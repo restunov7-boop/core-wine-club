@@ -22,3 +22,6 @@ dist/
 .DS_Store
 Thumbs.db
 .vscode/
+
+# Local process pid files
+*.pid
