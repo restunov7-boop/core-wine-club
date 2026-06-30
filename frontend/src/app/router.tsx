@@ -1,0 +1,78 @@
+import { createBrowserRouter, Navigate } from "react-router-dom";
+
+import { AdminGuard } from "./guards/AdminGuard";
+import { AuthGuard } from "./guards/AuthGuard";
+import { AdminLayout } from "./layout/AdminLayout";
+import { AppShell } from "./layouts/AppShell";
+import { BottlePage } from "../modules/bottle/BottlePage";
+import { DiaryNoteDetailPage } from "../modules/diary/DiaryNoteDetailPage";
+import { DiaryNoteFormPage } from "../modules/diary/DiaryNoteFormPage";
+import { DiaryPage } from "../modules/diary/DiaryPage";
+import { DiscoveriesPage } from "../modules/discoveries/DiscoveriesPage";
+import { DiscoveryDetailPage } from "../modules/discoveries/DiscoveryDetailPage";
+import { HomePage } from "../modules/home/HomePage";
+import { LearningPathDetailPage } from "../modules/learning/LearningPathDetailPage";
+import { LearningPathsPage } from "../modules/learning/LearningPathsPage";
+import { LessonDetailPage } from "../modules/learning/LessonDetailPage";
+import { OnboardingPage } from "../modules/onboarding/OnboardingPage";
+import { TasteProfilePage } from "../modules/taste-profile/TasteProfilePage";
+import { PlaceholderPage } from "../shared/ui/PlaceholderPage";
+
+export const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Navigate to="/home" replace />,
+  },
+  {
+    path: "/loading",
+    element: <PlaceholderPage title="Loading" />,
+  },
+  {
+    path: "/onboarding",
+    element: (
+      <AuthGuard>
+        <OnboardingPage />
+      </AuthGuard>
+    ),
+  },
+  {
+    element: (
+      <AuthGuard>
+        <AppShell />
+      </AuthGuard>
+    ),
+    children: [
+      { path: "/home", element: <HomePage /> },
+      { path: "/bottle", element: <BottlePage /> },
+      { path: "/discoveries", element: <DiscoveriesPage /> },
+      { path: "/discoveries/:slug", element: <DiscoveryDetailPage /> },
+      { path: "/learn", element: <LearningPathsPage /> },
+      { path: "/learn/lessons/:lessonSlug", element: <LessonDetailPage /> },
+      { path: "/learn/:pathSlug", element: <LearningPathDetailPage /> },
+      { path: "/diary", element: <DiaryPage /> },
+      { path: "/diary/new", element: <DiaryNoteFormPage /> },
+      { path: "/diary/:noteId", element: <DiaryNoteDetailPage /> },
+      { path: "/diary/:noteId/edit", element: <DiaryNoteFormPage /> },
+      { path: "/taste-profile", element: <TasteProfilePage /> },
+      { path: "/club", element: <PlaceholderPage title="Клуб" /> },
+      { path: "/my-path", element: <PlaceholderPage title="Мой путь" /> },
+      { path: "/premium", element: <PlaceholderPage title="Premium" /> },
+      { path: "/notifications", element: <PlaceholderPage title="Notifications" /> },
+      { path: "/settings", element: <PlaceholderPage title="Settings" /> },
+    ],
+  },
+  {
+    path: "/admin",
+    element: (
+      <AuthGuard>
+        <AdminGuard>
+          <AdminLayout />
+        </AdminGuard>
+      </AuthGuard>
+    ),
+    children: [
+      { index: true, element: <PlaceholderPage title="Admin" /> },
+      { path: "dashboard", element: <PlaceholderPage title="Admin Dashboard" /> },
+    ],
+  },
+]);
