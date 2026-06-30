@@ -72,19 +72,24 @@ export function BottlePage() {
         <BottleVisual fillPercent={progress.fill_percent} />
 
         <div className="bottle-panel__content">
-          <span>Прогресс уроков</span>
+          <span>Уроки и дневник</span>
           <strong>{progress.fill_percent}%</strong>
           <p>
             Заполнено {progress.completed_units} из {progress.total_units}
           </p>
           <div className="bottle-panel__stats">
             <div>
-              <strong>{progress.breakdown.completed_lessons_count}</strong>
-              <small>уроков завершено</small>
+              <strong>
+                {progress.breakdown.learning.completed_lessons_count} из{" "}
+                {progress.breakdown.learning.available_lessons_count}
+              </strong>
+              <small>уроки завершены</small>
             </div>
             <div>
-              <strong>{progress.breakdown.available_lessons_count}</strong>
-              <small>уроков доступно</small>
+              <strong>
+                {progress.breakdown.diary.notes_count} из {progress.breakdown.diary.target_notes_count}
+              </strong>
+              <small>заметки в дневнике</small>
             </div>
           </div>
           <Link className="primary-action bottle-panel__action" to={progress.next_action.href}>

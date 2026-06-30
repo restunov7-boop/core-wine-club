@@ -101,12 +101,17 @@ Invoke-Api -Method Delete -Path "/progress/lessons/$firstLessonSlug/complete" -H
 $progressBefore = Invoke-Api -Method Get -Path "/progress/summary" -Headers $headers
 Assert-True ($progressBefore.data.learning.completed_lessons_count -eq 0) "Initial completed lesson count mismatch"
 Assert-True ($progressBefore.data.learning.available_lessons_count -eq 5) "Available lesson count mismatch"
+Assert-True ($progressBefore.data.diary.notes_count -eq 0) "Initial diary notes count mismatch"
+Assert-True ($progressBefore.data.diary.created_note_events_count -eq 0) "Initial diary event count mismatch"
 Write-Ok "progress summary initial"
 
 $bottleBefore = Invoke-Api -Method Get -Path "/bottle/progress" -Headers $headers
 Assert-True ($bottleBefore.data.completed_units -eq 0) "Initial bottle completed units mismatch"
-Assert-True ($bottleBefore.data.total_units -eq 5) "Initial bottle total units mismatch"
+Assert-True ($bottleBefore.data.total_units -eq 8) "Initial bottle total units mismatch"
 Assert-True ($bottleBefore.data.fill_percent -eq 0) "Initial bottle fill mismatch"
+Assert-True ($bottleBefore.data.source -eq "learning_and_diary") "Initial bottle source mismatch"
+Assert-True ($bottleBefore.data.breakdown.learning.available_lessons_count -eq 5) "Initial bottle learning total mismatch"
+Assert-True ($bottleBefore.data.breakdown.diary.target_notes_count -eq 3) "Initial bottle diary target mismatch"
 Write-Ok "bottle progress initial"
 
 $completedLesson = Invoke-Api -Method Post -Path "/progress/lessons/$firstLessonSlug/complete" -Headers $headers
@@ -115,7 +120,8 @@ Write-Ok "progress complete lesson"
 
 $bottleAfterComplete = Invoke-Api -Method Get -Path "/bottle/progress" -Headers $headers
 Assert-True ($bottleAfterComplete.data.completed_units -eq 1) "Bottle completed units did not update"
-Assert-True ($bottleAfterComplete.data.fill_percent -eq 20) "Bottle fill did not update"
+Assert-True ($bottleAfterComplete.data.fill_percent -eq 12) "Bottle fill did not update"
+Assert-True ($bottleAfterComplete.data.breakdown.learning.completed_lessons_count -eq 1) "Bottle learning count did not update"
 Write-Ok "bottle progress after complete"
 
 $learningPathAfterCompletion = Invoke-Api -Method Get -Path "/learning/paths/$firstPathSlug" -Headers $headers
@@ -161,6 +167,18 @@ $noteId = $note.data.id
 Assert-True ([string]::IsNullOrWhiteSpace($noteId) -eq $false) "Diary note id is empty"
 Write-Ok "diary create"
 
+$progressAfterDiaryCreate = Invoke-Api -Method Get -Path "/progress/summary" -Headers $headers
+Assert-True ($progressAfterDiaryCreate.data.diary.notes_count -eq 1) "Diary notes count did not update"
+Assert-True ($progressAfterDiaryCreate.data.diary.created_note_events_count -eq 1) "Diary event count did not update"
+Write-Ok "progress summary after diary create"
+
+$bottleAfterDiaryCreate = Invoke-Api -Method Get -Path "/bottle/progress" -Headers $headers
+Assert-True ($bottleAfterDiaryCreate.data.completed_units -eq 1) "Bottle diary contribution did not update"
+Assert-True ($bottleAfterDiaryCreate.data.fill_percent -eq 12) "Bottle diary fill did not update"
+Assert-True ($bottleAfterDiaryCreate.data.breakdown.diary.notes_count -eq 1) "Bottle diary notes count did not update"
+Assert-True ($bottleAfterDiaryCreate.data.breakdown.diary.contributed_units -eq 1) "Bottle diary contributed units mismatch"
+Write-Ok "bottle progress after diary create"
+
 $notes = Invoke-Api -Method Get -Path "/diary/notes" -Headers $headers
 Assert-True ($notes.data.total -ge 1) "Diary list is empty"
 Write-Ok "diary list"
@@ -194,5 +212,16 @@ catch {
     }
 }
 Write-Ok "deleted note returns 404"
+
+$progressAfterDiaryDelete = Invoke-Api -Method Get -Path "/progress/summary" -Headers $headers
+Assert-True ($progressAfterDiaryDelete.data.diary.notes_count -eq 0) "Diary notes count did not reset after delete"
+Assert-True ($progressAfterDiaryDelete.data.diary.created_note_events_count -eq 1) "Diary event history was unexpectedly removed"
+Write-Ok "progress summary after diary delete"
+
+$bottleAfterDiaryDelete = Invoke-Api -Method Get -Path "/bottle/progress" -Headers $headers
+Assert-True ($bottleAfterDiaryDelete.data.completed_units -eq 0) "Bottle diary contribution did not reset after delete"
+Assert-True ($bottleAfterDiaryDelete.data.fill_percent -eq 0) "Bottle diary fill did not reset after delete"
+Assert-True ($bottleAfterDiaryDelete.data.breakdown.diary.notes_count -eq 0) "Bottle diary notes did not reset after delete"
+Write-Ok "bottle progress after diary delete"
 
 Write-Ok "sprint 6 smoke complete"

@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.diary.models import TastingNote
 from app.diary.schemas import TastingNoteCreate, TastingNoteDetail, TastingNoteListItem, TastingNoteUpdate, normalize_tasted_at
+from app.progress.service import record_diary_note_created_event
 from app.projects.models import ProjectUser
 from app.shared.errors import NotFoundError
 
@@ -49,6 +50,8 @@ def create_tasting_note(db: Session, project_user: ProjectUser, payload: Tasting
     )
     _apply_payload(note, payload.model_dump(exclude_unset=True))
     db.add(note)
+    db.flush()
+    record_diary_note_created_event(db, project_user, note)
     db.commit()
     db.refresh(note)
     return note

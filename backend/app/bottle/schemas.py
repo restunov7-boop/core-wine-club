@@ -1,9 +1,20 @@
 from pydantic import BaseModel
 
 
-class BottleBreakdown(BaseModel):
+class BottleLearningBreakdown(BaseModel):
     completed_lessons_count: int
     available_lessons_count: int
+
+
+class BottleDiaryBreakdown(BaseModel):
+    notes_count: int
+    target_notes_count: int
+    contributed_units: int
+
+
+class BottleBreakdown(BaseModel):
+    learning: BottleLearningBreakdown
+    diary: BottleDiaryBreakdown
 
 
 class BottleNextAction(BaseModel):

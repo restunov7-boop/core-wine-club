@@ -21,5 +21,11 @@ class LearningProgressSummary(BaseModel):
     completed_lesson_slugs: list[str]
 
 
+class DiaryProgressSummary(BaseModel):
+    notes_count: int
+    created_note_events_count: int
+
+
 class ProgressSummary(BaseModel):
     learning: LearningProgressSummary
+    diary: DiaryProgressSummary

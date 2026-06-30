@@ -5,15 +5,24 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
+from app.diary.models import TastingNote
 from app.learning.models import Lesson
 from app.progress.models import ProgressEvent
-from app.progress.schemas import LearningProgressSummary, LessonCompletionState, LessonUncompleteState, ProgressSummary
+from app.progress.schemas import (
+    DiaryProgressSummary,
+    LearningProgressSummary,
+    LessonCompletionState,
+    LessonUncompleteState,
+    ProgressSummary,
+)
 from app.projects.models import ProjectUser
 from app.shared.errors import NotFoundError
 
 
 LESSON_COMPLETED_EVENT = "learning.lesson.completed"
 LESSON_SOURCE_TYPE = "lesson"
+DIARY_NOTE_CREATED_EVENT = "diary.note.created"
+DIARY_NOTE_SOURCE_TYPE = "diary_note"
 
 
 def mark_lesson_completed(db: Session, project_user: ProjectUser, lesson_slug: str) -> LessonCompletionState:
@@ -58,7 +67,10 @@ def unmark_lesson_completed(db: Session, project_user: ProjectUser, lesson_slug:
 
 
 def build_progress_summary(db: Session, project_user: ProjectUser) -> ProgressSummary:
-    return ProgressSummary(learning=build_learning_progress_summary(db, project_user))
+    return ProgressSummary(
+        learning=build_learning_progress_summary(db, project_user),
+        diary=build_diary_progress_summary(db, project_user),
+    )
 
 
 def build_learning_progress_summary(db: Session, project_user: ProjectUser) -> LearningProgressSummary:
@@ -111,6 +123,69 @@ def get_lesson_completion_map(
         .all()
     )
     return {event.source_id: event for event in events if event.source_id is not None}
+
+
+def record_diary_note_created_event(
+    db: Session,
+    project_user: ProjectUser,
+    note: TastingNote,
+) -> ProgressEvent:
+    event = (
+        db.query(ProgressEvent)
+        .filter(
+            ProgressEvent.project_id == project_user.project_id,
+            ProgressEvent.project_user_id == project_user.id,
+            ProgressEvent.event_type == DIARY_NOTE_CREATED_EVENT,
+            ProgressEvent.source_type == DIARY_NOTE_SOURCE_TYPE,
+            ProgressEvent.source_id == note.id,
+        )
+        .one_or_none()
+    )
+    if event is not None:
+        return event
+
+    metadata = {"wine_name": note.wine_name}
+    if note.rating is not None:
+        metadata["rating"] = note.rating
+
+    event = ProgressEvent(
+        project_id=project_user.project_id,
+        project_user_id=project_user.id,
+        event_type=DIARY_NOTE_CREATED_EVENT,
+        source_type=DIARY_NOTE_SOURCE_TYPE,
+        source_id=note.id,
+        source_slug=None,
+        metadata_json=metadata,
+        occurred_at=datetime.now(timezone.utc),
+    )
+    db.add(event)
+    return event
+
+
+def build_diary_progress_summary(db: Session, project_user: ProjectUser) -> DiaryProgressSummary:
+    notes_count = (
+        db.query(TastingNote)
+        .filter(
+            TastingNote.project_id == project_user.project_id,
+            TastingNote.project_user_id == project_user.id,
+            TastingNote.visibility == "private",
+        )
+        .count()
+    )
+    created_note_events_count = (
+        db.query(ProgressEvent)
+        .filter(
+            ProgressEvent.project_id == project_user.project_id,
+            ProgressEvent.project_user_id == project_user.id,
+            ProgressEvent.event_type == DIARY_NOTE_CREATED_EVENT,
+            ProgressEvent.source_type == DIARY_NOTE_SOURCE_TYPE,
+        )
+        .count()
+    )
+    return DiaryProgressSummary(
+        notes_count=notes_count,
+        created_note_events_count=created_note_events_count,
+    )
 
 
 def _lesson_completion_events_query(db: Session, project_user: ProjectUser):

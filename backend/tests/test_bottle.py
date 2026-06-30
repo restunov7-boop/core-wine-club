@@ -15,13 +15,20 @@ def test_bottle_progress_starts_at_zero_for_fresh_user(client):
     assert response.status_code == 200, response.text
     data = response.json()["data"]
     assert data["title"] == "Моя бутылка"
-    assert data["source"] == "learning_lessons"
+    assert data["source"] == "learning_and_diary"
     assert data["completed_units"] == 0
-    assert data["total_units"] == 5
+    assert data["total_units"] == 8
     assert data["fill_percent"] == 0
     assert data["breakdown"] == {
-        "completed_lessons_count": 0,
-        "available_lessons_count": 5,
+        "learning": {
+            "completed_lessons_count": 0,
+            "available_lessons_count": 5,
+        },
+        "diary": {
+            "notes_count": 0,
+            "target_notes_count": 3,
+            "contributed_units": 0,
+        },
     }
     assert data["next_action"] == {
         "label": "Продолжить уроки",
@@ -39,12 +46,12 @@ def test_bottle_progress_updates_after_complete_and_uncomplete(client):
 
     assert after_complete.status_code == 200, after_complete.text
     assert after_complete.json()["data"]["completed_units"] == 1
-    assert after_complete.json()["data"]["total_units"] == 5
-    assert after_complete.json()["data"]["fill_percent"] == 20
+    assert after_complete.json()["data"]["total_units"] == 8
+    assert after_complete.json()["data"]["fill_percent"] == 12
 
     assert after_uncomplete.status_code == 200, after_uncomplete.text
     assert after_uncomplete.json()["data"]["completed_units"] == 0
-    assert after_uncomplete.json()["data"]["total_units"] == 5
+    assert after_uncomplete.json()["data"]["total_units"] == 8
     assert after_uncomplete.json()["data"]["fill_percent"] == 0
 
 
@@ -59,7 +66,7 @@ def test_second_user_does_not_see_first_users_bottle_progress(client):
     assert response.status_code == 200, response.text
     data = response.json()["data"]
     assert data["completed_units"] == 0
-    assert data["total_units"] == 5
+    assert data["total_units"] == 8
     assert data["fill_percent"] == 0
 
 
@@ -86,7 +93,8 @@ def test_unpublished_lessons_are_not_counted_in_bottle_total(client):
     response = client.get("/api/v1/bottle/progress", headers=headers)
 
     assert response.status_code == 200, response.text
-    assert response.json()["data"]["total_units"] == 5
+    assert response.json()["data"]["breakdown"]["learning"]["available_lessons_count"] == 5
+    assert response.json()["data"]["total_units"] == 8
 
 
 def test_home_includes_bottle_preview(client):
@@ -101,7 +109,65 @@ def test_home_includes_bottle_preview(client):
     assert sections["bottle"]["title"] == "Моя бутылка"
     assert sections["bottle"]["href"] == "/bottle"
     assert sections["bottle"]["stats"] == {
-        "fill_percent": 20,
+        "fill_percent": 12,
         "completed_units": 1,
-        "total_units": 5,
+        "total_units": 8,
     }
+
+
+def test_bottle_combines_learning_and_diary_progress(client):
+    headers = login(client)
+    note = client.post(
+        "/api/v1/diary/notes",
+        headers=headers,
+        json={
+            "wine_name": "Sprint 11 Wine",
+            "rating": 4,
+            "wine_color": "red",
+            "sweetness": "dry",
+        },
+    )
+    assert note.status_code == 200, note.text
+    client.post(f"/api/v1/progress/lessons/{LESSON_SLUG}/complete", headers=headers)
+
+    response = client.get("/api/v1/bottle/progress", headers=headers)
+
+    assert response.status_code == 200, response.text
+    data = response.json()["data"]
+    assert data["completed_units"] == 2
+    assert data["total_units"] == 8
+    assert data["fill_percent"] == 25
+    assert data["breakdown"]["learning"] == {
+        "completed_lessons_count": 1,
+        "available_lessons_count": 5,
+    }
+    assert data["breakdown"]["diary"] == {
+        "notes_count": 1,
+        "target_notes_count": 3,
+        "contributed_units": 1,
+    }
+
+
+def test_deleting_diary_note_reduces_current_bottle_diary_contribution(client):
+    headers = login(client)
+    note = client.post(
+        "/api/v1/diary/notes",
+        headers=headers,
+        json={
+            "wine_name": "Delete Me",
+            "rating": 3,
+            "wine_color": "white",
+            "sweetness": "dry",
+        },
+    )
+    note_id = note.json()["data"]["id"]
+    before_delete = client.get("/api/v1/bottle/progress", headers=headers)
+
+    delete_response = client.delete(f"/api/v1/diary/notes/{note_id}", headers=headers)
+    after_delete = client.get("/api/v1/bottle/progress", headers=headers)
+
+    assert delete_response.status_code == 200, delete_response.text
+    assert before_delete.json()["data"]["breakdown"]["diary"]["notes_count"] == 1
+    assert before_delete.json()["data"]["completed_units"] == 1
+    assert after_delete.json()["data"]["breakdown"]["diary"]["notes_count"] == 0
+    assert after_delete.json()["data"]["completed_units"] == 0

@@ -29,7 +29,7 @@ def test_home_returns_previews_and_empty_stats(client):
     assert sections["bottle"]["stats"] == {
         "fill_percent": 0,
         "completed_units": 0,
-        "total_units": 5,
+        "total_units": 8,
     }
     assert sections["diary"]["stats"]["notes_count"] == 0
     assert sections["taste_profile"]["stats"]["notes_count"] == 0

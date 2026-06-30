@@ -1,20 +1,33 @@
+from uuid import UUID
+
 from app.database import SessionLocal
+from app.diary.models import TastingNote
 from app.progress.models import ProgressEvent
-from app.progress.service import LESSON_COMPLETED_EVENT, LESSON_SOURCE_TYPE
-from tests.conftest import complete_onboarding, login, set_dev_user
+from app.progress.service import (
+    DIARY_NOTE_CREATED_EVENT,
+    DIARY_NOTE_SOURCE_TYPE,
+    LESSON_COMPLETED_EVENT,
+    LESSON_SOURCE_TYPE,
+    record_diary_note_created_event,
+)
+from app.projects.models import ProjectUser
+from tests.conftest import complete_onboarding, create_note, login, set_dev_user
 
 
 LESSON_SLUG = "how-wine-is-made"
 
 
-def _count_progress_events() -> int:
+def _count_progress_events(
+    event_type: str = LESSON_COMPLETED_EVENT,
+    source_type: str = LESSON_SOURCE_TYPE,
+) -> int:
     db = SessionLocal()
     try:
         return (
             db.query(ProgressEvent)
             .filter(
-                ProgressEvent.event_type == LESSON_COMPLETED_EVENT,
-                ProgressEvent.source_type == LESSON_SOURCE_TYPE,
+                ProgressEvent.event_type == event_type,
+                ProgressEvent.source_type == source_type,
             )
             .count()
         )
@@ -83,11 +96,70 @@ def test_progress_summary_returns_current_user_counts(client):
         "available_lessons_count": 5,
         "completed_lesson_slugs": [],
     }
+    assert response_before.json()["data"]["diary"] == {
+        "notes_count": 0,
+        "created_note_events_count": 0,
+    }
     assert response_after.status_code == 200, response_after.text
     assert response_after.json()["data"]["learning"] == {
         "completed_lessons_count": 1,
         "available_lessons_count": 5,
         "completed_lesson_slugs": [LESSON_SLUG],
+    }
+    assert response_after.json()["data"]["diary"] == {
+        "notes_count": 0,
+        "created_note_events_count": 0,
+    }
+
+
+def test_creating_diary_note_creates_progress_event(client):
+    headers = login(client)
+
+    note = create_note(client, headers, wine_name="Sprint 11 Event Wine", rating=5)
+
+    assert note["id"]
+    assert _count_progress_events(DIARY_NOTE_CREATED_EVENT, DIARY_NOTE_SOURCE_TYPE) == 1
+
+
+def test_diary_note_created_event_is_idempotent_for_same_note(client):
+    headers = login(client)
+    note = create_note(client, headers, wine_name="Idempotent Wine")
+
+    db = SessionLocal()
+    try:
+        db_note = db.query(TastingNote).filter(TastingNote.id == UUID(note["id"])).one()
+        project_user = db.query(ProjectUser).filter(ProjectUser.id == db_note.project_user_id).one()
+        record_diary_note_created_event(db, project_user, db_note)
+        db.commit()
+    finally:
+        db.close()
+
+    assert _count_progress_events(DIARY_NOTE_CREATED_EVENT, DIARY_NOTE_SOURCE_TYPE) == 1
+
+
+def test_progress_summary_includes_diary_counts(client):
+    headers = login(client)
+
+    response_before = client.get("/api/v1/progress/summary", headers=headers)
+    note = create_note(client, headers, wine_name="Summary Wine")
+    response_after_create = client.get("/api/v1/progress/summary", headers=headers)
+    client.delete(f"/api/v1/diary/notes/{note['id']}", headers=headers)
+    response_after_delete = client.get("/api/v1/progress/summary", headers=headers)
+
+    assert response_before.status_code == 200, response_before.text
+    assert response_before.json()["data"]["diary"] == {
+        "notes_count": 0,
+        "created_note_events_count": 0,
+    }
+    assert response_after_create.status_code == 200, response_after_create.text
+    assert response_after_create.json()["data"]["diary"] == {
+        "notes_count": 1,
+        "created_note_events_count": 1,
+    }
+    assert response_after_delete.status_code == 200, response_after_delete.text
+    assert response_after_delete.json()["data"]["diary"] == {
+        "notes_count": 0,
+        "created_note_events_count": 1,
     }
 
 
@@ -106,6 +178,22 @@ def test_second_dev_user_does_not_see_first_users_completed_lesson(client):
     assert lesson.status_code == 200, lesson.text
     assert lesson.json()["data"]["is_completed"] is False
     assert lesson.json()["data"]["completed_at"] is None
+
+
+def test_second_dev_user_does_not_see_first_users_diary_progress(client):
+    user_one_headers = login(client)
+    create_note(client, user_one_headers, wine_name="First User Wine")
+
+    set_dev_user(telegram_id="200002", username="core_second_user", first_name="Second")
+    user_two_headers = login(client)
+    summary = client.get("/api/v1/progress/summary", headers=user_two_headers)
+
+    assert summary.status_code == 200, summary.text
+    assert summary.json()["data"]["diary"] == {
+        "notes_count": 0,
+        "created_note_events_count": 0,
+    }
+    assert _count_progress_events(DIARY_NOTE_CREATED_EVENT, DIARY_NOTE_SOURCE_TYPE) == 1
 
 
 def test_learning_and_home_include_current_user_completion_state(client):

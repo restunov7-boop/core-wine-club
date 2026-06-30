@@ -123,11 +123,13 @@ Learning pages do not show bottle fill, points, quizzes, achievements, or gamifi
 
 ## Bottle
 
-Sprint 10 adds a protected bottle route:
+Sprint 10 adds a protected bottle route. Sprint 11 extends its progress source to learning plus diary:
 
-- `/bottle` shows a CSS bottle visual powered by lesson completion progress.
+- `/bottle` shows a CSS bottle visual powered by lesson completion progress and up to 3 existing private diary notes.
 - `/home` links to `/bottle` and shows fill/count stats.
-- Completing or uncompleting lessons changes bottle progress through the existing backend ledger.
+- Completing or uncompleting lessons changes the learning part of bottle progress.
+- Creating or deleting diary notes changes the current diary contribution.
+- The next action comes from the backend: continue lessons, add a diary note, or view the taste profile.
 
 Bottle is not in bottom navigation yet; it is reachable from Home.
 
@@ -172,4 +174,4 @@ pnpm build
 
 ## Sprint Boundary
 
-Sprint 10 adds Bottle UI foundation only. It does not add AI, recommendations, public profile, sharing, social features, achievements, points, streaks, badges, weekly bottle, quizzes, premium/payments, notifications, admin CRUD, CMS/editor, uploads, OCR/barcode, or external wine databases.
+Sprint 11 adds the diary contribution to Bottle UI only. It does not add AI, recommendations, public profile, sharing, social features, achievements, points, streaks, badges, weekly bottle, quizzes, premium/payments, notifications, admin CRUD, CMS/editor, uploads, OCR/barcode, or external wine databases.

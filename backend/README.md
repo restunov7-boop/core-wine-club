@@ -122,11 +122,15 @@ Invoke-RestMethod -Method Post http://127.0.0.1:8000/api/v1/progress/lessons/how
 Invoke-RestMethod -Method Delete http://127.0.0.1:8000/api/v1/progress/lessons/how-wine-is-made/complete -Headers $headers
 ```
 
+`/progress/summary` returns both learning counts and diary counts. Sprint 11 writes `diary.note.created` events when tasting notes are created; deleting a note does not delete that historical event.
+
 Bottle:
 
 ```powershell
 Invoke-RestMethod http://127.0.0.1:8000/api/v1/bottle/progress -Headers $headers
 ```
+
+Bottle progress uses published lesson completion plus up to 3 existing private diary notes. The source is `learning_and_diary`; no bottle table or gamification state is created.
 
 Diary:
 
@@ -218,6 +222,8 @@ Start the backend on port `8000`, then from the repository root run:
 ```powershell
 .\backend\scripts\smoke_sprint6.ps1
 ```
+
+The smoke script includes the Sprint 11 bottle and diary progress checks.
 
 The script checks health, dev auth, `/auth/me`, onboarding reset/complete, home, discoveries, learning paths/lessons, progress summary, lesson complete/uncomplete, bottle progress, diary CRUD, taste profile, and deleted-note 404 behavior. Successful steps print `[OK] ...`.
 
