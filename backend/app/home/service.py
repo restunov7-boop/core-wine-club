@@ -73,6 +73,12 @@ def build_home_response(db: Session, user: User, project_user: ProjectUser) -> H
                 },
             ),
             HomeSection(
+                key="quizzes",
+                title="Квизы",
+                description="Короткие проверки без оценок и давления.",
+                href="/quizzes",
+            ),
+            HomeSection(
                 key="bottle",
                 title=bottle_progress.title,
                 description=bottle_progress.subtitle,

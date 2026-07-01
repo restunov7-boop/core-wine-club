@@ -1,6 +1,6 @@
 # Backend
 
-FastAPI backend for CORE Wine Club auth, onboarding, home, discoveries, learning foundation, progress ledger, Bottle UI foundation, diary, taste profile, My Path, and quality tooling.
+FastAPI backend for CORE Wine Club auth, onboarding, home, discoveries, learning foundation, quizzes foundation, progress ledger, Bottle UI foundation, diary, taste profile, My Path, and quality tooling.
 
 ## Windows PowerShell Setup
 
@@ -113,6 +113,25 @@ Invoke-RestMethod http://127.0.0.1:8000/api/v1/learning/paths -Headers $headers
 Invoke-RestMethod http://127.0.0.1:8000/api/v1/learning/paths/wine-basics -Headers $headers
 Invoke-RestMethod http://127.0.0.1:8000/api/v1/learning/lessons/how-wine-is-made -Headers $headers
 ```
+
+Quizzes:
+
+```powershell
+$quiz = Invoke-RestMethod http://127.0.0.1:8000/api/v1/quizzes/wine-basics-check -Headers $headers
+Invoke-RestMethod http://127.0.0.1:8000/api/v1/quizzes -Headers $headers
+Invoke-RestMethod `
+  -Method Post `
+  -Uri http://127.0.0.1:8000/api/v1/quizzes/wine-basics-check/check `
+  -Headers $headers `
+  -ContentType "application/json" `
+  -Body (@{
+    answers = @(
+      @{ question_id = $quiz.data.questions[0].id; selected_option_key = "a" }
+    )
+  } | ConvertTo-Json -Depth 10)
+```
+
+Quiz detail does not expose `correct_option_key`. Quiz checks do not persist attempts and do not create progress events.
 
 Progress:
 
@@ -234,7 +253,7 @@ Start the backend on port `8000`, then from the repository root run:
 .\backend\scripts\smoke_sprint6.ps1
 ```
 
-The smoke script includes the Sprint 13 My Path checks plus the Sprint 12 bottle, diary, and progress activity checks.
+The smoke script includes Sprint 16 quizzes checks plus the Sprint 13 My Path checks and Sprint 12 bottle, diary, and progress activity checks.
 
 The script checks health, dev auth, `/auth/me`, onboarding reset/complete, home, discoveries, learning paths/lessons, progress summary, lesson complete/uncomplete, bottle progress, diary CRUD, taste profile, and deleted-note 404 behavior. Successful steps print `[OK] ...`.
 
@@ -271,6 +290,20 @@ Sprint 8 adds project-scoped read-only learning:
 - `/home` returns a small learning preview.
 
 Sprint 8 does not persist lesson completion, progress, scores, or bottle state.
+
+## Quizzes Foundation
+
+Sprint 16 adds project-scoped quiz content:
+
+- model/tables: `quizzes`, `quiz_questions`;
+- unique `(project_id, slug)` for quizzes;
+- published-only filtering for normal reads;
+- `GET /quizzes`, `GET /quizzes/{slug}`, and `POST /quizzes/{slug}/check`;
+- quiz detail hides `correct_option_key`;
+- checks are not persisted and do not create `ProgressEvent`;
+- idempotent demo seed for `wine-basics-check`.
+
+Sprint 16 does not add attempts, quiz progress, bottle contribution, points, achievements, badges, streaks, or gamification.
 
 ## Progress Ledger
 
@@ -322,4 +355,4 @@ Sprint 5 adds a private dynamic taste profile:
 
 ## Sprint Boundary
 
-Sprint 13 adds My Path / Next Actions Foundation only. It does not add AI, recommendations, public profiles, sharing, social features, achievements, quizzes, points, badges, streaks, premium/payments, notifications, admin CRUD, CMS/editor, uploads, OCR/barcode, inventory, external wine databases, production hosting, or deployment.
+Sprint 16 adds Quizzes Foundation only. It does not add quiz attempts, quiz progress events, bottle integration, AI, recommendations, public profiles, sharing, social features, achievements, points, badges, streaks, premium/payments, notifications, admin CRUD, CMS/editor, uploads, OCR/barcode, inventory, external wine databases, production hosting, or deployment.

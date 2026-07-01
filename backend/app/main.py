@@ -12,6 +12,7 @@ from app.learning.router import router as learning_router
 from app.my_path.router import router as my_path_router
 from app.onboarding.router import router as onboarding_router
 from app.progress.router import router as progress_router
+from app.quizzes.router import router as quizzes_router
 from app.shared.errors import AppError
 from app.shared.responses import app_error_handler
 from app.taste_profile.router import router as taste_profile_router
@@ -35,6 +36,7 @@ def create_app() -> FastAPI:
     app.include_router(onboarding_router, prefix=settings.api_v1_prefix)
     app.include_router(discoveries_router, prefix=settings.api_v1_prefix)
     app.include_router(learning_router, prefix=settings.api_v1_prefix)
+    app.include_router(quizzes_router, prefix=settings.api_v1_prefix)
     app.include_router(progress_router, prefix=settings.api_v1_prefix)
     app.include_router(bottle_router, prefix=settings.api_v1_prefix)
     app.include_router(diary_router, prefix=settings.api_v1_prefix)

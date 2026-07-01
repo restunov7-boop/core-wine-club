@@ -409,6 +409,8 @@ textarea:focus-visible {
 .learning-page,
 .learning-detail,
 .lesson-detail,
+.quizzes-page,
+.quiz-detail-page,
 .progress-page,
 .my-path-page,
 .diary-page,
@@ -420,6 +422,8 @@ textarea:focus-visible {
 
 .discoveries-page,
 .learning-page,
+.quizzes-page,
+.quiz-detail-page,
 .progress-page,
 .my-path-page,
 .diary-page,
@@ -436,6 +440,11 @@ textarea:focus-visible {
 .learning-detail,
 .lesson-card,
 .lesson-detail,
+.quizzes-header,
+.quiz-card,
+.quiz-detail-header,
+.quiz-question,
+.quiz-result-card,
 .progress-header,
 .activity-card,
 .activity-preview-panel,
@@ -459,6 +468,9 @@ textarea:focus-visible {
 
 .discoveries-header,
 .learning-header,
+.quizzes-header,
+.quiz-detail-header,
+.quiz-result-card,
 .progress-header,
 .my-path-header,
 .diary-header,
@@ -474,6 +486,9 @@ textarea:focus-visible {
 .discovery-meta span,
 .learning-header > span,
 .learning-meta span,
+.quizzes-header > span,
+.quiz-meta span,
+.quiz-result-card > span,
 .lesson-card__topline span,
 .back-link,
 .progress-header > span,
@@ -499,6 +514,8 @@ textarea:focus-visible {
 .learning-header h1,
 .learning-detail h1,
 .lesson-detail h1,
+.quizzes-header h1,
+.quiz-detail-header h1,
 .progress-header h1,
 .my-path-header h1,
 .diary-header h1,
@@ -517,6 +534,11 @@ textarea:focus-visible {
 .learning-detail p,
 .lesson-card p,
 .lesson-detail p,
+.quizzes-header p,
+.quiz-card p,
+.quiz-detail-header p,
+.quiz-question p,
+.quiz-result-card p,
 .progress-header p,
 .activity-card p,
 .activity-preview-panel p,
@@ -542,6 +564,7 @@ textarea:focus-visible {
 
 .discoveries-list,
 .learning-list,
+.quiz-list,
 .lesson-list {
   display: grid;
   gap: 12px;
@@ -549,6 +572,7 @@ textarea:focus-visible {
 
 .discovery-card,
 .learning-card,
+.quiz-card,
 .lesson-card {
   display: block;
   padding: 18px;
@@ -559,6 +583,7 @@ textarea:focus-visible {
 
 .discovery-card:hover,
 .learning-card:hover,
+.quiz-card:hover,
 .lesson-card:hover {
   border-color: rgba(214, 168, 79, 0.52);
   transform: translateY(-1px);
@@ -566,6 +591,7 @@ textarea:focus-visible {
 
 .discovery-card h2,
 .learning-card h2,
+.quiz-card h2,
 .lesson-card h2 {
   margin: 12px 0 0;
   font-size: 22px;
@@ -578,8 +604,13 @@ textarea:focus-visible {
   color: var(--color-text);
 }
 
+.quiz-card__subtitle {
+  color: var(--color-text);
+}
+
 .discovery-meta,
 .learning-meta,
+.quiz-meta,
 .lesson-card__topline {
   display: flex;
   flex-wrap: wrap;
@@ -588,6 +619,7 @@ textarea:focus-visible {
 
 .discovery-meta span,
 .learning-meta span,
+.quiz-meta span,
 .lesson-card__topline span {
   padding: 5px 8px;
   border: 1px solid rgba(214, 168, 79, 0.28);
@@ -621,6 +653,87 @@ textarea:focus-visible {
   display: grid;
   gap: 16px;
   margin-top: 22px;
+}
+
+.quiz-card__cta {
+  width: fit-content;
+  display: inline-flex;
+  margin-top: 14px;
+  padding: 8px 10px;
+  border: 1px solid rgba(214, 168, 79, 0.28);
+  border-radius: var(--radius-card);
+  color: var(--color-accent);
+  font-size: 13px;
+}
+
+.quiz-question-list {
+  display: grid;
+  gap: 12px;
+}
+
+.quiz-question {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 18px;
+}
+
+.quiz-question legend {
+  display: grid;
+  gap: 8px;
+  padding: 0;
+  color: var(--color-text);
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.quiz-question legend span {
+  color: var(--color-accent);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.quiz-options {
+  display: grid;
+  gap: 8px;
+}
+
+.quiz-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(245, 239, 232, 0.1);
+  border-radius: var(--radius-card);
+  background: rgba(245, 239, 232, 0.04);
+  color: var(--color-text);
+  line-height: 1.45;
+}
+
+.quiz-option input {
+  flex: 0 0 auto;
+  margin-top: 3px;
+  accent-color: var(--color-primary);
+}
+
+.quiz-answer-result {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid rgba(255, 180, 168, 0.32);
+  border-radius: var(--radius-card);
+  background: rgba(255, 180, 168, 0.08);
+}
+
+.quiz-answer-result--correct {
+  border-color: rgba(214, 168, 79, 0.38);
+  background: rgba(214, 168, 79, 0.08);
+}
+
+.quiz-answer-result strong {
+  color: var(--color-text);
 }
 
 .discovery-body p,
@@ -1537,6 +1650,10 @@ textarea:focus-visible {
   .learning-header,
   .learning-detail,
   .lesson-detail,
+  .quizzes-header,
+  .quiz-detail-header,
+  .quiz-question,
+  .quiz-result-card,
   .progress-header,
   .my-path-header,
   .diary-header,
@@ -1558,6 +1675,8 @@ textarea:focus-visible {
   .learning-header h1,
   .learning-detail h1,
   .lesson-detail h1,
+  .quizzes-header h1,
+  .quiz-detail-header h1,
   .progress-header h1,
   .my-path-header h1,
   .diary-header h1,
@@ -1598,6 +1717,7 @@ textarea:focus-visible {
 
   .discoveries-list,
   .learning-list,
+  .quiz-list,
   .diary-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

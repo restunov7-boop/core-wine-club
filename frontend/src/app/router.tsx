@@ -17,6 +17,8 @@ import { LessonDetailPage } from "../modules/learning/LessonDetailPage";
 import { MyPathPage } from "../modules/my-path/MyPathPage";
 import { OnboardingPage } from "../modules/onboarding/OnboardingPage";
 import { ProgressActivityPage } from "../modules/progress/ProgressActivityPage";
+import { QuizDetailPage } from "../modules/quizzes/QuizDetailPage";
+import { QuizzesPage } from "../modules/quizzes/QuizzesPage";
 import { TasteProfilePage } from "../modules/taste-profile/TasteProfilePage";
 import { PlaceholderPage } from "../shared/ui/PlaceholderPage";
 
@@ -48,6 +50,8 @@ export const router = createBrowserRouter([
       { path: "/bottle", element: <BottlePage /> },
       { path: "/progress", element: <ProgressActivityPage /> },
       { path: "/my-path", element: <MyPathPage /> },
+      { path: "/quizzes", element: <QuizzesPage /> },
+      { path: "/quizzes/:quizSlug", element: <QuizDetailPage /> },
       { path: "/discoveries", element: <DiscoveriesPage /> },
       { path: "/discoveries/:slug", element: <DiscoveryDetailPage /> },
       { path: "/learn", element: <LearningPathsPage /> },

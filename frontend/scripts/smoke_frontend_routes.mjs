@@ -5,6 +5,8 @@ const routes = [
   "/my-path",
   "/bottle",
   "/progress",
+  "/quizzes",
+  "/quizzes/wine-basics-check",
   "/discoveries",
   "/learn",
   "/diary",

@@ -97,6 +97,38 @@ Assert-True ($lesson.data.slug -eq $firstLessonSlug) "Lesson detail slug mismatc
 Assert-True ([string]::IsNullOrWhiteSpace($lesson.data.body) -eq $false) "Lesson body is empty"
 Write-Ok "learning lesson detail"
 
+$progressBeforeQuiz = Invoke-Api -Method Get -Path "/progress/summary" -Headers $headers
+$quizzes = Invoke-Api -Method Get -Path "/quizzes" -Headers $headers
+Assert-True ($quizzes.data.items.Count -ge 1) "Quizzes list is empty"
+Assert-True ($quizzes.data.items[0].slug -eq "wine-basics-check") "Unexpected quiz slug"
+Write-Ok "quizzes list"
+
+$quiz = Invoke-Api -Method Get -Path "/quizzes/wine-basics-check" -Headers $headers
+Assert-True ($quiz.data.slug -eq "wine-basics-check") "Quiz detail slug mismatch"
+Assert-True ($quiz.data.questions.Count -eq 5) "Quiz question count mismatch"
+Assert-True (($quiz.data.questions[0].PSObject.Properties.Name -contains "correct_option_key") -eq $false) "Quiz detail exposed correct answer"
+Write-Ok "quiz detail"
+
+$quizAnswerKeys = @("a", "b", "a", "b", "b")
+$quizAnswers = @()
+for ($i = 0; $i -lt $quiz.data.questions.Count; $i++) {
+    $quizAnswers += @{
+        question_id = $quiz.data.questions[$i].id
+        selected_option_key = $quizAnswerKeys[$i]
+    }
+}
+$quizCheck = Invoke-Api -Method Post -Path "/quizzes/wine-basics-check/check" -Headers $headers -Body @{ answers = $quizAnswers }
+Assert-True ($quizCheck.data.total_questions -eq 5) "Quiz check total question mismatch"
+Assert-True ($quizCheck.data.correct_count -eq 5) "Quiz check correct count mismatch"
+Assert-True ($quizCheck.data.items.Count -eq 5) "Quiz check item count mismatch"
+Assert-True ([string]::IsNullOrWhiteSpace($quizCheck.data.items[0].explanation) -eq $false) "Quiz check explanation missing"
+Write-Ok "quiz check"
+
+$progressAfterQuiz = Invoke-Api -Method Get -Path "/progress/summary" -Headers $headers
+Assert-True ($progressAfterQuiz.data.learning.completed_lessons_count -eq $progressBeforeQuiz.data.learning.completed_lessons_count) "Quiz changed lesson progress"
+Assert-True ($progressAfterQuiz.data.diary.created_note_events_count -eq $progressBeforeQuiz.data.diary.created_note_events_count) "Quiz created progress events"
+Write-Ok "quiz does not change progress"
+
 Invoke-Api -Method Delete -Path "/progress/lessons/$firstLessonSlug/complete" -Headers $headers | Out-Null
 $progressBefore = Invoke-Api -Method Get -Path "/progress/summary" -Headers $headers
 Assert-True ($progressBefore.data.learning.completed_lessons_count -eq 0) "Initial completed lesson count mismatch"

@@ -2,7 +2,7 @@
 
 Windows-first local development workspace for the CORE / Wine Club MVP.
 
-Current implemented foundation includes auth, onboarding, home, discoveries, learning paths and lessons, lesson completion events, Bottle UI foundation, private diary, private taste profile, deterministic My Path, and Sprint 14 UX readiness. Sprint 14 polishes the existing product surfaces; it does not add AI recommendations, achievements, gamification, or a new business domain.
+Current implemented foundation includes auth, onboarding, home, discoveries, learning paths and lessons, quizzes foundation, lesson completion events, Bottle UI foundation, private diary, private taste profile, deterministic My Path, and Sprint 14 UX readiness. Sprint 16 adds simple quizzes as a learning-support layer; it does not add quiz attempts, progress events, bottle integration, AI recommendations, achievements, or gamification.
 
 ## Required Tools
 
@@ -118,7 +118,7 @@ Start the backend first, then run:
 .\backend\scripts\smoke_sprint6.ps1
 ```
 
-The smoke script logs in with dev Telegram auth, checks `/auth/me`, onboarding reset/complete, home, my path, discoveries, learning paths/lessons, lesson completion/uncompletion, progress summary/activity, bottle progress, diary CRUD, taste profile, and verifies that a deleted diary note returns 404 while its creation event remains in progress history. Successful steps print `[OK] ...`.
+The smoke script logs in with dev Telegram auth, checks `/auth/me`, onboarding reset/complete, home, my path, discoveries, learning paths/lessons, quizzes, lesson completion/uncompletion, progress summary/activity, bottle progress, diary CRUD, taste profile, and verifies that a deleted diary note returns 404 while its creation event remains in progress history. Successful steps print `[OK] ...`.
 
 ## Frontend Build
 
@@ -208,4 +208,8 @@ Sprint 13 adds `/my-path` and Home next-action previews using deterministic rule
 
 Sprint 14 adds UX polish, route safety, clearer states, Home hub ordering, and mobile spacing improvements for existing routes only. It does not add a new product domain, database table, migration, AI, recommendations, achievements, points, streaks, social features, quizzes, premium/payments, or admin CRUD.
 
-Quizzes, club/feed/comments, achievements, notifications, premium features beyond `ProjectUser` access-state fields, admin CRUD, AI, recommendations, uploads, external wine databases, and deployment are intentionally not implemented.
+Sprint 15 Lite adds frontend route manifest and route smoke only. It does not add product features.
+
+Sprint 16 adds project-scoped quiz content and local answer checking only. It does not add quiz attempts, quiz completion events, progress ledger events for quizzes, bottle fill from quizzes, achievements, points, badges, streaks, or gamification.
+
+Club/feed/comments, achievements, notifications, premium features beyond `ProjectUser` access-state fields, admin CRUD, AI, recommendations, uploads, external wine databases, and deployment are intentionally not implemented.

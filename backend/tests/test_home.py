@@ -25,7 +25,7 @@ def test_home_returns_previews_and_empty_stats(client):
     assert data["onboarding_completed"] is True
 
     sections = _sections_by_key(data)
-    assert {"discoveries", "learning", "bottle", "activity", "my_path", "diary", "taste_profile"}.issubset(sections)
+    assert {"discoveries", "learning", "quizzes", "bottle", "activity", "my_path", "diary", "taste_profile"}.issubset(sections)
     assert len(sections["discoveries"]["items"]) == 3
     assert sections["learning"]["items"][0]["slug"] == "wine-basics"
     assert sections["learning"]["items"][0]["lessons_count"] == 5
@@ -33,6 +33,7 @@ def test_home_returns_previews_and_empty_stats(client):
     assert sections["learning"]["items"][0]["estimated_minutes"] == 25
     assert sections["learning"]["stats"]["completed_lessons_count"] == 0
     assert sections["learning"]["stats"]["available_lessons_count"] == 5
+    assert sections["quizzes"]["href"] == "/quizzes"
     assert sections["bottle"]["href"] == "/bottle"
     assert sections["bottle"]["stats"] == {
         "fill_percent": 0,

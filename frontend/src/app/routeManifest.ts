@@ -41,6 +41,22 @@ export const routeManifest: RouteManifestItem[] = [
     purpose: "Private progress activity history for the current project user.",
   },
   {
+    path: "/quizzes",
+    label: "Quizzes",
+    requiresAuth: true,
+    requiresOnboarding: true,
+    usesAppShell: true,
+    purpose: "Published quiz list for lightweight learning checks without persisted attempts.",
+  },
+  {
+    path: "/quizzes/:quizSlug",
+    label: "Quiz Detail",
+    requiresAuth: true,
+    requiresOnboarding: true,
+    usesAppShell: true,
+    purpose: "Take one quiz locally and check answers without progress or bottle integration.",
+  },
+  {
     path: "/discoveries",
     label: "Discoveries",
     requiresAuth: true,

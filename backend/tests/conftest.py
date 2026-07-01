@@ -23,6 +23,8 @@ from app.main import app
 from app.progress import models as progress_models  # noqa: F401
 from app.projects import models as project_models  # noqa: F401
 from app.projects.service import ensure_default_project
+from app.quizzes import models as quiz_models  # noqa: F401
+from app.quizzes.service import seed_demo_quizzes
 from app.users import models as user_models  # noqa: F401
 
 
@@ -45,6 +47,7 @@ def reset_database() -> Generator[None, None, None]:
         project = ensure_default_project(db)
         seed_demo_discoveries(db, project)
         seed_demo_learning(db, project)
+        seed_demo_quizzes(db, project)
         db.commit()
     finally:
         db.close()

@@ -10,6 +10,7 @@ from app.discoveries import models as discovery_models  # noqa: F401
 from app.learning import models as learning_models  # noqa: F401
 from app.progress import models as progress_models  # noqa: F401
 from app.projects import models as project_models  # noqa: F401
+from app.quizzes import models as quiz_models  # noqa: F401
 from app.users import models as user_models  # noqa: F401
 
 config = context.config

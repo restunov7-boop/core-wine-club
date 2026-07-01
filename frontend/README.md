@@ -1,6 +1,6 @@
 # Frontend
 
-React + TypeScript + Vite frontend for CORE Wine Club auth, onboarding, home, discoveries, learning paths and lesson completion, Bottle UI foundation, diary, taste profile, My Path, UX readiness, and build validation.
+React + TypeScript + Vite frontend for CORE Wine Club auth, onboarding, home, discoveries, learning paths and lesson completion, quizzes foundation, Bottle UI foundation, diary, taste profile, My Path, UX readiness, and build validation.
 
 ## Windows PowerShell Setup
 
@@ -121,6 +121,18 @@ Sprint 9 adds lesson completion controls:
 
 Learning pages do not show bottle fill, points, quizzes, achievements, or gamified progress.
 
+## Quizzes
+
+Sprint 16 adds protected quiz routes:
+
+- `/quizzes` shows published quizzes.
+- `/quizzes/:quizSlug` lets the user answer single-choice questions and check answers.
+- Results are local to the page and can be cleared with `Попробовать ещё раз`.
+- Quiz detail does not show correct answers before submit.
+- Quiz checks do not persist attempts, create progress events, fill the bottle, or show points/achievements.
+
+The bottom navigation is unchanged; quizzes are reachable from Home and direct route.
+
 ## Bottle
 
 Sprint 10 adds a protected bottle route. Sprint 11 extends its progress source to learning plus diary. Sprint 12 adds recent activity preview:
@@ -177,6 +189,8 @@ Sprint 7 wraps authenticated, onboarding-completed app routes in `AppShell`:
 - `/bottle`
 - `/progress`
 - `/my-path`
+- `/quizzes`
+- `/quizzes/:quizSlug`
 - `/discoveries`
 - `/discoveries/:slug`
 - `/diary`
@@ -209,6 +223,15 @@ pnpm install
 pnpm build
 ```
 
+Route smoke:
+
+```powershell
+cd frontend
+pnpm smoke:routes
+```
+
+The route smoke expects the frontend dev server to be running on `http://127.0.0.1:5173` unless `FRONTEND_BASE_URL` is set.
+
 ## Sprint Boundary
 
-Sprint 14 adds UX polish / product readiness only. It does not add AI, recommendations, public profile, sharing, social features, achievements, points, streaks, badges, weekly bottle, quizzes, premium/payments, notifications, admin CRUD, CMS/editor, uploads, OCR/barcode, or external wine databases.
+Sprint 16 adds Quizzes Foundation only. It does not add quiz attempt persistence, quiz completion events, bottle integration, AI, recommendations, public profile, sharing, social features, achievements, points, streaks, badges, weekly bottle, premium/payments, notifications, admin CRUD, CMS/editor, uploads, OCR/barcode, or external wine databases.
