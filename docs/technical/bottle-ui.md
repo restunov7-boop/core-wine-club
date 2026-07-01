@@ -2,6 +2,7 @@
 
 Sprint 10 adds a Wine Club bottle visualization powered by the existing progress ledger.
 Sprint 11 extends the same visualization with a diary contribution from existing private tasting notes.
+Sprint 12 adds a small activity preview so the user can see recent actions that contributed to progress.
 
 ## Source Of Truth
 
@@ -33,7 +34,8 @@ Response includes:
 - `total_units`;
 - `source = learning_and_diary`;
 - nested learning and diary breakdown;
-- next action.
+- next action;
+- `activity_preview` with up to 3 recent progress activity items.
 
 ## Calculation
 
@@ -79,10 +81,12 @@ Deleting a diary note reduces the current diary contribution because the bottle 
 - href `/bottle`;
 - stats: `fill_percent`, `completed_units`, `total_units`.
 
+Sprint 12 also adds a separate `activity` section on `/home` with recent progress events and `href = /progress`.
+
 ## Frontend
 
-`/bottle` renders a CSS-only bottle visual, learning counts, diary counts, and the backend-provided CTA. It is intentionally a visual layer only.
+`/bottle` renders a CSS-only bottle visual, learning counts, diary counts, the backend-provided CTA, and a small recent activity preview. It is intentionally a visual layer only.
 
 ## Non-Goals
 
-No new bottle table, points, achievements, badges, streaks, weekly bottle, history, skins, quizzes, or new progress source of truth are added in Sprint 10 or Sprint 11.
+No new bottle table, points, achievements, badges, streaks, weekly bottle, history table, skins, quizzes, or new progress source of truth are added in Sprint 10, Sprint 11, or Sprint 12.

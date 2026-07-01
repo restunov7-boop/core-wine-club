@@ -372,6 +372,8 @@ a {
 .learning-page,
 .learning-detail,
 .lesson-detail,
+.progress-page,
+.my-path-page,
 .diary-page,
 .diary-detail,
 .taste-profile-page {
@@ -381,6 +383,8 @@ a {
 
 .discoveries-page,
 .learning-page,
+.progress-page,
+.my-path-page,
 .diary-page,
 .taste-profile-page {
   display: grid;
@@ -395,6 +399,12 @@ a {
 .learning-detail,
 .lesson-card,
 .lesson-detail,
+.progress-header,
+.activity-card,
+.activity-preview-panel,
+.my-path-header,
+.my-path-panel,
+.my-path-summary-card,
 .diary-header,
 .diary-empty,
 .diary-note-card,
@@ -412,6 +422,8 @@ a {
 
 .discoveries-header,
 .learning-header,
+.progress-header,
+.my-path-header,
 .diary-header,
 .diary-empty,
 .taste-profile-header,
@@ -427,6 +439,13 @@ a {
 .learning-meta span,
 .lesson-card__topline span,
 .back-link,
+.progress-header > span,
+.activity-card > span,
+.activity-preview-panel__header span,
+.activity-preview-item > span,
+.my-path-header > span,
+.my-path-panel__header span,
+.my-path-summary-card span,
 .diary-header > span,
 .diary-note-card__topline span,
 .diary-field span,
@@ -443,6 +462,8 @@ a {
 .learning-header h1,
 .learning-detail h1,
 .lesson-detail h1,
+.progress-header h1,
+.my-path-header h1,
 .diary-header h1,
 .diary-detail h1,
 .taste-profile-header h1 {
@@ -459,6 +480,11 @@ a {
 .learning-detail p,
 .lesson-card p,
 .lesson-detail p,
+.progress-header p,
+.activity-card p,
+.activity-preview-panel p,
+.my-path-header p,
+.my-path-panel p,
 .diary-header p,
 .diary-empty p,
 .diary-note-card p,
@@ -593,6 +619,150 @@ a {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+.activity-list,
+.activity-preview-list {
+  display: grid;
+  gap: 12px;
+}
+
+.activity-card,
+.activity-preview-item {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+}
+
+.activity-card-link,
+.activity-preview-link {
+  display: block;
+}
+
+.activity-card-link .activity-card,
+.activity-preview-link .activity-preview-item {
+  transition:
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.activity-card-link:hover .activity-card,
+.activity-preview-link:hover .activity-preview-item {
+  border-color: rgba(214, 168, 79, 0.52);
+  transform: translateY(-1px);
+}
+
+.activity-card h2,
+.activity-preview-item strong {
+  margin: 0;
+  font-size: 19px;
+  line-height: 1.2;
+}
+
+.activity-preview-panel {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+}
+
+.activity-preview-panel__header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.activity-preview-panel__header h2 {
+  margin: 6px 0 0;
+  font-size: 22px;
+  line-height: 1.18;
+}
+
+.activity-preview-panel__header .ghost-action {
+  flex: 0 0 auto;
+}
+
+.activity-preview-panel__empty {
+  margin: 0;
+}
+
+.activity-preview-item {
+  border: 1px solid rgba(245, 239, 232, 0.08);
+  border-radius: var(--radius-card);
+  background: rgba(245, 239, 232, 0.04);
+}
+
+.activity-preview-item p {
+  margin: 0;
+}
+
+.my-path-summary-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.my-path-summary-card {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+}
+
+.my-path-summary-card strong {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.my-path-panel {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+}
+
+.my-path-panel__header h2 {
+  margin: 6px 0 0;
+  font-size: 22px;
+  line-height: 1.18;
+}
+
+.my-path-action-list,
+.my-path-section-list {
+  display: grid;
+  gap: 10px;
+}
+
+.my-path-action,
+.my-path-section-link {
+  display: block;
+}
+
+.my-path-action article,
+.my-path-section-link article {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+  border: 1px solid rgba(245, 239, 232, 0.08);
+  border-radius: var(--radius-card);
+  background: rgba(245, 239, 232, 0.04);
+  transition:
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.my-path-action:hover article,
+.my-path-section-link:hover article {
+  border-color: rgba(214, 168, 79, 0.52);
+  transform: translateY(-1px);
+}
+
+.my-path-action strong,
+.my-path-section-link strong {
+  font-size: 18px;
+}
+
+.my-path-action p,
+.my-path-section-link p {
+  margin: 0;
 }
 
 .bottle-page {

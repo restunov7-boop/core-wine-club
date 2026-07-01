@@ -1,6 +1,6 @@
 # Progress Sources
 
-This note records the current Sprint 11 progress sources and how they are used by read models.
+This note records the current Sprint 12 progress sources and how they are used by read models.
 
 ## Learning
 
@@ -39,6 +39,16 @@ Deleting a diary note does not delete the historical `diary.note.created` event.
 
 The endpoint does not return points, achievements, streaks, badges, scores, or bottle-specific entities.
 
+## Activity Endpoint
+
+`GET /api/v1/progress/activity` returns a read-only activity projection over the same events:
+
+- `learning.lesson.completed` becomes `Урок завершён`;
+- `diary.note.created` becomes `Заметка добавлена`;
+- deleted diary notes remain in history with metadata fallback and no deleted detail href.
+
+The endpoint filters by current project and current `ProjectUser`.
+
 ## Bottle Read Model
 
 `GET /api/v1/bottle/progress` currently uses:
@@ -54,3 +64,5 @@ completed_units = completed_published_lessons_count + min(current_private_notes_
 fill_percent = int(completed_units / total_units * 100), capped at 100
 source = learning_and_diary
 ```
+
+Bottle also exposes up to 3 recent activity items as `activity_preview`.

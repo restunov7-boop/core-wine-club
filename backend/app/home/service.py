@@ -4,8 +4,9 @@ from app.bottle.service import build_bottle_progress
 from app.diary.service import count_tasting_notes
 from app.discoveries.schemas import DiscoveryPreview
 from app.discoveries.service import list_discovery_previews
-from app.home.schemas import HomeHero, HomeProject, HomeResponse, HomeSection, HomeUser
+from app.home.schemas import HomeHero, HomeProject, HomeResponse, HomeSection, HomeSectionItem, HomeUser
 from app.learning.service import list_learning_path_previews
+from app.my_path.service import build_my_path
 from app.progress.service import build_learning_progress_summary
 from app.projects.models import ProjectUser
 from app.taste_profile.service import build_taste_profile_preview
@@ -20,6 +21,26 @@ def build_home_response(db: Session, user: User, project_user: ProjectUser) -> H
     learning_items = [item.model_dump(mode="json") for item in list_learning_path_previews(db, project_user)]
     learning_progress = build_learning_progress_summary(db, project_user)
     bottle_progress = build_bottle_progress(db, project_user)
+    my_path = build_my_path(db, project_user)
+    activity_items = [
+        HomeSectionItem(
+            id=str(item.id),
+            title=item.title,
+            description=item.description,
+            href=item.href,
+            occurred_at=item.occurred_at,
+        )
+        for item in bottle_progress.activity_preview
+    ]
+    my_path_items = [
+        HomeSectionItem(
+            id=item.key,
+            title=item.title,
+            description=item.description,
+            href=item.href,
+        )
+        for item in my_path.next_actions[:2]
+    ]
     notes_count = count_tasting_notes(db, project_user)
     taste_profile_preview = build_taste_profile_preview(db, project_user)
 
@@ -63,6 +84,20 @@ def build_home_response(db: Session, user: User, project_user: ProjectUser) -> H
                 },
             ),
             HomeSection(
+                key="activity",
+                title="Недавняя активность",
+                description="Что уже наполнило твою бутылку.",
+                href="/progress",
+                items=activity_items,
+            ),
+            HomeSection(
+                key="my_path",
+                title="Что дальше",
+                description="Короткий маршрут на сегодня.",
+                href="/my-path",
+                items=my_path_items,
+            ),
+            HomeSection(
                 key="diary",
                 title="Дневник вкуса",
                 description="Сохраняй свои впечатления о винах и постепенно собирай личную карту вкуса.",
@@ -78,11 +113,6 @@ def build_home_response(db: Session, user: User, project_user: ProjectUser) -> H
                 key="club",
                 title="Клуб",
                 description="Здесь появится пространство общения.",
-            ),
-            HomeSection(
-                key="my-path",
-                title="Мой путь",
-                description="Будет добавлено в следующих спринтах.",
             ),
         ],
     )

@@ -1,11 +1,11 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.permissions.dependencies import require_capability
-from app.progress.service import build_progress_summary, mark_lesson_completed, unmark_lesson_completed
+from app.progress.service import build_progress_activity, build_progress_summary, mark_lesson_completed, unmark_lesson_completed
 from app.projects.models import ProjectUser
 from app.shared.responses import success_response
 
@@ -39,3 +39,13 @@ def get_progress_summary(
 ) -> dict[str, object]:
     summary = build_progress_summary(db, project_user)
     return success_response(summary.model_dump(mode="json"))
+
+
+@router.get("/activity")
+def get_progress_activity(
+    db: Annotated[Session, Depends(get_db)],
+    project_user: Annotated[ProjectUser, Depends(require_capability("view_app"))],
+    limit: Annotated[int, Query()] = 20,
+) -> dict[str, object]:
+    activity, normalized_limit = build_progress_activity(db, project_user, limit)
+    return success_response(activity.model_dump(mode="json"), meta={"limit": normalized_limit})

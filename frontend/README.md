@@ -1,6 +1,6 @@
 # Frontend
 
-React + TypeScript + Vite frontend for CORE Wine Club auth, onboarding, home, discoveries, learning paths and lesson completion, Bottle UI foundation, diary, Sprint 5 taste profile foundation, and Sprint 6 build validation.
+React + TypeScript + Vite frontend for CORE Wine Club auth, onboarding, home, discoveries, learning paths and lesson completion, Bottle UI foundation, diary, taste profile, My Path, and build validation.
 
 ## Windows PowerShell Setup
 
@@ -76,7 +76,7 @@ When the backend is running and dev auth is enabled:
 - If onboarding is incomplete, `/home` redirects to `/onboarding`.
 - `/onboarding` saves wine experience, taste preferences, goals, and optional display name.
 - After completion, the user returns to `/home`.
-- `/home` renders the static Wine Club foundation page.
+- `/home` renders the Wine Club foundation page with a My Path preview.
 - `/admin` still shows access denied for the default `member` role.
 
 ## Discoveries
@@ -123,10 +123,11 @@ Learning pages do not show bottle fill, points, quizzes, achievements, or gamifi
 
 ## Bottle
 
-Sprint 10 adds a protected bottle route. Sprint 11 extends its progress source to learning plus diary:
+Sprint 10 adds a protected bottle route. Sprint 11 extends its progress source to learning plus diary. Sprint 12 adds recent activity preview:
 
 - `/bottle` shows a CSS bottle visual powered by lesson completion progress and up to 3 existing private diary notes.
 - `/home` links to `/bottle` and shows fill/count stats.
+- `/bottle` shows up to 3 recent activity events and links to `/progress`.
 - Completing or uncompleting lessons changes the learning part of bottle progress.
 - Creating or deleting diary notes changes the current diary contribution.
 - The next action comes from the backend: continue lessons, add a diary note, or view the taste profile.
@@ -134,6 +135,29 @@ Sprint 10 adds a protected bottle route. Sprint 11 extends its progress source t
 Bottle is not in bottom navigation yet; it is reachable from Home.
 
 No achievements, points, streaks, badges, weekly bottle, quizzes, or social features are added.
+
+## Progress Activity
+
+Sprint 12 adds a protected personal activity route:
+
+- `/progress` shows recent progress events newest first.
+- It is based on backend `GET /progress/activity`.
+- Items can link to lesson details or existing diary note details.
+- Deleted diary note events remain readable but do not link to deleted note pages.
+- `/home` shows a small activity card linking to `/progress`.
+
+This is not a feed and does not add points, badges, streaks, comments, likes, or sharing.
+
+## My Path
+
+Sprint 13 adds a protected personal route:
+
+- `/my-path` shows summary cards for lessons, diary, bottle, and recent activity.
+- It renders deterministic next actions from the backend.
+- `/home` shows the `Что дальше` preview with up to 2 actions.
+- The bottom navigation is unchanged.
+
+This is not an AI recommendation engine and does not add achievements, points, badges, streaks, quizzes, or social features.
 
 ## Taste Profile
 
@@ -151,6 +175,8 @@ Sprint 7 wraps authenticated, onboarding-completed app routes in `AppShell`:
 
 - `/home`
 - `/bottle`
+- `/progress`
+- `/my-path`
 - `/discoveries`
 - `/discoveries/:slug`
 - `/diary`
@@ -174,4 +200,4 @@ pnpm build
 
 ## Sprint Boundary
 
-Sprint 11 adds the diary contribution to Bottle UI only. It does not add AI, recommendations, public profile, sharing, social features, achievements, points, streaks, badges, weekly bottle, quizzes, premium/payments, notifications, admin CRUD, CMS/editor, uploads, OCR/barcode, or external wine databases.
+Sprint 13 adds My Path / Next Actions Foundation only. It does not add AI, recommendations, public profile, sharing, social features, achievements, points, streaks, badges, weekly bottle, quizzes, premium/payments, notifications, admin CRUD, CMS/editor, uploads, OCR/barcode, or external wine databases.

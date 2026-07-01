@@ -72,10 +72,19 @@ It does not return points, bottle percentage, achievements, streaks, or scores.
 
 Deleting a diary note does not delete or mutate the historical `diary.note.created` event. Current bottle diary contribution is based on existing `tasting_notes`, while the ledger remains append-style for creation history.
 
+`GET /progress/activity` returns a read-only personal activity projection over the ledger:
+
+- newest events first;
+- current project and current `ProjectUser` only;
+- lesson events mapped to lesson titles and lesson detail hrefs;
+- diary note events mapped to wine names and diary hrefs only when the note still exists.
+
+Deleted diary note events can remain visible as history, but they do not link to deleted detail pages.
+
 ## Ownership And Security
 
 Progress endpoints use `require_capability("view_app")`. Frontend state is not trusted for authorization. Deleting a completion event filters by `project_id`, `project_user_id`, event type, source type, and lesson source id, so it cannot delete another user's progress event.
 
 ## Bottle Read Model
 
-The Bottle UI reads progress summaries and current diary notes as a read model. The ledger itself remains generic and does not encode bottle-specific concepts.
+The Bottle UI reads progress summaries, current diary notes, and a small activity preview as read models. The ledger itself remains generic and does not encode bottle-specific concepts.

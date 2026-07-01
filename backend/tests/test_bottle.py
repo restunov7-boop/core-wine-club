@@ -7,6 +7,14 @@ from tests.conftest import complete_onboarding, login, set_dev_user
 LESSON_SLUG = "how-wine-is-made"
 
 
+def _complete_first_lessons(client, headers: dict[str, str], count: int) -> None:
+    path_response = client.get("/api/v1/learning/paths/wine-basics", headers=headers)
+    assert path_response.status_code == 200, path_response.text
+    for lesson in path_response.json()["data"]["lessons"][:count]:
+        response = client.post(f"/api/v1/progress/lessons/{lesson['slug']}/complete", headers=headers)
+        assert response.status_code == 200, response.text
+
+
 def test_bottle_progress_starts_at_zero_for_fresh_user(client):
     headers = login(client)
 
@@ -34,6 +42,7 @@ def test_bottle_progress_starts_at_zero_for_fresh_user(client):
         "label": "Продолжить уроки",
         "href": "/learn",
     }
+    assert data["activity_preview"] == []
 
 
 def test_bottle_progress_updates_after_complete_and_uncomplete(client):
@@ -146,6 +155,8 @@ def test_bottle_combines_learning_and_diary_progress(client):
         "target_notes_count": 3,
         "contributed_units": 1,
     }
+    assert len(data["activity_preview"]) == 2
+    assert {item["title"] for item in data["activity_preview"]} == {"Урок завершён", "Заметка добавлена"}
 
 
 def test_deleting_diary_note_reduces_current_bottle_diary_contribution(client):
@@ -171,3 +182,27 @@ def test_deleting_diary_note_reduces_current_bottle_diary_contribution(client):
     assert before_delete.json()["data"]["completed_units"] == 1
     assert after_delete.json()["data"]["breakdown"]["diary"]["notes_count"] == 0
     assert after_delete.json()["data"]["completed_units"] == 0
+
+
+def test_bottle_activity_preview_returns_max_three_items(client):
+    headers = login(client)
+    _complete_first_lessons(client, headers, count=4)
+    client.post(
+        "/api/v1/diary/notes",
+        headers=headers,
+        json={
+            "wine_name": "Bottle Preview Wine",
+            "rating": 4,
+            "wine_color": "red",
+            "sweetness": "dry",
+        },
+    )
+
+    response = client.get("/api/v1/bottle/progress", headers=headers)
+
+    assert response.status_code == 200, response.text
+    activity_preview = response.json()["data"]["activity_preview"]
+    assert len(activity_preview) == 3
+    assert activity_preview[0]["title"] == "Заметка добавлена"
+    assert activity_preview[0]["description"] == "Bottle Preview Wine"
+    assert activity_preview[0]["occurred_at"]

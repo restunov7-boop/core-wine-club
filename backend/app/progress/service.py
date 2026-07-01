@@ -13,6 +13,9 @@ from app.progress.schemas import (
     LearningProgressSummary,
     LessonCompletionState,
     LessonUncompleteState,
+    ProgressActivityItem,
+    ProgressActivityPreviewItem,
+    ProgressActivityResponse,
     ProgressSummary,
 )
 from app.projects.models import ProjectUser
@@ -23,6 +26,8 @@ LESSON_COMPLETED_EVENT = "learning.lesson.completed"
 LESSON_SOURCE_TYPE = "lesson"
 DIARY_NOTE_CREATED_EVENT = "diary.note.created"
 DIARY_NOTE_SOURCE_TYPE = "diary_note"
+DEFAULT_ACTIVITY_LIMIT = 20
+MAX_ACTIVITY_LIMIT = 50
 
 
 def mark_lesson_completed(db: Session, project_user: ProjectUser, lesson_slug: str) -> LessonCompletionState:
@@ -71,6 +76,49 @@ def build_progress_summary(db: Session, project_user: ProjectUser) -> ProgressSu
         learning=build_learning_progress_summary(db, project_user),
         diary=build_diary_progress_summary(db, project_user),
     )
+
+
+def build_progress_activity(
+    db: Session,
+    project_user: ProjectUser,
+    limit: int | None = DEFAULT_ACTIVITY_LIMIT,
+) -> tuple[ProgressActivityResponse, int]:
+    normalized_limit = normalize_activity_limit(limit)
+    events = (
+        _progress_activity_events_query(db, project_user)
+        .order_by(ProgressEvent.occurred_at.desc(), ProgressEvent.created_at.desc())
+        .limit(normalized_limit)
+        .all()
+    )
+    return ProgressActivityResponse(items=_map_activity_events(db, project_user, events)), normalized_limit
+
+
+def build_progress_activity_preview(
+    db: Session,
+    project_user: ProjectUser,
+    limit: int = 3,
+) -> list[ProgressActivityPreviewItem]:
+    response, _ = build_progress_activity(db, project_user, limit)
+    return [
+        ProgressActivityPreviewItem(
+            id=item.id,
+            title=item.title,
+            description=item.description,
+            occurred_at=item.occurred_at,
+            href=item.href,
+        )
+        for item in response.items
+    ]
+
+
+def normalize_activity_limit(limit: int | None) -> int:
+    if limit is None:
+        return DEFAULT_ACTIVITY_LIMIT
+    return max(1, min(limit, MAX_ACTIVITY_LIMIT))
+
+
+def count_progress_activity_events(db: Session, project_user: ProjectUser) -> int:
+    return _progress_activity_events_query(db, project_user).count()
 
 
 def build_learning_progress_summary(db: Session, project_user: ProjectUser) -> LearningProgressSummary:
@@ -186,6 +234,119 @@ def build_diary_progress_summary(db: Session, project_user: ProjectUser) -> Diar
         notes_count=notes_count,
         created_note_events_count=created_note_events_count,
     )
+
+
+def _progress_activity_events_query(db: Session, project_user: ProjectUser):
+    return db.query(ProgressEvent).filter(
+        ProgressEvent.project_id == project_user.project_id,
+        ProgressEvent.project_user_id == project_user.id,
+        ProgressEvent.event_type.in_([LESSON_COMPLETED_EVENT, DIARY_NOTE_CREATED_EVENT]),
+        ProgressEvent.source_type.in_([LESSON_SOURCE_TYPE, DIARY_NOTE_SOURCE_TYPE]),
+    )
+
+
+def _map_activity_events(
+    db: Session,
+    project_user: ProjectUser,
+    events: list[ProgressEvent],
+) -> list[ProgressActivityItem]:
+    lesson_ids = [
+        event.source_id
+        for event in events
+        if event.event_type == LESSON_COMPLETED_EVENT and event.source_id is not None
+    ]
+    note_ids = [
+        event.source_id
+        for event in events
+        if event.event_type == DIARY_NOTE_CREATED_EVENT and event.source_id is not None
+    ]
+    lessons_by_id = {
+        lesson.id: lesson
+        for lesson in (
+            db.query(Lesson)
+            .filter(
+                Lesson.project_id == project_user.project_id,
+                Lesson.id.in_(lesson_ids),
+            )
+            .all()
+            if lesson_ids
+            else []
+        )
+    }
+    notes_by_id = {
+        note.id: note
+        for note in (
+            db.query(TastingNote)
+            .filter(
+                TastingNote.project_id == project_user.project_id,
+                TastingNote.project_user_id == project_user.id,
+                TastingNote.visibility == "private",
+                TastingNote.id.in_(note_ids),
+            )
+            .all()
+            if note_ids
+            else []
+        )
+    }
+
+    return [_map_activity_event(event, lessons_by_id, notes_by_id) for event in events]
+
+
+def _map_activity_event(
+    event: ProgressEvent,
+    lessons_by_id: dict[UUID, Lesson],
+    notes_by_id: dict[UUID, TastingNote],
+) -> ProgressActivityItem:
+    if event.event_type == LESSON_COMPLETED_EVENT:
+        lesson = lessons_by_id.get(event.source_id) if event.source_id is not None else None
+        description = (
+            lesson.title
+            if lesson is not None
+            else _metadata_text(event, "title", "lesson_title") or event.source_slug or "Урок"
+        )
+        href = f"/learn/lessons/{event.source_slug}" if event.source_slug else None
+        return ProgressActivityItem(
+            id=event.id,
+            event_type=event.event_type,
+            source_type=event.source_type,
+            source_id=event.source_id,
+            source_slug=event.source_slug,
+            title="Урок завершён",
+            description=description,
+            occurred_at=event.occurred_at,
+            href=href,
+        )
+
+    note = notes_by_id.get(event.source_id) if event.source_id is not None else None
+    description = (
+        note.wine_name
+        if note is not None
+        else _metadata_text(event, "wine_name") or "Заметка в дневнике"
+    )
+    href = f"/diary/{event.source_id}" if note is not None and event.source_id is not None else None
+    return ProgressActivityItem(
+        id=event.id,
+        event_type=event.event_type,
+        source_type=event.source_type,
+        source_id=event.source_id,
+        source_slug=event.source_slug,
+        title="Заметка добавлена",
+        description=description,
+        occurred_at=event.occurred_at,
+        href=href,
+    )
+
+
+def _metadata_text(event: ProgressEvent, *keys: str) -> str | None:
+    if not isinstance(event.metadata_json, dict):
+        return None
+    for key in keys:
+        value = event.metadata_json.get(key)
+        if isinstance(value, str):
+            cleaned = value.strip()
+            if cleaned:
+                return cleaned
+    return None
 
 
 def _lesson_completion_events_query(db: Session, project_user: ProjectUser):

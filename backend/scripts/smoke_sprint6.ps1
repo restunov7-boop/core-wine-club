@@ -105,6 +105,13 @@ Assert-True ($progressBefore.data.diary.notes_count -eq 0) "Initial diary notes 
 Assert-True ($progressBefore.data.diary.created_note_events_count -eq 0) "Initial diary event count mismatch"
 Write-Ok "progress summary initial"
 
+$myPathBefore = Invoke-Api -Method Get -Path "/my-path" -Headers $headers
+Assert-True ($myPathBefore.data.summary.completed_lessons_count -eq 0) "Initial my-path lesson count mismatch"
+Assert-True ($myPathBefore.data.summary.diary_notes_count -eq 0) "Initial my-path diary count mismatch"
+Assert-True ($myPathBefore.data.next_actions.Count -ge 2) "Initial my-path next actions missing"
+Assert-True ($myPathBefore.data.next_actions[0].key -eq "start_learning") "Initial my-path first action mismatch"
+Write-Ok "my-path initial"
+
 $bottleBefore = Invoke-Api -Method Get -Path "/bottle/progress" -Headers $headers
 Assert-True ($bottleBefore.data.completed_units -eq 0) "Initial bottle completed units mismatch"
 Assert-True ($bottleBefore.data.total_units -eq 8) "Initial bottle total units mismatch"
@@ -117,6 +124,13 @@ Write-Ok "bottle progress initial"
 $completedLesson = Invoke-Api -Method Post -Path "/progress/lessons/$firstLessonSlug/complete" -Headers $headers
 Assert-True ($completedLesson.data.is_completed -eq $true) "Lesson completion failed"
 Write-Ok "progress complete lesson"
+
+$myPathAfterLesson = Invoke-Api -Method Get -Path "/my-path" -Headers $headers
+$myPathAfterLessonKeys = @($myPathAfterLesson.data.next_actions | ForEach-Object { $_.key })
+Assert-True ($myPathAfterLessonKeys -contains "continue_learning") "My-path did not switch to continue learning"
+Assert-True ($myPathAfterLessonKeys -contains "view_bottle") "My-path did not include bottle after progress"
+Assert-True ($myPathAfterLesson.data.next_actions.Count -le 4) "My-path returned more than 4 actions"
+Write-Ok "my-path after lesson"
 
 $bottleAfterComplete = Invoke-Api -Method Get -Path "/bottle/progress" -Headers $headers
 Assert-True ($bottleAfterComplete.data.completed_units -eq 1) "Bottle completed units did not update"
@@ -172,12 +186,44 @@ Assert-True ($progressAfterDiaryCreate.data.diary.notes_count -eq 1) "Diary note
 Assert-True ($progressAfterDiaryCreate.data.diary.created_note_events_count -eq 1) "Diary event count did not update"
 Write-Ok "progress summary after diary create"
 
+$myPathAfterDiary = Invoke-Api -Method Get -Path "/my-path" -Headers $headers
+$myPathAfterDiaryKeys = @($myPathAfterDiary.data.next_actions | ForEach-Object { $_.key })
+Assert-True ($myPathAfterDiary.data.summary.diary_notes_count -eq 1) "My-path diary count did not update"
+Assert-True ($myPathAfterDiaryKeys -contains "add_diary_note") "My-path did not switch to add diary note"
+Assert-True ($myPathAfterDiaryKeys -contains "view_bottle") "My-path did not include bottle after diary progress"
+Assert-True ($myPathAfterDiary.data.next_actions.Count -le 4) "My-path after diary returned more than 4 actions"
+Write-Ok "my-path after diary"
+
+$completedLessonForActivity = Invoke-Api -Method Post -Path "/progress/lessons/$firstLessonSlug/complete" -Headers $headers
+Assert-True ($completedLessonForActivity.data.is_completed -eq $true) "Lesson completion for activity failed"
+$activity = Invoke-Api -Method Get -Path "/progress/activity" -Headers $headers
+Assert-True ($activity.data.items.Count -ge 2) "Progress activity did not include lesson and diary events"
+Assert-True ($activity.data.items[0].event_type -in @("learning.lesson.completed", "diary.note.created")) "Unexpected activity event type"
+Assert-True ($activity.meta.limit -eq 20) "Progress activity default limit mismatch"
+Write-Ok "progress activity"
+
+$homeWithActivity = Invoke-Api -Method Get -Path "/home" -Headers $headers
+$activitySection = $homeWithActivity.data.sections | Where-Object { $_.key -eq "activity" } | Select-Object -First 1
+Assert-True ($null -ne $activitySection) "Home activity section is missing"
+Assert-True ($activitySection.href -eq "/progress") "Home activity href mismatch"
+Assert-True ($activitySection.items.Count -ge 2) "Home activity preview did not include recent events"
+$myPathSection = $homeWithActivity.data.sections | Where-Object { $_.key -eq "my_path" } | Select-Object -First 1
+Assert-True ($null -ne $myPathSection) "Home my-path section is missing"
+Assert-True ($myPathSection.href -eq "/my-path") "Home my-path href mismatch"
+Assert-True ($myPathSection.items.Count -le 2) "Home my-path preview returned too many actions"
+Write-Ok "home activity preview"
+
 $bottleAfterDiaryCreate = Invoke-Api -Method Get -Path "/bottle/progress" -Headers $headers
-Assert-True ($bottleAfterDiaryCreate.data.completed_units -eq 1) "Bottle diary contribution did not update"
-Assert-True ($bottleAfterDiaryCreate.data.fill_percent -eq 12) "Bottle diary fill did not update"
+Assert-True ($bottleAfterDiaryCreate.data.completed_units -eq 2) "Bottle diary and lesson contribution did not update"
+Assert-True ($bottleAfterDiaryCreate.data.fill_percent -eq 25) "Bottle diary and lesson fill did not update"
 Assert-True ($bottleAfterDiaryCreate.data.breakdown.diary.notes_count -eq 1) "Bottle diary notes count did not update"
 Assert-True ($bottleAfterDiaryCreate.data.breakdown.diary.contributed_units -eq 1) "Bottle diary contributed units mismatch"
+Assert-True ($bottleAfterDiaryCreate.data.activity_preview.Count -ge 2) "Bottle activity preview did not include recent events"
 Write-Ok "bottle progress after diary create"
+
+$uncompletedLessonForActivity = Invoke-Api -Method Delete -Path "/progress/lessons/$firstLessonSlug/complete" -Headers $headers
+Assert-True ($uncompletedLessonForActivity.data.is_completed -eq $false) "Lesson cleanup after activity failed"
+Write-Ok "progress activity lesson cleanup"
 
 $notes = Invoke-Api -Method Get -Path "/diary/notes" -Headers $headers
 Assert-True ($notes.data.total -ge 1) "Diary list is empty"

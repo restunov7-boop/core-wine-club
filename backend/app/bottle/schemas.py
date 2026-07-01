@@ -1,4 +1,6 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+from app.progress.schemas import ProgressActivityPreviewItem
 
 
 class BottleLearningBreakdown(BaseModel):
@@ -31,3 +33,4 @@ class BottleProgress(BaseModel):
     source: str
     breakdown: BottleBreakdown
     next_action: BottleNextAction
+    activity_preview: list[ProgressActivityPreviewItem] = Field(default_factory=list)

@@ -97,6 +97,51 @@ export function BottlePage() {
           </Link>
         </div>
       </article>
+
+      <section className="activity-preview-panel">
+        <div className="activity-preview-panel__header">
+          <div>
+            <span>Недавняя активность</span>
+            <h2>Что наполнило бутылку</h2>
+          </div>
+          <Link className="ghost-action" to="/progress">
+            Вся активность
+          </Link>
+        </div>
+
+        {progress.activity_preview.length === 0 ? (
+          <p className="activity-preview-panel__empty">Пройди первый урок или добавь заметку в дневник.</p>
+        ) : (
+          <div className="activity-preview-list">
+            {progress.activity_preview.map((item) => {
+              const content = (
+                <article className="activity-preview-item">
+                  <span>{formatActivityDate(item.occurred_at)}</span>
+                  <strong>{item.title}</strong>
+                  <p>{item.description}</p>
+                </article>
+              );
+
+              return item.href ? (
+                <Link className="activity-preview-link" key={item.id} to={item.href}>
+                  {content}
+                </Link>
+              ) : (
+                <div key={item.id}>{content}</div>
+              );
+            })}
+          </div>
+        )}
+      </section>
     </section>
   );
+}
+
+function formatActivityDate(value: string): string {
+  return new Intl.DateTimeFormat("ru-RU", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(value));
 }

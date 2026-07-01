@@ -1,6 +1,6 @@
 # Backend
 
-FastAPI backend for CORE Wine Club auth, onboarding, home, discoveries, learning foundation, progress ledger, Bottle UI foundation, diary, Sprint 5 taste profile foundation, and Sprint 6 quality tooling.
+FastAPI backend for CORE Wine Club auth, onboarding, home, discoveries, learning foundation, progress ledger, Bottle UI foundation, diary, taste profile, My Path, and quality tooling.
 
 ## Windows PowerShell Setup
 
@@ -118,11 +118,22 @@ Progress:
 
 ```powershell
 Invoke-RestMethod http://127.0.0.1:8000/api/v1/progress/summary -Headers $headers
+Invoke-RestMethod http://127.0.0.1:8000/api/v1/progress/activity -Headers $headers
 Invoke-RestMethod -Method Post http://127.0.0.1:8000/api/v1/progress/lessons/how-wine-is-made/complete -Headers $headers
 Invoke-RestMethod -Method Delete http://127.0.0.1:8000/api/v1/progress/lessons/how-wine-is-made/complete -Headers $headers
 ```
 
 `/progress/summary` returns both learning counts and diary counts. Sprint 11 writes `diary.note.created` events when tasting notes are created; deleting a note does not delete that historical event.
+
+`/progress/activity` returns a read-only personal activity projection over existing `progress_events`, scoped to the current project user. It supports `limit`, default `20`, capped at `50`.
+
+My Path:
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:8000/api/v1/my-path -Headers $headers
+```
+
+`/my-path` returns a read-only personal route from existing learning, diary, bottle, and activity state. It returns at most 4 deterministic next actions and does not create a new table.
 
 Bottle:
 
@@ -130,7 +141,7 @@ Bottle:
 Invoke-RestMethod http://127.0.0.1:8000/api/v1/bottle/progress -Headers $headers
 ```
 
-Bottle progress uses published lesson completion plus up to 3 existing private diary notes. The source is `learning_and_diary`; no bottle table or gamification state is created.
+Bottle progress uses published lesson completion plus up to 3 existing private diary notes. The source is `learning_and_diary`; no bottle table or gamification state is created. Sprint 12 adds a small `activity_preview` array.
 
 Diary:
 
@@ -223,7 +234,7 @@ Start the backend on port `8000`, then from the repository root run:
 .\backend\scripts\smoke_sprint6.ps1
 ```
 
-The smoke script includes the Sprint 11 bottle and diary progress checks.
+The smoke script includes the Sprint 13 My Path checks plus the Sprint 12 bottle, diary, and progress activity checks.
 
 The script checks health, dev auth, `/auth/me`, onboarding reset/complete, home, discoveries, learning paths/lessons, progress summary, lesson complete/uncomplete, bottle progress, diary CRUD, taste profile, and deleted-note 404 behavior. Successful steps print `[OK] ...`.
 
@@ -269,10 +280,13 @@ Sprint 9 adds generic project-scoped, user-owned progress events:
 - every row has `project_id` and `project_user_id`;
 - current event: `learning.lesson.completed` for `source_type = lesson`;
 - idempotency is enforced by service lookup plus unique `(project_id, project_user_id, event_type, source_type, source_id)`;
-- `/progress/summary` returns simple learning counts;
+- `/progress/summary` returns learning and diary counts;
+- `/progress/activity` returns a read-only activity projection;
 - learning endpoints compute completion state from the current user's events.
 
 Sprint 9 does not add Bottle UI, points, achievements, quizzes, scores, or gamification.
+
+Sprint 12 activity is read-only. It does not add a separate activity table, social feed, points, achievements, badges, comments, likes, or rankings.
 
 ## Bottle UI Foundation
 
@@ -286,6 +300,16 @@ Sprint 10 adds read-only bottle progress:
 
 The bottle is a visualization layer only.
 
+## My Path
+
+Sprint 13 adds deterministic next actions:
+
+- endpoint: `GET /api/v1/my-path`;
+- reads existing learning, diary, bottle, and progress activity state;
+- returns summary counts, up to 4 next actions, and route sections;
+- `/home` returns a `my_path` preview with up to 2 next actions;
+- no recommendation engine, scoring, AI, gamification, or new table.
+
 ## Taste Profile
 
 Sprint 5 adds a private dynamic taste profile:
@@ -298,4 +322,4 @@ Sprint 5 adds a private dynamic taste profile:
 
 ## Sprint Boundary
 
-Sprint 10 adds Bottle UI foundation only. It does not add AI, recommendations, public profiles, sharing, social features, achievements, quizzes, points, streaks, premium/payments, notifications, admin CRUD, CMS/editor, uploads, OCR/barcode, inventory, external wine databases, production hosting, or deployment.
+Sprint 13 adds My Path / Next Actions Foundation only. It does not add AI, recommendations, public profiles, sharing, social features, achievements, quizzes, points, badges, streaks, premium/payments, notifications, admin CRUD, CMS/editor, uploads, OCR/barcode, inventory, external wine databases, production hosting, or deployment.

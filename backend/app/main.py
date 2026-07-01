@@ -9,6 +9,7 @@ from app.diary.router import router as diary_router
 from app.discoveries.router import router as discoveries_router
 from app.home.router import router as home_router
 from app.learning.router import router as learning_router
+from app.my_path.router import router as my_path_router
 from app.onboarding.router import router as onboarding_router
 from app.progress.router import router as progress_router
 from app.shared.errors import AppError
@@ -38,6 +39,7 @@ def create_app() -> FastAPI:
     app.include_router(bottle_router, prefix=settings.api_v1_prefix)
     app.include_router(diary_router, prefix=settings.api_v1_prefix)
     app.include_router(taste_profile_router, prefix=settings.api_v1_prefix)
+    app.include_router(my_path_router, prefix=settings.api_v1_prefix)
     app.include_router(home_router, prefix=settings.api_v1_prefix)
     return app
 

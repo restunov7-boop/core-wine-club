@@ -49,7 +49,7 @@ export function HomePage() {
 
   const greetingName = home.user.display_name ?? "друг";
   const hubSections = home.sections.filter((section) =>
-    ["discoveries", "learning", "bottle", "diary", "taste_profile"].includes(section.key),
+    ["discoveries", "learning", "bottle", "my_path", "activity", "diary", "taste_profile"].includes(section.key),
   );
 
   return (
@@ -84,13 +84,18 @@ function HomeSectionCard({ section }: { section: HomeResponse["sections"][number
       ? "/discoveries"
       : section.key === "learning"
         ? "/learn"
-      : section.key === "diary"
-        ? "/diary"
-        : section.key === "taste_profile"
-          ? "/taste-profile"
-          : null);
+        : section.key === "activity"
+          ? "/progress"
+          : section.key === "my_path"
+            ? "/my-path"
+            : section.key === "diary"
+              ? "/diary"
+              : section.key === "taste_profile"
+                ? "/taste-profile"
+                : null);
   const isAvailable =
-    section.items.length > 0 || ["diary", "taste_profile", "learning", "bottle"].includes(section.key);
+    section.items.length > 0 ||
+    ["diary", "taste_profile", "learning", "bottle", "activity", "my_path"].includes(section.key);
   const stats = buildStats(section.stats);
 
   const content = (
@@ -113,9 +118,9 @@ function HomeSectionCard({ section }: { section: HomeResponse["sections"][number
       {section.items.length > 0 && (
         <ul className="home-preview-list">
           {section.items.map((item) => (
-            <li key={item.slug}>
+            <li key={item.id ?? item.slug ?? item.title}>
               <span>{item.title}</span>
-              {formatPreviewMeta(item) && <small>{formatPreviewMeta(item)}</small>}
+              {formatPreviewMeta(item, section.key) && <small>{formatPreviewMeta(item, section.key)}</small>}
             </li>
           ))}
         </ul>
@@ -183,7 +188,16 @@ function buildStats(stats: Record<string, number | null>): Array<{ value: string
   return output;
 }
 
-function formatPreviewMeta(item: HomeResponse["sections"][number]["items"][number]): string | null {
+function formatPreviewMeta(item: HomeResponse["sections"][number]["items"][number], sectionKey: string): string | null {
+  if (sectionKey === "activity") {
+    return [item.description, item.occurred_at ? formatActivityDate(item.occurred_at) : null]
+      .filter(Boolean)
+      .join(" · ") || null;
+  }
+  if (sectionKey === "my_path") {
+    return item.description;
+  }
+
   const parts: string[] = [];
   if (typeof item.lessons_count === "number" && typeof item.completed_lessons_count === "number") {
     parts.push(`${item.completed_lessons_count} из ${item.lessons_count} завершено`);
@@ -194,4 +208,13 @@ function formatPreviewMeta(item: HomeResponse["sections"][number]["items"][numbe
     parts.push(`${item.estimated_minutes} мин`);
   }
   return parts.length > 0 ? parts.join(" · ") : null;
+}
+
+function formatActivityDate(value: string): string {
+  return new Intl.DateTimeFormat("ru-RU", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(value));
 }

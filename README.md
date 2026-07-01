@@ -2,7 +2,7 @@
 
 Windows-first local development workspace for the CORE / Wine Club MVP.
 
-Current implemented foundation includes auth, onboarding, home, discoveries, learning paths and lessons, lesson completion events, Bottle UI foundation, private diary, private taste profile, and Sprint 6 quality/stability tooling. Sprint 11 extends bottle progress with a small private diary contribution; it does not add achievements or gamification.
+Current implemented foundation includes auth, onboarding, home, discoveries, learning paths and lessons, lesson completion events, Bottle UI foundation, private diary, private taste profile, and Sprint 6 quality/stability tooling. Sprint 13 adds a deterministic My Path / next actions layer; it does not add AI recommendations, achievements, or gamification.
 
 ## Required Tools
 
@@ -118,7 +118,7 @@ Start the backend first, then run:
 .\backend\scripts\smoke_sprint6.ps1
 ```
 
-The smoke script logs in with dev Telegram auth, checks `/auth/me`, onboarding reset/complete, home, discoveries, learning paths/lessons, lesson completion/uncompletion, progress summary, bottle progress, diary CRUD, taste profile, and verifies that a deleted diary note returns 404 while its creation event remains in progress history. Successful steps print `[OK] ...`.
+The smoke script logs in with dev Telegram auth, checks `/auth/me`, onboarding reset/complete, home, my path, discoveries, learning paths/lessons, lesson completion/uncompletion, progress summary/activity, bottle progress, diary CRUD, taste profile, and verifies that a deleted diary note returns 404 while its creation event remains in progress history. Successful steps print `[OK] ...`.
 
 ## Frontend Build
 
@@ -201,5 +201,9 @@ Sprint 9 includes generic project-scoped, user-owned progress events and lesson 
 Sprint 10 includes Bottle UI foundation as a visualization of lesson completion progress. It does not add a bottle table or a new progress source of truth.
 
 Sprint 11 extends Bottle UI to include up to 3 existing private diary notes alongside lesson progress, and records `diary.note.created` events in the existing progress ledger. It does not add gamification or new business areas.
+
+Sprint 12 adds `/progress/activity`, `/progress`, and small Home/Bottle activity previews as read-only projections over `progress_events`. It does not add a new activity table, social feed, points, badges, streaks, or achievements.
+
+Sprint 13 adds `/my-path` and Home next-action previews using deterministic rules over existing user state. It does not add AI, a recommendation engine, a new table, points, badges, streaks, or achievements.
 
 Quizzes, club/feed/comments, achievements, notifications, premium features beyond `ProjectUser` access-state fields, admin CRUD, AI, recommendations, uploads, external wine databases, and deployment are intentionally not implemented.

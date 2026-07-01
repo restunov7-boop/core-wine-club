@@ -13,8 +13,12 @@ export type HomeHero = {
 };
 
 export type HomeSectionItem = {
-  slug: string;
+  id: string | null;
+  slug: string | null;
   title: string;
+  description: string | null;
+  href: string | null;
+  occurred_at: string | null;
   estimated_minutes: number | null;
   lessons_count: number | null;
   completed_lessons_count: number | null;

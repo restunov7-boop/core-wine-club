@@ -14,7 +14,9 @@ import { HomePage } from "../modules/home/HomePage";
 import { LearningPathDetailPage } from "../modules/learning/LearningPathDetailPage";
 import { LearningPathsPage } from "../modules/learning/LearningPathsPage";
 import { LessonDetailPage } from "../modules/learning/LessonDetailPage";
+import { MyPathPage } from "../modules/my-path/MyPathPage";
 import { OnboardingPage } from "../modules/onboarding/OnboardingPage";
+import { ProgressActivityPage } from "../modules/progress/ProgressActivityPage";
 import { TasteProfilePage } from "../modules/taste-profile/TasteProfilePage";
 import { PlaceholderPage } from "../shared/ui/PlaceholderPage";
 
@@ -44,6 +46,8 @@ export const router = createBrowserRouter([
     children: [
       { path: "/home", element: <HomePage /> },
       { path: "/bottle", element: <BottlePage /> },
+      { path: "/progress", element: <ProgressActivityPage /> },
+      { path: "/my-path", element: <MyPathPage /> },
       { path: "/discoveries", element: <DiscoveriesPage /> },
       { path: "/discoveries/:slug", element: <DiscoveryDetailPage /> },
       { path: "/learn", element: <LearningPathsPage /> },
@@ -55,7 +59,6 @@ export const router = createBrowserRouter([
       { path: "/diary/:noteId/edit", element: <DiaryNoteFormPage /> },
       { path: "/taste-profile", element: <TasteProfilePage /> },
       { path: "/club", element: <PlaceholderPage title="Клуб" /> },
-      { path: "/my-path", element: <PlaceholderPage title="Мой путь" /> },
       { path: "/premium", element: <PlaceholderPage title="Premium" /> },
       { path: "/notifications", element: <PlaceholderPage title="Notifications" /> },
       { path: "/settings", element: <PlaceholderPage title="Settings" /> },

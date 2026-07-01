@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app.bottle.schemas import BottleBreakdown, BottleDiaryBreakdown, BottleLearningBreakdown, BottleNextAction, BottleProgress
-from app.progress.service import build_diary_progress_summary, build_learning_progress_summary
+from app.progress.service import build_diary_progress_summary, build_learning_progress_summary, build_progress_activity_preview
 from app.projects.models import ProjectUser
 
 
@@ -36,6 +36,7 @@ def build_bottle_progress(db: Session, project_user: ProjectUser) -> BottleProgr
             ),
         ),
         next_action=next_action,
+        activity_preview=build_progress_activity_preview(db, project_user, limit=3),
     )
 
 

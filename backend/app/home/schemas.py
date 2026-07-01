@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import TypeAlias
 
 from pydantic import BaseModel, Field
@@ -20,8 +21,12 @@ class HomeHero(BaseModel):
 
 
 class HomeSectionItem(BaseModel):
-    slug: str
+    id: str | None = None
+    slug: str | None = None
     title: str
+    description: str | None = None
+    href: str | None = None
+    occurred_at: datetime | None = None
     estimated_minutes: int | None = None
     lessons_count: int | None = None
     completed_lessons_count: int | None = None

@@ -1,3 +1,5 @@
+import type { ProgressActivityPreviewItem } from "../progress/types";
+
 export type BottleLearningBreakdown = {
   completed_lessons_count: number;
   available_lessons_count: number;
@@ -28,4 +30,5 @@ export type BottleProgress = {
   source: "learning_and_diary";
   breakdown: BottleBreakdown;
   next_action: BottleNextAction;
+  activity_preview: ProgressActivityPreviewItem[];
 };
