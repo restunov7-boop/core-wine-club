@@ -1,0 +1,139 @@
+export type RouteManifestItem = {
+  path: string;
+  label: string;
+  requiresAuth: boolean;
+  requiresOnboarding: boolean;
+  usesAppShell: boolean;
+  purpose: string;
+};
+
+export const routeManifest: RouteManifestItem[] = [
+  {
+    path: "/home",
+    label: "Home",
+    requiresAuth: true,
+    requiresOnboarding: true,
+    usesAppShell: true,
+    purpose: "Main hub with next actions and previews for current Wine Club modules.",
+  },
+  {
+    path: "/my-path",
+    label: "My Path",
+    requiresAuth: true,
+    requiresOnboarding: true,
+    usesAppShell: true,
+    purpose: "Deterministic personal route with next actions based on existing user state.",
+  },
+  {
+    path: "/bottle",
+    label: "Bottle",
+    requiresAuth: true,
+    requiresOnboarding: true,
+    usesAppShell: true,
+    purpose: "Read-only bottle progress visualization from lessons and diary notes.",
+  },
+  {
+    path: "/progress",
+    label: "Progress Activity",
+    requiresAuth: true,
+    requiresOnboarding: true,
+    usesAppShell: true,
+    purpose: "Private progress activity history for the current project user.",
+  },
+  {
+    path: "/discoveries",
+    label: "Discoveries",
+    requiresAuth: true,
+    requiresOnboarding: true,
+    usesAppShell: true,
+    purpose: "Published discovery list for the current project.",
+  },
+  {
+    path: "/discoveries/:slug",
+    label: "Discovery Detail",
+    requiresAuth: true,
+    requiresOnboarding: true,
+    usesAppShell: true,
+    purpose: "Single published discovery article.",
+  },
+  {
+    path: "/learn",
+    label: "Learning",
+    requiresAuth: true,
+    requiresOnboarding: true,
+    usesAppShell: true,
+    purpose: "Learning path list with completion counts.",
+  },
+  {
+    path: "/learn/:pathSlug",
+    label: "Learning Path",
+    requiresAuth: true,
+    requiresOnboarding: true,
+    usesAppShell: true,
+    purpose: "One learning path with ordered lessons.",
+  },
+  {
+    path: "/learn/lessons/:lessonSlug",
+    label: "Lesson Detail",
+    requiresAuth: true,
+    requiresOnboarding: true,
+    usesAppShell: true,
+    purpose: "Single lesson with completion controls.",
+  },
+  {
+    path: "/diary",
+    label: "Diary",
+    requiresAuth: true,
+    requiresOnboarding: true,
+    usesAppShell: true,
+    purpose: "Private tasting notes for the current project user.",
+  },
+  {
+    path: "/diary/new",
+    label: "New Diary Note",
+    requiresAuth: true,
+    requiresOnboarding: true,
+    usesAppShell: true,
+    purpose: "Create a private tasting note.",
+  },
+  {
+    path: "/diary/:noteId",
+    label: "Diary Note",
+    requiresAuth: true,
+    requiresOnboarding: true,
+    usesAppShell: true,
+    purpose: "View one private tasting note owned by the current project user.",
+  },
+  {
+    path: "/diary/:noteId/edit",
+    label: "Edit Diary Note",
+    requiresAuth: true,
+    requiresOnboarding: true,
+    usesAppShell: true,
+    purpose: "Edit one private tasting note owned by the current project user.",
+  },
+  {
+    path: "/taste-profile",
+    label: "Taste Profile",
+    requiresAuth: true,
+    requiresOnboarding: true,
+    usesAppShell: true,
+    purpose: "Private taste profile computed from onboarding and diary notes.",
+  },
+  {
+    path: "/onboarding",
+    label: "Onboarding",
+    requiresAuth: true,
+    requiresOnboarding: false,
+    usesAppShell: false,
+    purpose: "Initial Wine Club setup before entering the main app shell.",
+  },
+  {
+    path: "/admin",
+    label: "Admin",
+    requiresAuth: true,
+    requiresOnboarding: false,
+    usesAppShell: false,
+    purpose: "Protected admin entry point; members see access denied.",
+  },
+];
