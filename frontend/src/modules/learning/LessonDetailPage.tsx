@@ -35,6 +35,7 @@ export function LessonDetailPage() {
   const [isSavingCompletion, setIsSavingCompletion] = useState(false);
   const pathSlug = (location.state as LessonLocationState | null)?.pathSlug;
   const backTo = pathSlug ? `/learn/${pathSlug}` : "/learn";
+  const backLabel = pathSlug ? "Назад к маршруту" : "Назад к урокам";
 
   useEffect(() => {
     let mounted = true;
@@ -137,7 +138,7 @@ export function LessonDetailPage() {
   return (
     <article className="lesson-detail">
       <Link className="back-link" to={backTo}>
-        Назад к маршруту
+        {backLabel}
       </Link>
 
       <header className="lesson-detail__header">

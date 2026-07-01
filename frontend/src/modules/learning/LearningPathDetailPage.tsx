@@ -97,27 +97,37 @@ export function LearningPathDetailPage() {
         {path.description && <p>{path.description}</p>}
       </header>
 
-      <div className="lesson-list">
-        {path.lessons.map((lesson, index) => (
-          <Link
-            className="lesson-card"
-            key={lesson.slug}
-            to={`/learn/lessons/${lesson.slug}`}
-            state={{ pathSlug: path.slug }}
-          >
-            <article>
-              <div className="lesson-card__topline">
-                <span>{index + 1}</span>
-                <span>{lessonTypeLabels[lesson.lesson_type] ?? lesson.lesson_type}</span>
-                {lesson.is_completed && <span>Завершён</span>}
-                {lesson.estimated_minutes && <span>{lesson.estimated_minutes} мин</span>}
-              </div>
-              <h2>{lesson.title}</h2>
-              <p>{lesson.summary}</p>
-            </article>
+      {path.lessons.length === 0 ? (
+        <div className="lesson-empty">
+          <h2>Уроки ещё не опубликованы</h2>
+          <p>Вернись к списку маршрутов — там появятся доступные уроки.</p>
+          <Link className="primary-action" to="/learn">
+            Назад к урокам
           </Link>
-        ))}
-      </div>
+        </div>
+      ) : (
+        <div className="lesson-list">
+          {path.lessons.map((lesson, index) => (
+            <Link
+              className="lesson-card"
+              key={lesson.slug}
+              to={`/learn/lessons/${lesson.slug}`}
+              state={{ pathSlug: path.slug }}
+            >
+              <article>
+                <div className="lesson-card__topline">
+                  <span>{index + 1}</span>
+                  <span>{lessonTypeLabels[lesson.lesson_type] ?? lesson.lesson_type}</span>
+                  {lesson.is_completed && <span>Завершён</span>}
+                  {lesson.estimated_minutes && <span>{lesson.estimated_minutes} мин</span>}
+                </div>
+                <h2>{lesson.title}</h2>
+                <p>{lesson.summary}</p>
+              </article>
+            </Link>
+          ))}
+        </div>
+      )}
     </article>
   );
 }

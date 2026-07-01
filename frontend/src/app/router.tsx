@@ -78,4 +78,8 @@ export const router = createBrowserRouter([
       { path: "dashboard", element: <PlaceholderPage title="Admin Dashboard" /> },
     ],
   },
+  {
+    path: "*",
+    element: <Navigate to="/home" replace />,
+  },
 ]);

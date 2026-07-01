@@ -34,6 +34,7 @@ export function DiaryNoteDetailPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -84,12 +85,12 @@ export function DiaryNoteDetailPage() {
     }
 
     setIsDeleting(true);
-    setError(null);
+    setActionError(null);
     try {
       await deleteTastingNote(noteId);
       navigate("/diary", { replace: true });
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Не удалось удалить заметку");
+      setActionError(caught instanceof Error ? caught.message : "Не удалось удалить заметку");
       setIsDeleting(false);
     }
   }
@@ -157,6 +158,7 @@ export function DiaryNoteDetailPage() {
             </button>
           </>
         )}
+        {actionError && <small className="form-error">{actionError}</small>}
       </div>
     </article>
   );

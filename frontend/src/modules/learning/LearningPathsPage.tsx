@@ -75,7 +75,15 @@ export function LearningPathsPage() {
       </header>
 
       {items.length === 0 ? (
-        <EmptyState title="Уроков пока нет" description="Первые маршруты появятся здесь после локального seed." />
+        <EmptyState
+          title="Уроков пока нет"
+          description="Первые маршруты появятся здесь после локального seed. Пока можно открыть главную."
+          action={
+            <Link className="primary-action" to="/home">
+              На главную
+            </Link>
+          }
+        />
       ) : (
         <div className="learning-list">
           {items.map((item) => (

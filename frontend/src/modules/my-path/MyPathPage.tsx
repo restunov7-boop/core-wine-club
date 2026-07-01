@@ -62,6 +62,9 @@ export function MyPathPage() {
   return (
     <section className="my-path-page">
       <header className="my-path-header">
+        <Link className="back-link" to="/home">
+          На главную
+        </Link>
         <span>Что дальше</span>
         <h1>{myPath.title}</h1>
         <p>{myPath.subtitle}</p>
@@ -82,25 +85,35 @@ export function MyPathPage() {
 
       <section className="my-path-panel">
         <div className="my-path-panel__header">
-          <span>Что дальше</span>
-          <h2>Следующие шаги</h2>
+          <span>Следующий шаг</span>
+          <h2>Что можно сделать сейчас</h2>
         </div>
-        <div className="my-path-action-list">
-          {myPath.next_actions.map((action) => (
-            <Link className="my-path-action" key={action.key} to={action.href}>
-              <article>
-                <strong>{action.title}</strong>
-                <p>{action.description}</p>
-              </article>
+        {myPath.next_actions.length === 0 ? (
+          <div className="my-path-empty">
+            <h3>Маршрут пока пуст</h3>
+            <p>Вернись на главную или открой уроки — там всегда есть спокойный следующий шаг.</p>
+            <Link className="primary-action" to="/learn">
+              Продолжить уроки
             </Link>
-          ))}
-        </div>
+          </div>
+        ) : (
+          <div className="my-path-action-list">
+            {myPath.next_actions.map((action) => (
+              <Link className="my-path-action" key={action.key} to={action.href}>
+                <article>
+                  <strong>{action.title}</strong>
+                  <p>{action.description}</p>
+                </article>
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="my-path-panel">
         <div className="my-path-panel__header">
-          <span>Разделы</span>
-          <h2>Куда можно перейти</h2>
+          <span>Твой маршрут</span>
+          <h2>Разделы рядом</h2>
         </div>
         <div className="my-path-section-list">
           {myPath.sections.map((section) => (

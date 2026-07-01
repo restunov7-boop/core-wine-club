@@ -79,7 +79,7 @@ export function DiaryPage() {
         <h1>Дневник вкуса</h1>
         <p>Твои личные заметки о винах. Только для тебя.</p>
         <Link className="primary-action diary-header__action" to="/diary/new">
-          Новая заметка
+          Добавить заметку
         </Link>
       </header>
 

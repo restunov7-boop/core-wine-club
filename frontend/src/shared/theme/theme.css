@@ -29,9 +29,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   overflow-x: hidden;
-  background:
-    radial-gradient(circle at top left, rgba(143, 38, 56, 0.22), transparent 34rem),
-    linear-gradient(145deg, #141313 0%, #1d1719 48%, #141313 100%);
+  background: linear-gradient(145deg, #141313 0%, #1d1719 48%, #141313 100%);
 }
 
 a {
@@ -39,8 +37,35 @@ a {
   text-decoration: none;
 }
 
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:not(:disabled),
+a[href] {
+  cursor: pointer;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid rgba(214, 168, 79, 0.82);
+  outline-offset: 3px;
+}
+
 .app-shell {
   min-height: 100vh;
+  overflow-x: hidden;
   padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom));
 }
 
@@ -86,7 +111,7 @@ a {
   bottom: 0;
   left: 50%;
   z-index: 30;
-  width: min(100%, 760px);
+  width: min(calc(100% - 16px), 760px);
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 3px;
@@ -164,6 +189,12 @@ a {
   border-color: rgba(255, 180, 168, 0.28);
 }
 
+.state-card__action,
+.page__actions {
+  width: fit-content;
+  margin-top: 6px;
+}
+
 .empty-state__action {
   display: flex;
   flex-wrap: wrap;
@@ -171,15 +202,23 @@ a {
 }
 
 .page {
+  width: min(100%, 720px);
   min-height: calc(100vh - 124px);
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin: 0 auto;
   padding: 24px;
   border: 1px solid rgba(245, 239, 232, 0.08);
   border-radius: var(--radius-card);
   background: linear-gradient(160deg, rgba(33, 29, 31, 0.96), rgba(43, 37, 39, 0.88));
   box-shadow: var(--shadow-soft);
+}
+
+.page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .page__eyebrow {
@@ -321,10 +360,8 @@ a {
 }
 
 .home-preview-list li {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
+  display: grid;
+  gap: 5px;
   padding-top: 10px;
   border-top: 1px solid rgba(245, 239, 232, 0.08);
 }
@@ -337,8 +374,8 @@ a {
 }
 
 .home-preview-list small {
-  flex: 0 0 auto;
   color: var(--color-text-muted);
+  line-height: 1.45;
 }
 
 .home-stat {
@@ -567,6 +604,8 @@ a {
 .back-link {
   width: fit-content;
   display: flex;
+  align-items: center;
+  min-height: 36px;
   margin-bottom: 20px;
 }
 
@@ -619,6 +658,19 @@ a {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+.lesson-empty {
+  display: grid;
+  gap: 12px;
+  margin-top: 22px;
+  padding: 14px 0 0;
+  border-top: 1px solid rgba(245, 239, 232, 0.08);
+}
+
+.lesson-empty h2,
+.lesson-empty p {
+  margin: 0;
 }
 
 .activity-list,
@@ -729,6 +781,24 @@ a {
 .my-path-section-list {
   display: grid;
   gap: 10px;
+}
+
+.my-path-empty {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid rgba(245, 239, 232, 0.08);
+  border-radius: var(--radius-card);
+  background: rgba(245, 239, 232, 0.04);
+}
+
+.my-path-empty h3,
+.my-path-empty p {
+  margin: 0;
+}
+
+.my-path-empty .primary-action {
+  width: fit-content;
 }
 
 .my-path-action,
@@ -850,6 +920,11 @@ a {
 .bottle-panel__action {
   width: fit-content;
   margin-top: 6px;
+}
+
+.bottle-panel__hint {
+  max-width: 28rem;
+  padding-top: 4px;
 }
 
 .bottle-visual {
@@ -1140,6 +1215,10 @@ a {
   align-items: center;
 }
 
+.diary-actions .form-error {
+  flex-basis: 100%;
+}
+
 .danger-action {
   min-height: 44px;
   padding: 0 16px;
@@ -1341,6 +1420,12 @@ a {
   color: #ffb4a8;
 }
 
+.text-input,
+.select-input,
+.textarea-input {
+  min-width: 0;
+}
+
 .admin-shell {
   min-height: 100vh;
   display: grid;
@@ -1401,6 +1486,104 @@ a {
   .admin-shell__sidebar {
     border-right: 0;
     border-bottom: 1px solid rgba(245, 239, 232, 0.08);
+  }
+}
+
+@media (max-width: 520px) {
+  .activity-preview-panel__header {
+    display: grid;
+  }
+
+  .activity-preview-panel__header .ghost-action {
+    width: fit-content;
+  }
+}
+
+@media (max-width: 430px) {
+  :root {
+    --bottom-nav-height: 78px;
+  }
+
+  .app-header__brand {
+    min-height: 58px;
+    padding: 8px 14px;
+  }
+
+  .app-header__brand span {
+    font-size: 17px;
+  }
+
+  .app-shell__main {
+    padding: 16px 12px 22px;
+  }
+
+  .bottom-nav {
+    gap: 2px;
+    padding: 8px 8px calc(10px + env(safe-area-inset-bottom));
+  }
+
+  .bottom-nav__link {
+    min-height: 48px;
+    padding: 6px 1px;
+    font-size: 10px;
+  }
+
+  .state-card,
+  .empty-state,
+  .home-page__intro,
+  .home-hero,
+  .discoveries-header,
+  .discovery-detail,
+  .learning-header,
+  .learning-detail,
+  .lesson-detail,
+  .progress-header,
+  .my-path-header,
+  .diary-header,
+  .diary-detail,
+  .taste-profile-header,
+  .taste-summary-card,
+  .taste-profile-card,
+  .taste-stat-card,
+  .bottle-header,
+  .bottle-panel,
+  .onboarding-panel {
+    padding: 18px;
+  }
+
+  .home-page__intro h1,
+  .page h1,
+  .discoveries-header h1,
+  .discovery-detail h1,
+  .learning-header h1,
+  .learning-detail h1,
+  .lesson-detail h1,
+  .progress-header h1,
+  .my-path-header h1,
+  .diary-header h1,
+  .diary-detail h1,
+  .taste-profile-header h1,
+  .bottle-header h1,
+  .onboarding-panel h1 {
+    font-size: 29px;
+  }
+
+  .my-path-summary-grid,
+  .bottle-panel__stats {
+    grid-template-columns: 1fr;
+  }
+
+  .home-stat {
+    width: 100%;
+  }
+
+  .onboarding-actions {
+    flex-wrap: wrap;
+  }
+
+  .onboarding-actions .primary-action,
+  .onboarding-actions .ghost-action {
+    flex: 1 1 140px;
   }
 }
 

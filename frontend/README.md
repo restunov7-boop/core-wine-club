@@ -1,6 +1,6 @@
 # Frontend
 
-React + TypeScript + Vite frontend for CORE Wine Club auth, onboarding, home, discoveries, learning paths and lesson completion, Bottle UI foundation, diary, taste profile, My Path, and build validation.
+React + TypeScript + Vite frontend for CORE Wine Club auth, onboarding, home, discoveries, learning paths and lesson completion, Bottle UI foundation, diary, taste profile, My Path, UX readiness, and build validation.
 
 ## Windows PowerShell Setup
 
@@ -190,6 +190,17 @@ Sprint 7 wraps authenticated, onboarding-completed app routes in `AppShell`:
 
 The bottom navigation links to Home, Открытия, Уроки, Дневник, and Профиль. `/onboarding` stays focused without bottom navigation. `/admin` stays separate behind `AdminGuard`.
 
+## UX Readiness
+
+Sprint 14 polishes the existing app without adding a new product domain:
+
+- Home is ordered around `Что дальше`, bottle progress, learning, diary, profile, activity, and discoveries.
+- Shared loading, error, and empty states use calmer copy and clearer actions.
+- Bottle explains that lessons and diary notes fill the current bottle.
+- My Path uses `Что дальше` / `Твой маршрут` language rather than recommendation language.
+- Progress is private activity history, not a feed.
+- Mobile spacing, focus states, and bottom nav fit were tightened for small screens.
+
 ## Build Validation
 
 ```powershell
@@ -200,4 +211,4 @@ pnpm build
 
 ## Sprint Boundary
 
-Sprint 13 adds My Path / Next Actions Foundation only. It does not add AI, recommendations, public profile, sharing, social features, achievements, points, streaks, badges, weekly bottle, quizzes, premium/payments, notifications, admin CRUD, CMS/editor, uploads, OCR/barcode, or external wine databases.
+Sprint 14 adds UX polish / product readiness only. It does not add AI, recommendations, public profile, sharing, social features, achievements, points, streaks, badges, weekly bottle, quizzes, premium/payments, notifications, admin CRUD, CMS/editor, uploads, OCR/barcode, or external wine databases.

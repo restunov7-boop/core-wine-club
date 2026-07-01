@@ -126,7 +126,7 @@ export function OnboardingPage() {
       <section className="onboarding-page">
         <div className="onboarding-panel">
           <span>Дочь винодела</span>
-          <h1>Онбординг уже завершен</h1>
+          <h1>Онбординг уже завершён</h1>
           <p>Можно сразу вернуться на главную страницу клуба.</p>
           <button className="primary-action" type="button" onClick={() => navigate("/home", { replace: true })}>
             На главную

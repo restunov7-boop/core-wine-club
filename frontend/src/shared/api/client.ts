@@ -36,14 +36,17 @@ async function request<TData>(path: string, init: RequestInit = {}): Promise<Api
     });
   } catch (error) {
     const detail = error instanceof Error ? error.message : "Unknown network error";
-    throw new ApiError(`Network request failed: ${detail}`, 0, { url: `${API_BASE_URL}${path}` });
+    throw new ApiError("Не удалось связаться с сервером. Проверь, что backend запущен.", 0, {
+      detail,
+      url: `${API_BASE_URL}${path}`,
+    });
   }
 
   const payload = await response.json().catch(() => null);
 
   if (!response.ok) {
     const message =
-      typeof payload?.error?.message === "string" ? payload.error.message : "API request failed";
+      typeof payload?.error?.message === "string" ? payload.error.message : "Не удалось выполнить запрос";
     throw new ApiError(message, response.status, payload);
   }
 

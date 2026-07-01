@@ -7,6 +7,8 @@ import { LoadingState } from "../../shared/ui/LoadingState";
 import { getHome } from "./api";
 import type { HomeResponse } from "./types";
 
+const homeSectionOrder = ["my_path", "bottle", "learning", "diary", "taste_profile", "activity", "discoveries"];
+
 export function HomePage() {
   const navigate = useNavigate();
   const [home, setHome] = useState<HomeResponse | null>(null);
@@ -48,9 +50,9 @@ export function HomePage() {
   }
 
   const greetingName = home.user.display_name ?? "друг";
-  const hubSections = home.sections.filter((section) =>
-    ["discoveries", "learning", "bottle", "my_path", "activity", "diary", "taste_profile"].includes(section.key),
-  );
+  const hubSections = home.sections
+    .filter((section) => homeSectionOrder.includes(section.key))
+    .sort((left, right) => homeSectionOrder.indexOf(left.key) - homeSectionOrder.indexOf(right.key));
 
   return (
     <section className="home-page">
@@ -62,10 +64,10 @@ export function HomePage() {
 
       <div className="home-hero">
         <div>
-          <span>Wine Club</span>
+          <span>Твой клубный центр</span>
           <h2>{home.hero.title}</h2>
         </div>
-        <p>Онбординг завершен. Открытия, дневник и первые мягкие закономерности вкуса уже доступны.</p>
+        <p>Здесь видно следующий шаг, личный прогресс и разделы, к которым можно спокойно вернуться.</p>
       </div>
 
       <div className="home-section-grid">
@@ -78,7 +80,8 @@ export function HomePage() {
 }
 
 function HomeSectionCard({ section }: { section: HomeResponse["sections"][number] }) {
-  const linkTo =
+  const notesCount = typeof section.stats.notes_count === "number" ? section.stats.notes_count : null;
+  const defaultLinkTo =
     section.href ??
     (section.key === "discoveries"
       ? "/discoveries"
@@ -93,6 +96,7 @@ function HomeSectionCard({ section }: { section: HomeResponse["sections"][number
               : section.key === "taste_profile"
                 ? "/taste-profile"
                 : null);
+  const linkTo = section.key === "diary" && notesCount === 0 ? "/diary/new" : defaultLinkTo;
   const isAvailable =
     section.items.length > 0 ||
     ["diary", "taste_profile", "learning", "bottle", "activity", "my_path"].includes(section.key);
@@ -126,7 +130,7 @@ function HomeSectionCard({ section }: { section: HomeResponse["sections"][number
         </ul>
       )}
 
-      {linkTo && <div className="home-section-card__cta">Открыть раздел</div>}
+      {linkTo && <div className="home-section-card__cta">{getSectionCta(section.key, notesCount)}</div>}
     </article>
   );
 
@@ -139,6 +143,28 @@ function HomeSectionCard({ section }: { section: HomeResponse["sections"][number
   }
 
   return content;
+}
+
+function getSectionCta(sectionKey: string, notesCount: number | null): string {
+  if (sectionKey === "my_path") {
+    return "Продолжить";
+  }
+  if (sectionKey === "bottle") {
+    return "Посмотреть бутылку";
+  }
+  if (sectionKey === "learning") {
+    return "Продолжить уроки";
+  }
+  if (sectionKey === "diary") {
+    return notesCount && notesCount > 0 ? "Открыть дневник" : "Добавить заметку";
+  }
+  if (sectionKey === "taste_profile") {
+    return "Открыть профиль";
+  }
+  if (sectionKey === "activity") {
+    return "Вся активность";
+  }
+  return "Открыть";
 }
 
 function buildStats(stats: Record<string, number | null>): Array<{ value: string; label: string }> {

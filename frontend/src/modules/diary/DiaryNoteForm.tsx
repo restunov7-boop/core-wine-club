@@ -115,7 +115,7 @@ export function DiaryNoteForm({ form, isSubmitting, submitLabel, onChange, onSub
           placeholder="Chianti Classico"
           onChange={(event) => update("wine_name", event.target.value)}
         />
-        <small className="field-hint">Обязательное поле</small>
+        <small className="field-hint">Название нужно, чтобы сохранить заметку.</small>
       </label>
 
       <div className="form-grid">

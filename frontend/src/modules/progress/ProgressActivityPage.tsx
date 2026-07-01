@@ -63,9 +63,12 @@ export function ProgressActivityPage() {
   return (
     <section className="progress-page">
       <header className="progress-header">
+        <Link className="back-link" to="/bottle">
+          К бутылке
+        </Link>
         <span>Личная история</span>
         <h1>Активность</h1>
-        <p>Что уже наполнило твою бутылку.</p>
+        <p>Приватная история действий, которые уже наполнили бутылку.</p>
       </header>
 
       {items.length === 0 ? (
@@ -73,9 +76,14 @@ export function ProgressActivityPage() {
           title="Пока здесь тихо"
           description="Пройди первый урок или добавь заметку в дневник — и здесь появится история."
           action={
-            <Link className="primary-action" to="/learn">
-              Перейти к урокам
-            </Link>
+            <>
+              <Link className="primary-action" to="/learn">
+                Продолжить уроки
+              </Link>
+              <Link className="ghost-action" to="/diary/new">
+                Добавить заметку
+              </Link>
+            </>
           }
         />
       ) : (

@@ -2,7 +2,7 @@
 
 Windows-first local development workspace for the CORE / Wine Club MVP.
 
-Current implemented foundation includes auth, onboarding, home, discoveries, learning paths and lessons, lesson completion events, Bottle UI foundation, private diary, private taste profile, and Sprint 6 quality/stability tooling. Sprint 13 adds a deterministic My Path / next actions layer; it does not add AI recommendations, achievements, or gamification.
+Current implemented foundation includes auth, onboarding, home, discoveries, learning paths and lessons, lesson completion events, Bottle UI foundation, private diary, private taste profile, deterministic My Path, and Sprint 14 UX readiness. Sprint 14 polishes the existing product surfaces; it does not add AI recommendations, achievements, gamification, or a new business domain.
 
 ## Required Tools
 
@@ -205,5 +205,7 @@ Sprint 11 extends Bottle UI to include up to 3 existing private diary notes alon
 Sprint 12 adds `/progress/activity`, `/progress`, and small Home/Bottle activity previews as read-only projections over `progress_events`. It does not add a new activity table, social feed, points, badges, streaks, or achievements.
 
 Sprint 13 adds `/my-path` and Home next-action previews using deterministic rules over existing user state. It does not add AI, a recommendation engine, a new table, points, badges, streaks, or achievements.
+
+Sprint 14 adds UX polish, route safety, clearer states, Home hub ordering, and mobile spacing improvements for existing routes only. It does not add a new product domain, database table, migration, AI, recommendations, achievements, points, streaks, social features, quizzes, premium/payments, or admin CRUD.
 
 Quizzes, club/feed/comments, achievements, notifications, premium features beyond `ProjectUser` access-state fields, admin CRUD, AI, recommendations, uploads, external wine databases, and deployment are intentionally not implemented.

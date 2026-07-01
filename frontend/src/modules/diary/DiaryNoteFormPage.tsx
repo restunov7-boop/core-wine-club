@@ -13,6 +13,8 @@ export function DiaryNoteFormPage() {
   const navigate = useNavigate();
   const { noteId } = useParams();
   const isEditing = Boolean(noteId);
+  const backTo = isEditing && noteId ? `/diary/${noteId}` : "/diary";
+  const backLabel = isEditing ? "Назад к заметке" : "Назад к дневнику";
   const [form, setForm] = useState<DiaryNoteFormState>(emptyDiaryNoteForm);
   const [isLoading, setIsLoading] = useState(isEditing);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -81,8 +83,8 @@ export function DiaryNoteFormPage() {
   return (
     <section className="diary-page">
       <header className="diary-header">
-        <Link className="back-link" to="/diary">
-          Назад к дневнику
+        <Link className="back-link" to={backTo}>
+          {backLabel}
         </Link>
         <span>{isEditing ? "Редактирование" : "Новая запись"}</span>
         <h1>{isEditing ? "Редактировать заметку" : "Новая заметка"}</h1>
@@ -94,7 +96,7 @@ export function DiaryNoteFormPage() {
       <DiaryNoteForm
         form={form}
         isSubmitting={isSubmitting}
-        submitLabel={isEditing ? "Сохранить изменения" : "Создать заметку"}
+        submitLabel={isEditing ? "Сохранить изменения" : "Добавить заметку"}
         onChange={setForm}
         onSubmit={submit}
       />

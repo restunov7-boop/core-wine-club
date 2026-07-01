@@ -114,7 +114,7 @@ export function TasteProfilePage() {
         <p>{profile.summary.description}</p>
         {profile.stats.notes_count === 0 && (
           <Link className="primary-action taste-summary-card__action" to="/diary/new">
-            Добавить первую заметку
+            Добавить заметку
           </Link>
         )}
       </section>

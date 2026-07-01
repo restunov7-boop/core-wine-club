@@ -83,7 +83,15 @@ export function DiscoveriesPage() {
       </header>
 
       {items.length === 0 ? (
-        <EmptyState title="Открытий пока нет" description="Первые материалы появятся здесь после локального seed." />
+        <EmptyState
+          title="Открытий пока нет"
+          description="Первые материалы появятся здесь после локального seed. Пока можно вернуться на главную."
+          action={
+            <Link className="primary-action" to="/home">
+              На главную
+            </Link>
+          }
+        />
       ) : (
         <div className="discoveries-list">
           {items.map((item) => (

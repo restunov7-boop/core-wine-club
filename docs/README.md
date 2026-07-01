@@ -7,4 +7,4 @@
 
 Sprint 0 creates the documentation structure only.
 
-Current Sprint 13 technical notes include `technical/progress-ledger.md`, `technical/progress-sources.md`, `technical/progress-activity.md`, `technical/bottle-ui.md`, and `technical/my-path.md`.
+Current Sprint 14 technical notes include `technical/progress-ledger.md`, `technical/progress-sources.md`, `technical/progress-activity.md`, `technical/bottle-ui.md`, `technical/my-path.md`, and `technical/ux-readiness.md`.
