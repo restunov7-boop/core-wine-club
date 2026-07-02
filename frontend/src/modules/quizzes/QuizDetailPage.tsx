@@ -147,6 +147,11 @@ export function QuizDetailPage() {
         {quiz.subtitle && <p className="quiz-card__subtitle">{quiz.subtitle}</p>}
         <p>{quiz.summary}</p>
         {quiz.description && <p>{quiz.description}</p>}
+        {quiz.slug === "wine-basics-check" && (
+          <Link className="quiz-related-path" to="/learn/wine-basics">
+            Связано с путём: Винная база
+          </Link>
+        )}
       </header>
 
       {quiz.is_completed && (

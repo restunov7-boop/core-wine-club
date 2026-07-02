@@ -11,10 +11,17 @@ from app.learning.schemas import (
     LearningPathLessonItem,
     LearningPathListItem,
     LearningPathPreview,
+    LearningRecommendedQuiz,
+    LearningNextStep,
     LessonDetail,
 )
-from app.progress.service import get_lesson_completion_event, get_lesson_completion_map
+from app.progress.service import (
+    get_lesson_completion_event,
+    get_lesson_completion_map,
+    get_quiz_completion_map,
+)
 from app.projects.models import Project, ProjectUser
+from app.quizzes.models import Quiz, QuizQuestion
 from app.shared.errors import NotFoundError
 
 
@@ -131,6 +138,10 @@ DEMO_LESSONS: list[dict[str, Any]] = [
     },
 ]
 
+PATH_RECOMMENDED_QUIZZES: dict[str, list[str]] = {
+    "wine-basics": ["wine-basics-check"],
+}
+
 
 def _published_paths_query(db: Session, project_user: ProjectUser):
     return db.query(LearningPath).filter(
@@ -194,6 +205,7 @@ def get_learning_path_detail(db: Session, project_user: ProjectUser, slug: str) 
     ]
     lessons_count = len(lessons)
     completed_lessons_count = sum(1 for lesson in lessons if lesson.is_completed)
+    recommended_quizzes = _recommended_quizzes_for_path(db, project_user, learning_path.slug)
 
     return LearningPathDetail(
         id=learning_path.id,
@@ -207,6 +219,7 @@ def get_learning_path_detail(db: Session, project_user: ProjectUser, slug: str) 
         lessons_count=lessons_count,
         completed_lessons_count=completed_lessons_count,
         lessons=lessons,
+        recommended_quizzes=recommended_quizzes,
     )
 
 
@@ -215,6 +228,7 @@ def get_lesson_detail(db: Session, project_user: ProjectUser, slug: str) -> Less
     if lesson is None:
         raise NotFoundError("Lesson was not found")
     completion = get_lesson_completion_event(db, project_user, lesson.id)
+    next_step = _build_lesson_next_step(db, project_user, lesson)
     return LessonDetail(
         id=lesson.id,
         slug=lesson.slug,
@@ -228,6 +242,7 @@ def get_lesson_detail(db: Session, project_user: ProjectUser, slug: str) -> Less
         published_at=lesson.published_at,
         is_completed=completion is not None,
         completed_at=completion.occurred_at if completion is not None else None,
+        next_step=next_step,
     )
 
 
@@ -318,6 +333,7 @@ def seed_demo_learning(db: Session, project: Project) -> int:
 
 
 def _path_to_list_item(db: Session, project_user: ProjectUser, path: LearningPath) -> LearningPathListItem:
+    recommended_quizzes = _recommended_quizzes_for_path(db, project_user, path.slug)
     return LearningPathListItem(
         id=path.id,
         slug=path.slug,
@@ -329,6 +345,8 @@ def _path_to_list_item(db: Session, project_user: ProjectUser, path: LearningPat
         cover_image_url=path.cover_image_url,
         lessons_count=_count_published_lessons(db, project_user, path),
         completed_lessons_count=_count_completed_lessons(db, project_user, path),
+        recommended_quizzes_count=len(recommended_quizzes),
+        completed_recommended_quizzes_count=sum(1 for quiz in recommended_quizzes if quiz.is_completed),
     )
 
 
@@ -340,3 +358,106 @@ def _count_completed_lessons(db: Session, project_user: ProjectUser, learning_pa
     lesson_rows = _published_lessons_for_path_query(db, project_user, learning_path).all()
     completion_map = get_lesson_completion_map(db, project_user, [lesson.id for lesson, _ in lesson_rows])
     return len(completion_map)
+
+
+def _recommended_quizzes_for_path(
+    db: Session,
+    project_user: ProjectUser,
+    path_slug: str,
+) -> list[LearningRecommendedQuiz]:
+    quiz_slugs = PATH_RECOMMENDED_QUIZZES.get(path_slug, [])
+    if not quiz_slugs:
+        return []
+
+    quizzes = (
+        db.query(Quiz)
+        .filter(
+            Quiz.project_id == project_user.project_id,
+            Quiz.slug.in_(quiz_slugs),
+            Quiz.is_published.is_(True),
+        )
+        .all()
+    )
+    quizzes_by_slug = {quiz.slug: quiz for quiz in quizzes}
+    completion_map = get_quiz_completion_map(db, project_user, [quiz.id for quiz in quizzes])
+
+    items: list[LearningRecommendedQuiz] = []
+    for slug in quiz_slugs:
+        quiz = quizzes_by_slug.get(slug)
+        if quiz is None:
+            continue
+        completion = completion_map.get(quiz.id)
+        items.append(
+            LearningRecommendedQuiz(
+                slug=quiz.slug,
+                title=quiz.title,
+                subtitle=quiz.subtitle,
+                summary=quiz.summary,
+                difficulty=quiz.difficulty,
+                estimated_minutes=quiz.estimated_minutes,
+                questions_count=_count_quiz_questions(db, project_user, quiz),
+                is_completed=completion is not None,
+                completed_at=completion.occurred_at if completion is not None else None,
+                href=f"/quizzes/{quiz.slug}",
+            )
+        )
+    return items
+
+
+def _build_lesson_next_step(db: Session, project_user: ProjectUser, lesson: Lesson) -> LearningNextStep | None:
+    path = _learning_path_for_lesson(db, project_user, lesson)
+    if path is None or path.slug not in PATH_RECOMMENDED_QUIZZES:
+        return None
+
+    lesson_rows = _published_lessons_for_path_query(db, project_user, path).all()
+    lesson_ids = [path_lesson.id for path_lesson, _ in lesson_rows]
+    completion_map = get_lesson_completion_map(db, project_user, lesson_ids)
+    if len(lesson_rows) == 0 or len(completion_map) < len(lesson_rows):
+        return None
+
+    recommended_quizzes = _recommended_quizzes_for_path(db, project_user, path.slug)
+    first_incomplete_quiz = next((quiz for quiz in recommended_quizzes if not quiz.is_completed), None)
+    if first_incomplete_quiz is not None:
+        return LearningNextStep(
+            type="quiz",
+            title="Закрепить базу в квизе",
+            description="Ты прошёл базовые уроки. Теперь можно спокойно проверить себя без оценок и давления.",
+            href=first_incomplete_quiz.href,
+            quiz_slug=first_incomplete_quiz.slug,
+        )
+
+    if recommended_quizzes:
+        return LearningNextStep(
+            type="my_path",
+            title="Посмотреть следующий шаг",
+            description="Квиз завершён. Можно перейти к личному пути.",
+            href="/my-path",
+        )
+
+    return None
+
+
+def _learning_path_for_lesson(db: Session, project_user: ProjectUser, lesson: Lesson) -> LearningPath | None:
+    return (
+        db.query(LearningPath)
+        .join(LearningPathLesson, LearningPathLesson.learning_path_id == LearningPath.id)
+        .filter(
+            LearningPath.project_id == project_user.project_id,
+            LearningPath.is_published.is_(True),
+            LearningPathLesson.project_id == project_user.project_id,
+            LearningPathLesson.lesson_id == lesson.id,
+        )
+        .order_by(LearningPath.sort_order.asc(), LearningPath.created_at.asc())
+        .first()
+    )
+
+
+def _count_quiz_questions(db: Session, project_user: ProjectUser, quiz: Quiz) -> int:
+    return (
+        db.query(QuizQuestion)
+        .filter(
+            QuizQuestion.project_id == project_user.project_id,
+            QuizQuestion.quiz_id == quiz.id,
+        )
+        .count()
+    )

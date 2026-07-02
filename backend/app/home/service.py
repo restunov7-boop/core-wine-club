@@ -42,6 +42,7 @@ def build_home_response(db: Session, user: User, project_user: ProjectUser) -> H
         )
         for item in my_path.next_actions[:2]
     ]
+    learning_journey_href = my_path.next_actions[0].href if my_path.next_actions else "/my-path"
     notes_count = count_tasting_notes(db, project_user)
     taste_profile_preview = build_taste_profile_preview(db, project_user)
 
@@ -71,6 +72,19 @@ def build_home_response(db: Session, user: User, project_user: ProjectUser) -> H
                 stats={
                     "completed_lessons_count": learning_progress.completed_lessons_count,
                     "available_lessons_count": learning_progress.available_lessons_count,
+                },
+            ),
+            HomeSection(
+                key="learning_journey",
+                title="Путь обучения",
+                description="Уроки, квиз и дневник складываются в твой винный прогресс.",
+                href=learning_journey_href,
+                stats={
+                    "completed_lessons_count": learning_progress.completed_lessons_count,
+                    "available_lessons_count": learning_progress.available_lessons_count,
+                    "completed_quizzes_count": quiz_progress.completed_quizzes_count,
+                    "available_quizzes_count": quiz_progress.available_quizzes_count,
+                    "notes_count": notes_count,
                 },
             ),
             HomeSection(

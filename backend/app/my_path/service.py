@@ -107,7 +107,8 @@ def _build_next_actions(summary: MyPathSummary) -> list[MyPathAction]:
         )
 
     if (
-        summary.completed_lessons_count > 0
+        summary.available_lessons_count > 0
+        and summary.completed_lessons_count >= summary.available_lessons_count
         and summary.completed_quizzes_count < summary.available_quizzes_count
     ):
         actions.append(

@@ -9,6 +9,8 @@ const routes = [
   "/quizzes/wine-basics-check",
   "/discoveries",
   "/learn",
+  "/learn/wine-basics",
+  "/learn/lessons/how-wine-is-made",
   "/diary",
   "/taste-profile",
   "/admin",

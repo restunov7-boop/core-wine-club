@@ -93,6 +93,11 @@ export function LearningPathsPage() {
                   <span>{difficultyLabels[item.difficulty] ?? item.difficulty}</span>
                   <span>{item.lessons_count} уроков</span>
                   <span>Завершено: {item.completed_lessons_count} из {item.lessons_count}</span>
+                  {item.recommended_quizzes_count > 0 && (
+                    <span>
+                      Квиз: {item.completed_recommended_quizzes_count} из {item.recommended_quizzes_count}
+                    </span>
+                  )}
                   {item.estimated_minutes && <span>{item.estimated_minutes} мин</span>}
                 </div>
                 <h2>{item.title}</h2>

@@ -101,12 +101,9 @@ export function LessonDetailPage() {
     setActionError(null);
     setIsSavingCompletion(true);
     try {
-      const completion = await completeLesson(lesson.slug);
-      setLesson({
-        ...lesson,
-        is_completed: completion.is_completed,
-        completed_at: completion.completed_at,
-      });
+      await completeLesson(lesson.slug);
+      const refreshedLesson = await getLesson(lesson.slug);
+      setLesson(refreshedLesson);
     } catch (caught) {
       setActionError(caught instanceof Error ? caught.message : "Не удалось завершить урок");
     } finally {
@@ -123,11 +120,8 @@ export function LessonDetailPage() {
     setIsSavingCompletion(true);
     try {
       await uncompleteLesson(lesson.slug);
-      setLesson({
-        ...lesson,
-        is_completed: false,
-        completed_at: null,
-      });
+      const refreshedLesson = await getLesson(lesson.slug);
+      setLesson(refreshedLesson);
     } catch (caught) {
       setActionError(caught instanceof Error ? caught.message : "Не удалось снять отметку");
     } finally {
@@ -173,6 +167,17 @@ export function LessonDetailPage() {
           <p key={paragraph}>{paragraph}</p>
         ))}
       </div>
+
+      {lesson.next_step && (
+        <section className="lesson-next-step">
+          <span>Следующий шаг</span>
+          <h2>{lesson.next_step.title}</h2>
+          <p>{lesson.next_step.description}</p>
+          <Link className="primary-action" to={lesson.next_step.href}>
+            {lesson.next_step.type === "quiz" ? "Перейти к квизу" : "Открыть мой путь"}
+          </Link>
+        </section>
+      )}
     </article>
   );
 }

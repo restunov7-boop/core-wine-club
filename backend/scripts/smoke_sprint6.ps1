@@ -89,6 +89,9 @@ Write-Ok "learning paths list"
 
 $learningPath = Invoke-Api -Method Get -Path "/learning/paths/$firstPathSlug" -Headers $headers
 Assert-True ($learningPath.data.lessons.Count -eq 5) "Learning path lesson count mismatch"
+Assert-True ($learningPath.data.recommended_quizzes.Count -eq 1) "Learning recommended quiz count mismatch"
+Assert-True ($learningPath.data.recommended_quizzes[0].slug -eq "wine-basics-check") "Learning recommended quiz slug mismatch"
+Assert-True ($learningPath.data.recommended_quizzes[0].is_completed -eq $false) "Initial learning recommended quiz completion mismatch"
 $firstLessonSlug = $learningPath.data.lessons[0].slug
 Write-Ok "learning path detail"
 
@@ -162,6 +165,10 @@ $quizAfterCompletion = Invoke-Api -Method Get -Path "/quizzes/wine-basics-check"
 Assert-True ($quizAfterCompletion.data.is_completed -eq $true) "Quiz detail did not expose completion state"
 Write-Ok "quiz detail completion state"
 
+$learningPathAfterQuiz = Invoke-Api -Method Get -Path "/learning/paths/$firstPathSlug" -Headers $headers
+Assert-True ($learningPathAfterQuiz.data.recommended_quizzes[0].is_completed -eq $true) "Learning recommended quiz did not expose completion state"
+Write-Ok "learning recommended quiz completion state"
+
 Invoke-Api -Method Delete -Path "/progress/lessons/$firstLessonSlug/complete" -Headers $headers | Out-Null
 $progressBefore = Invoke-Api -Method Get -Path "/progress/summary" -Headers $headers
 Assert-True ($progressBefore.data.learning.completed_lessons_count -eq 0) "Initial completed lesson count mismatch"
@@ -198,6 +205,7 @@ $myPathAfterLesson = Invoke-Api -Method Get -Path "/my-path" -Headers $headers
 $myPathAfterLessonKeys = @($myPathAfterLesson.data.next_actions | ForEach-Object { $_.key })
 Assert-True ($myPathAfterLessonKeys -contains "continue_learning") "My-path did not switch to continue learning"
 Assert-True ($myPathAfterLessonKeys -contains "view_bottle") "My-path did not include bottle after progress"
+Assert-True (($myPathAfterLessonKeys -contains "try_quiz") -eq $false) "My-path suggested quiz before all lessons were completed"
 Assert-True ($myPathAfterLesson.data.next_actions.Count -le 4) "My-path returned more than 4 actions"
 Write-Ok "my-path after lesson"
 
@@ -280,6 +288,9 @@ $myPathSection = $homeWithActivity.data.sections | Where-Object { $_.key -eq "my
 Assert-True ($null -ne $myPathSection) "Home my-path section is missing"
 Assert-True ($myPathSection.href -eq "/my-path") "Home my-path href mismatch"
 Assert-True ($myPathSection.items.Count -le 2) "Home my-path preview returned too many actions"
+$learningJourneySection = $homeWithActivity.data.sections | Where-Object { $_.key -eq "learning_journey" } | Select-Object -First 1
+Assert-True ($null -ne $learningJourneySection) "Home learning journey section is missing"
+Assert-True ($learningJourneySection.stats.available_quizzes_count -eq 1) "Home learning journey quiz stats mismatch"
 Write-Ok "home activity preview"
 
 $bottleAfterDiaryCreate = Invoke-Api -Method Get -Path "/bottle/progress" -Headers $headers

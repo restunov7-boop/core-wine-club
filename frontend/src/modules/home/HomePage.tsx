@@ -7,7 +7,17 @@ import { LoadingState } from "../../shared/ui/LoadingState";
 import { getHome } from "./api";
 import type { HomeResponse } from "./types";
 
-const homeSectionOrder = ["my_path", "bottle", "learning", "quizzes", "diary", "taste_profile", "activity", "discoveries"];
+const homeSectionOrder = [
+  "my_path",
+  "learning_journey",
+  "bottle",
+  "learning",
+  "quizzes",
+  "diary",
+  "taste_profile",
+  "activity",
+  "discoveries",
+];
 
 export function HomePage() {
   const navigate = useNavigate();
@@ -87,21 +97,25 @@ function HomeSectionCard({ section }: { section: HomeResponse["sections"][number
       ? "/discoveries"
       : section.key === "learning"
         ? "/learn"
-        : section.key === "quizzes"
-          ? "/quizzes"
-          : section.key === "activity"
-            ? "/progress"
-            : section.key === "my_path"
-              ? "/my-path"
-              : section.key === "diary"
-                ? "/diary"
-                : section.key === "taste_profile"
-                  ? "/taste-profile"
-                  : null);
+        : section.key === "learning_journey"
+          ? "/my-path"
+          : section.key === "quizzes"
+            ? "/quizzes"
+            : section.key === "activity"
+              ? "/progress"
+              : section.key === "my_path"
+                ? "/my-path"
+                : section.key === "diary"
+                  ? "/diary"
+                  : section.key === "taste_profile"
+                    ? "/taste-profile"
+                    : null);
   const linkTo = section.key === "diary" && notesCount === 0 ? "/diary/new" : defaultLinkTo;
   const isAvailable =
     section.items.length > 0 ||
-    ["diary", "taste_profile", "learning", "quizzes", "bottle", "activity", "my_path"].includes(section.key);
+    ["diary", "taste_profile", "learning", "learning_journey", "quizzes", "bottle", "activity", "my_path"].includes(
+      section.key,
+    );
   const stats = buildStats(section.stats);
 
   const content = (
@@ -156,6 +170,9 @@ function getSectionCta(sectionKey: string, notesCount: number | null): string {
   }
   if (sectionKey === "learning") {
     return "Продолжить уроки";
+  }
+  if (sectionKey === "learning_journey") {
+    return "Открыть следующий шаг";
   }
   if (sectionKey === "quizzes") {
     return "Открыть квиз";

@@ -12,6 +12,8 @@ export type LearningPathListItem = {
   cover_image_url: string | null;
   lessons_count: number;
   completed_lessons_count: number;
+  recommended_quizzes_count: number;
+  completed_recommended_quizzes_count: number;
 };
 
 export type LearningPathLessonItem = {
@@ -37,6 +39,28 @@ export type LearningPathDetail = {
   lessons_count: number;
   completed_lessons_count: number;
   lessons: LearningPathLessonItem[];
+  recommended_quizzes: LearningRecommendedQuiz[];
+};
+
+export type LearningRecommendedQuiz = {
+  slug: string;
+  title: string;
+  subtitle: string | null;
+  summary: string;
+  difficulty: LearningDifficulty;
+  estimated_minutes: number | null;
+  questions_count: number;
+  is_completed: boolean;
+  completed_at: string | null;
+  href: string;
+};
+
+export type LearningNextStep = {
+  type: "quiz" | "my_path";
+  title: string;
+  description: string;
+  href: string;
+  quiz_slug: string | null;
 };
 
 export type LessonDetail = {
@@ -52,6 +76,7 @@ export type LessonDetail = {
   published_at: string | null;
   is_completed: boolean;
   completed_at: string | null;
+  next_step: LearningNextStep | null;
 };
 
 export type LearningPathsResponse = {

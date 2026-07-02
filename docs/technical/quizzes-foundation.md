@@ -2,6 +2,7 @@
 
 Sprint 16 adds project-scoped quiz content and a local answer-check flow.
 Sprint 17 adds completion state through the existing `ProgressEvent` ledger.
+Sprint 18 links the existing `wine-basics` learning path to `wine-basics-check` as a static recommended quiz.
 
 ## Tables
 
@@ -44,6 +45,14 @@ source_slug: quizzes.slug
 The completion rule is `correct_count == total_questions`. Partial checks return results and explanations but do not create progress.
 
 Quiz completion affects Bottle, My Path, Progress Activity, and Home through existing read models. It does not affect lesson completion, diary stats, or taste profile.
+
+Sprint 18 uses completion state for learning integration only as a read model:
+
+- learning path detail can show `wine-basics-check` as a recommended quiz;
+- lesson detail can point to the quiz after all mapped lessons are completed;
+- My Path suggests the quiz only after all available lessons are completed.
+
+This does not create attempts, answer history, locks, points, badges, streaks, or achievements.
 
 ## Seed Content
 

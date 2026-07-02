@@ -121,6 +121,13 @@ Sprint 9 adds lesson completion controls:
 
 Learning pages do not show bottle fill, points, quizzes, achievements, or gamified progress.
 
+Sprint 18 links the existing `wine-basics` path to the existing `wine-basics-check` quiz:
+
+- `/learn` shows recommended quiz counts.
+- `/learn/:pathSlug` shows the recommended quiz card.
+- `/learn/lessons/:lessonSlug` shows a next-step CTA after all path lessons are completed.
+- The mapping is static and does not add locks, prerequisites, points, achievements, or new product routes.
+
 ## Quizzes
 
 Sprint 16 adds protected quiz routes:
@@ -131,6 +138,7 @@ Sprint 16 adds protected quiz routes:
 - Quiz detail does not show correct answers before submit.
 - Perfect quiz checks mark the quiz completed through the backend progress ledger.
 - Quiz checks do not persist attempts, full answer history, points, achievements, badges, or streaks.
+- Sprint 18 adds context that quizzes reinforce lessons and links `wine-basics-check` back to `/learn/wine-basics`.
 
 The bottom navigation is unchanged; quizzes are reachable from Home and direct route.
 
@@ -235,4 +243,4 @@ The route smoke expects the frontend dev server to be running on `http://127.0.0
 
 ## Sprint Boundary
 
-Sprint 17 adds quiz completion state and progress read-model integration only. It does not add quiz attempt persistence, full answer history, AI, recommendations, public profile, sharing, social features, achievements, points, streaks, badges, weekly bottle, premium/payments, notifications, admin CRUD, CMS/editor, uploads, OCR/barcode, or external wine databases.
+Sprint 18 adds learning-to-quiz integration polish only. It does not add quiz attempt persistence, full answer history, AI, recommendations, public profile, sharing, social features, achievements, points, streaks, badges, weekly bottle, premium/payments, notifications, admin CRUD, CMS/editor, uploads, OCR/barcode, external wine databases, locks, prerequisites, or new product routes.

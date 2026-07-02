@@ -8,6 +8,14 @@ def _action_keys(payload: dict) -> list[str]:
     return [item["key"] for item in payload["next_actions"]]
 
 
+def _complete_all_lessons(client, headers: dict[str, str]) -> None:
+    path_response = client.get("/api/v1/learning/paths/wine-basics", headers=headers)
+    assert path_response.status_code == 200, path_response.text
+    for lesson in path_response.json()["data"]["lessons"]:
+        response = client.post(f"/api/v1/progress/lessons/{lesson['slug']}/complete", headers=headers)
+        assert response.status_code == 200, response.text
+
+
 def test_my_path_requires_auth(client):
     response = client.get("/api/v1/my-path")
 
@@ -50,9 +58,25 @@ def test_my_path_changes_to_continue_learning_after_lesson(client):
     keys = _action_keys(data)
     assert "continue_learning" in keys
     assert "start_learning" not in keys
-    assert "try_quiz" in keys
+    assert "try_quiz" not in keys
     assert "view_bottle" in keys
-    assert "view_activity" not in keys
+    assert "view_activity" in keys
+
+
+def test_my_path_suggests_quiz_after_all_lessons_are_completed(client):
+    headers = login(client)
+    _complete_all_lessons(client, headers)
+
+    response = client.get("/api/v1/my-path", headers=headers)
+
+    assert response.status_code == 200, response.text
+    data = response.json()["data"]
+    assert data["summary"]["completed_lessons_count"] == 5
+    assert data["summary"]["available_lessons_count"] == 5
+    assert data["summary"]["completed_quizzes_count"] == 0
+    keys = _action_keys(data)
+    assert "continue_learning" not in keys
+    assert "try_quiz" in keys
 
 
 def test_my_path_diary_actions_change_after_notes(client):
@@ -78,7 +102,7 @@ def test_my_path_diary_actions_change_after_notes(client):
 
 def test_my_path_returns_max_four_actions(client):
     headers = login(client)
-    client.post(f"/api/v1/progress/lessons/{LESSON_SLUG}/complete", headers=headers)
+    _complete_all_lessons(client, headers)
     create_note(client, headers, wine_name="One")
     create_note(client, headers, wine_name="Two")
     create_note(client, headers, wine_name="Three")
@@ -89,10 +113,10 @@ def test_my_path_returns_max_four_actions(client):
     data = response.json()["data"]
     assert len(data["next_actions"]) == 4
     assert _action_keys(data) == [
-        "continue_learning",
         "try_quiz",
         "view_bottle",
         "view_taste_profile",
+        "view_activity",
     ]
 
 

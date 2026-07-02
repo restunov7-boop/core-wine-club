@@ -437,9 +437,11 @@ textarea:focus-visible {
 .discovery-detail,
 .learning-header,
 .learning-card,
+.learning-recommended,
 .learning-detail,
 .lesson-card,
 .lesson-detail,
+.lesson-next-step,
 .quizzes-header,
 .quiz-card,
 .quiz-detail-header,
@@ -469,6 +471,8 @@ textarea:focus-visible {
 
 .discoveries-header,
 .learning-header,
+.learning-recommended,
+.lesson-next-step,
 .quizzes-header,
 .quiz-detail-header,
 .quiz-completed-notice,
@@ -488,6 +492,8 @@ textarea:focus-visible {
 .discovery-meta span,
 .learning-header > span,
 .learning-meta span,
+.learning-recommended__header span,
+.lesson-next-step > span,
 .quizzes-header > span,
 .quiz-meta span,
 .quiz-completed-notice > span,
@@ -537,6 +543,7 @@ textarea:focus-visible {
 .learning-detail p,
 .lesson-card p,
 .lesson-detail p,
+.lesson-next-step p,
 .quizzes-header p,
 .quiz-card p,
 .quiz-detail-header p,
@@ -806,6 +813,38 @@ textarea:focus-visible {
 .lesson-empty h2,
 .lesson-empty p {
   margin: 0;
+}
+
+.learning-recommended,
+.lesson-next-step {
+  display: grid;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.learning-recommended__header h2,
+.lesson-next-step h2 {
+  margin: 8px 0 0;
+  font-size: 22px;
+  line-height: 1.18;
+}
+
+.learning-recommended__header p,
+.lesson-next-step p,
+.quiz-card__hint {
+  margin: 8px 0 0;
+}
+
+.quiz-related-path {
+  width: fit-content;
+  display: inline-flex;
+  margin-top: 14px;
+  padding: 8px 10px;
+  border: 1px solid rgba(214, 168, 79, 0.28);
+  border-radius: var(--radius-card);
+  color: var(--color-accent);
+  font-size: 13px;
+  font-weight: 650;
 }
 
 .activity-list,

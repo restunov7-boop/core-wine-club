@@ -25,7 +25,17 @@ def test_home_returns_previews_and_empty_stats(client):
     assert data["onboarding_completed"] is True
 
     sections = _sections_by_key(data)
-    assert {"discoveries", "learning", "quizzes", "bottle", "activity", "my_path", "diary", "taste_profile"}.issubset(sections)
+    assert {
+        "discoveries",
+        "learning",
+        "learning_journey",
+        "quizzes",
+        "bottle",
+        "activity",
+        "my_path",
+        "diary",
+        "taste_profile",
+    }.issubset(sections)
     assert len(sections["discoveries"]["items"]) == 3
     assert sections["learning"]["items"][0]["slug"] == "wine-basics"
     assert sections["learning"]["items"][0]["lessons_count"] == 5
@@ -33,6 +43,14 @@ def test_home_returns_previews_and_empty_stats(client):
     assert sections["learning"]["items"][0]["estimated_minutes"] == 25
     assert sections["learning"]["stats"]["completed_lessons_count"] == 0
     assert sections["learning"]["stats"]["available_lessons_count"] == 5
+    assert sections["learning_journey"]["href"] == "/learn"
+    assert sections["learning_journey"]["stats"] == {
+        "completed_lessons_count": 0,
+        "available_lessons_count": 5,
+        "completed_quizzes_count": 0,
+        "available_quizzes_count": 1,
+        "notes_count": 0,
+    }
     assert sections["quizzes"]["href"] == "/quizzes"
     assert sections["quizzes"]["stats"] == {
         "completed_quizzes_count": 0,
@@ -101,4 +119,4 @@ def test_home_my_path_preview_returns_max_two_actions(client):
     my_path = _sections_by_key(response.json()["data"])["my_path"]
     assert my_path["href"] == "/my-path"
     assert len(my_path["items"]) == 2
-    assert [item["href"] for item in my_path["items"]] == ["/learn", "/quizzes"]
+    assert [item["href"] for item in my_path["items"]] == ["/learn", "/bottle"]

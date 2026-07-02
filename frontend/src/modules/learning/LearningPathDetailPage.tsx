@@ -128,6 +128,36 @@ export function LearningPathDetailPage() {
           ))}
         </div>
       )}
+
+      {path.recommended_quizzes.length > 0 && (
+        <section className="learning-recommended">
+          <div className="learning-recommended__header">
+            <span>Закрепление</span>
+            <h2>Квиз после маршрута</h2>
+            <p>Короткая проверка помогает закрепить уроки. Это не экзамен и не оценка.</p>
+          </div>
+          <div className="quiz-list">
+            {path.recommended_quizzes.map((quiz) => (
+              <Link className="quiz-card" key={quiz.slug} to={quiz.href}>
+                <article>
+                  <div className="quiz-meta">
+                    <span>{difficultyLabels[quiz.difficulty] ?? quiz.difficulty}</span>
+                    {quiz.estimated_minutes && <span>{quiz.estimated_minutes} мин</span>}
+                    <span>{quiz.questions_count} вопросов</span>
+                    <span className={quiz.is_completed ? "quiz-status quiz-status--complete" : "quiz-status"}>
+                      {quiz.is_completed ? "Завершён" : "Можно пройти после уроков"}
+                    </span>
+                  </div>
+                  <h2>{quiz.title}</h2>
+                  {quiz.subtitle && <p className="quiz-card__subtitle">{quiz.subtitle}</p>}
+                  <p>{quiz.summary}</p>
+                  <strong className="quiz-card__cta">{quiz.is_completed ? "Открыть снова" : "Перейти к квизу"}</strong>
+                </article>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </article>
   );
 }

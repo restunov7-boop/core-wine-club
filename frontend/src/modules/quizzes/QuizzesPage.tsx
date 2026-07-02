@@ -72,6 +72,7 @@ export function QuizzesPage() {
         <span>Без оценок и давления</span>
         <h1>Квизы</h1>
         <p>Короткие проверки без оценок и давления.</p>
+        <p>Квизы помогают закрепить уроки. Это не экзамен и не оценка.</p>
       </header>
 
       {items.length === 0 ? (
@@ -100,6 +101,7 @@ export function QuizzesPage() {
                 <h2>{item.title}</h2>
                 {item.subtitle && <p className="quiz-card__subtitle">{item.subtitle}</p>}
                 <p>{item.summary}</p>
+                {!item.is_completed && <p className="quiz-card__hint">Можно пройти после уроков.</p>}
                 <strong className="quiz-card__cta">Открыть квиз</strong>
               </article>
             </Link>
