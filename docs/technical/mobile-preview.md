@@ -4,6 +4,8 @@
 
 Mobile Preview is a Sprint 6 development helper for checking the local app from a real phone.
 
+For Sprint 20, treat this as an optional Telegram Mini App readiness helper. It can provide temporary HTTPS URLs for a controlled test, but it is not production hosting and does not configure a Telegram bot.
+
 It starts the local backend, local frontend, and two Cloudflare Quick Tunnels:
 
 - one public URL for the backend;
@@ -114,4 +116,6 @@ Normal and production behavior is unchanged.
 - Cloudflare Quick Tunnel URLs are temporary.
 - This is dev-only tooling.
 - Do not use Mobile Preview for production hosting.
+- Do not commit Cloudflare tunnel URLs.
 - Do not put real production Telegram credentials or user data into this preview flow.
+- Real Telegram Mini App testing still requires bot configuration outside this script.

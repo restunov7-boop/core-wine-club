@@ -38,7 +38,16 @@ export function AuthGuard({ children }: PropsWithChildren) {
   }
 
   if (!isAuthenticated) {
-    return <PlaceholderPage title="Loading" description="Signing in with local dev Telegram mock..." />;
+    return (
+      <PlaceholderPage
+        title="Loading"
+        description={
+          devTelegramMockEnabled
+            ? "Signing in with local dev Telegram mock..."
+            : "Signing in with Telegram Mini App initData..."
+        }
+      />
+    );
   }
 
   return <>{children}</>;
