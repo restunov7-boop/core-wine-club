@@ -73,8 +73,8 @@ export function ProgressActivityPage() {
 
       {items.length === 0 ? (
         <EmptyState
-          title="Пока здесь тихо"
-          description="Пройди первый урок или добавь заметку в дневник — и здесь появится история."
+          title="Активность появится позже"
+          description="Здесь будет приватная история того, что наполняло бутылку: уроки, квизы и заметки дневника."
           action={
             <>
               <Link className="primary-action" to="/learn">

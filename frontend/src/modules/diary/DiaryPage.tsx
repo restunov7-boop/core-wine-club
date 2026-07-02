@@ -77,7 +77,7 @@ export function DiaryPage() {
       <header className="diary-header">
         <span>Только для тебя</span>
         <h1>Дневник вкуса</h1>
-        <p>Твои личные заметки о винах. Только для тебя.</p>
+        <p>Личные заметки о винах, которые постепенно делают профиль вкуса точнее.</p>
         <Link className="primary-action diary-header__action" to="/diary/new">
           Добавить заметку
         </Link>
@@ -85,8 +85,8 @@ export function DiaryPage() {
 
       {total === 0 ? (
         <EmptyState
-          title="Пока здесь пусто"
-          description="Сохрани первое впечатление: название вина, пару слов о вкусе и желание купить снова."
+          title="Пока нет заметок"
+          description="Добавь первое вино в дневник — так профиль вкуса станет точнее, а бутылка получит новый вклад."
           action={
             <Link className="primary-action" to="/diary/new">
               Добавить первую заметку

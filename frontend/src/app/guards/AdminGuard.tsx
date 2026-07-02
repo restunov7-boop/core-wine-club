@@ -13,9 +13,9 @@ export function AdminGuard({ children }: PropsWithChildren) {
       <PlaceholderPage
         eyebrow="Admin"
         title="Нет доступа"
-        description={`Текущая роль "${
+        description={`Для текущей роли "${
           projectUser?.role ?? "unknown"
-        }" не включает доступ к admin-разделу.`}
+        }" admin-раздел закрыт. Для демо это ожидаемое состояние обычного участника клуба.`}
         action={
           <Link className="primary-action" to="/home">
             На главную

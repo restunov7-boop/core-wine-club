@@ -107,7 +107,10 @@ export function BottlePage() {
             {progress.next_action.label}
           </Link>
           {progress.completed_units === 0 && (
-            <p className="bottle-panel__hint">Начни с короткого урока или первой заметки — бутылка начнёт наполняться.</p>
+            <p className="bottle-panel__hint">
+              Сейчас бутылка пустая — это нормальное начало. Заверши первый урок или добавь заметку, и здесь появится
+              первый видимый прогресс.
+            </p>
           )}
         </div>
       </article>
@@ -124,7 +127,9 @@ export function BottlePage() {
         </div>
 
         {progress.activity_preview.length === 0 ? (
-          <p className="activity-preview-panel__empty">Пройди первый урок или добавь заметку в дневник.</p>
+          <p className="activity-preview-panel__empty">
+            Пока нет действий. Уроки, квизы и заметки появятся здесь, когда начнут наполнять бутылку.
+          </p>
         ) : (
           <div className="activity-preview-list">
             {progress.activity_preview.map((item) => {
