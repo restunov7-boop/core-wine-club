@@ -267,6 +267,14 @@ textarea:focus-visible {
   padding: 24px;
 }
 
+.home-page__intro-header,
+.taste-profile-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
 .home-page__intro span,
 .home-hero span,
 .home-section-card span,
@@ -318,6 +326,10 @@ textarea:focus-visible {
   align-content: start;
   gap: 12px;
   padding: 18px;
+}
+
+.home-section-card--compact {
+  min-height: 0;
 }
 
 .home-section-card h3,
@@ -1103,6 +1115,8 @@ textarea:focus-visible {
 
 .bottle-visual {
   --bottle-fill: 0%;
+  --bottle-body-fill: 0%;
+  --bottle-neck-fill: 0%;
   width: min(100%, 210px);
   min-height: 360px;
   display: grid;
@@ -1135,7 +1149,7 @@ textarea:focus-visible {
   right: 0;
   bottom: 0;
   left: 0;
-  height: max(0%, calc((var(--bottle-fill) - 72%) * 3.6));
+  height: var(--bottle-neck-fill);
   background: linear-gradient(180deg, rgba(161, 42, 62, 0.92), rgba(88, 18, 35, 0.98));
   transition: height 220ms ease;
 }
@@ -1166,7 +1180,7 @@ textarea:focus-visible {
   right: 0;
   bottom: 0;
   left: 0;
-  height: min(var(--bottle-fill), 100%);
+  height: var(--bottle-body-fill);
   background:
     linear-gradient(180deg, rgba(198, 55, 82, 0.9), rgba(95, 17, 38, 0.98)),
     var(--color-primary);
@@ -1419,6 +1433,16 @@ textarea:focus-visible {
 .taste-profile-group h3,
 .taste-insight h3 {
   margin: 0;
+}
+
+.taste-profile-card__header h2 {
+  margin-top: 6px;
+}
+
+.taste-profile-card__header span {
+  color: var(--color-accent);
+  font-size: 12px;
+  text-transform: uppercase;
 }
 
 .taste-summary-card__action {

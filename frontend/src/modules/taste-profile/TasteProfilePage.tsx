@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import { getBottleProgress } from "../bottle/api";
+import type { BottleProgress } from "../bottle/types";
 import { getOnboardingStatus } from "../onboarding/api";
+import { getProgressSummary } from "../progress/api";
+import type { ProgressSummary } from "../progress/types";
 import { ErrorState } from "../../shared/ui/ErrorState";
 import { LoadingState } from "../../shared/ui/LoadingState";
 
@@ -53,6 +57,8 @@ const sweetnessLabels: Record<string, string> = {
 export function TasteProfilePage() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<TasteProfileResponse | null>(null);
+  const [progress, setProgress] = useState<ProgressSummary | null>(null);
+  const [bottle, setBottle] = useState<BottleProgress | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -71,9 +77,15 @@ export function TasteProfilePage() {
           return;
         }
 
-        const response = await getTasteProfile();
+        const [response, progressResponse, bottleResponse] = await Promise.all([
+          getTasteProfile(),
+          getProgressSummary(),
+          getBottleProgress(),
+        ]);
         if (mounted) {
           setProfile(response);
+          setProgress(progressResponse);
+          setBottle(bottleResponse);
         }
       } catch (caught) {
         if (mounted) {
@@ -142,6 +154,35 @@ export function TasteProfilePage() {
         <StatCard label="Средняя оценка" value={profile.stats.average_rating ? profile.stats.average_rating.toFixed(1) : "—"} />
         <StatCard label="Купил бы снова" value={formatRatio(profile.stats.would_buy_again_ratio)} />
       </section>
+
+      {progress && bottle && (
+        <section className="taste-profile-card">
+          <div className="taste-profile-card__header">
+            <div>
+              <span>Личный ритм</span>
+              <h2>Мой прогресс</h2>
+            </div>
+            <Link className="ghost-action" to="/progress">
+              Архив действий
+            </Link>
+          </div>
+          <div className="taste-stat-grid">
+            <StatCard
+              label="Уроки"
+              value={`${progress.learning.completed_lessons_count} из ${progress.learning.available_lessons_count}`}
+            />
+            <StatCard
+              label="Квизы"
+              value={`${progress.quizzes.completed_quizzes_count} из ${progress.quizzes.available_quizzes_count}`}
+            />
+            <StatCard label="Дневник" value={String(progress.diary.notes_count)} />
+            <StatCard label="Бутылка" value={`${bottle.fill_percent}%`} />
+          </div>
+          <Link className="primary-action taste-summary-card__action" to="/bottle">
+            Посмотреть бутылку
+          </Link>
+        </section>
+      )}
 
       <ProfileListCard title="Любимые стили" groups={[
         { label: "Цвет", items: profile.stats.favorite_wine_colors, labels: wineColorLabels },

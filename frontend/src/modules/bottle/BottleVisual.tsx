@@ -5,8 +5,15 @@ type BottleVisualProps = {
 };
 
 export function BottleVisual({ fillPercent }: BottleVisualProps) {
-  const clampedPercent = Math.max(0, Math.min(100, fillPercent));
-  const style = { "--bottle-fill": `${clampedPercent}%` } as CSSProperties;
+  const normalizedPercent = Number.isFinite(fillPercent) ? fillPercent : 0;
+  const clampedPercent = Math.max(0, Math.min(100, normalizedPercent));
+  const bodyFillPercent = Math.min(100, (clampedPercent / 72) * 100);
+  const neckFillPercent = clampedPercent <= 72 ? 0 : Math.min(100, ((clampedPercent - 72) / 28) * 100);
+  const style = {
+    "--bottle-fill": `${clampedPercent}%`,
+    "--bottle-body-fill": `${bodyFillPercent}%`,
+    "--bottle-neck-fill": `${neckFillPercent}%`,
+  } as CSSProperties;
 
   return (
     <div className="bottle-visual" style={style} aria-hidden="true">

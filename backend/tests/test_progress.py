@@ -287,7 +287,7 @@ def test_progress_activity_maps_quiz_completion_event(client):
     assert items[0]["event_type"] == QUIZ_COMPLETED_EVENT
     assert items[0]["source_type"] == QUIZ_SOURCE_TYPE
     assert items[0]["source_slug"] == QUIZ_SLUG
-    assert items[0]["title"] == "РљРІРёР· Р·Р°РІРµСЂС€С‘РЅ"
+    assert items[0]["title"] == "Квиз завершён"
     assert items[0]["description"] == quiz_detail["title"]
     assert items[0]["href"] == f"/quizzes/{QUIZ_SLUG}"
 

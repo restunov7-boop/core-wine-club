@@ -21,3 +21,20 @@ export type ProgressActivityPreviewItem = {
 export type ProgressActivityResponse = {
   items: ProgressActivityItem[];
 };
+
+export type ProgressSummary = {
+  learning: {
+    completed_lessons_count: number;
+    available_lessons_count: number;
+    completed_lesson_slugs: string[];
+  };
+  diary: {
+    notes_count: number;
+    created_note_events_count: number;
+  };
+  quizzes: {
+    completed_quizzes_count: number;
+    available_quizzes_count: number;
+    completed_quiz_slugs: string[];
+  };
+};

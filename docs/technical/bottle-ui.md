@@ -95,6 +95,16 @@ Sprint 12 also adds a separate `activity` section on `/home` with recent progres
 
 `/bottle` renders a CSS-only bottle visual, learning counts, diary counts, the backend-provided CTA, and a small recent activity preview. It is intentionally a visual layer only.
 
+Sprint 23 fixes the visual fill mapping:
+
+- `0%` is empty;
+- `25%` fills the lower bottle body;
+- `50%` fills about half the bottle body;
+- around `77%`, the body is full and the neck begins filling;
+- `100%` fills body and neck.
+
+The frontend clamps visual percent to `0..100` and separates body fill from neck fill so the neck does not fill while the body is still partially empty.
+
 ## Non-Goals
 
-No new bottle table, points, achievements, badges, streaks, weekly bottle, history table, skins, or new progress source of truth are added. Quiz completion is read from the generic progress ledger.
+No new bottle table, wine room, bottle shelf, points, achievements, badges, streaks, weekly bottle, history table, skins, or new progress source of truth are added. Quiz completion is read from the generic progress ledger.

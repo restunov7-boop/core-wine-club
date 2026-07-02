@@ -46,7 +46,7 @@ cd C:\Users\restu\Documents\core\core-wine-club\backend
 
 1. Open `http://127.0.0.1:5173/home`.
 2. Complete onboarding.
-3. Confirm Home explains the next step and shows the main product areas.
+3. Confirm Home is lightweight: greeting, one next action, compact bottle preview, and an activity archive link.
 4. Open Learning.
 5. Open `Винная база без снобизма`.
 6. Open the first lesson and mark it completed.
@@ -61,16 +61,16 @@ cd C:\Users\restu\Documents\core\core-wine-club\backend
 
 ## Page Checks
 
-- Home: clear first step, visible sections for path, bottle, learning, diary, profile, activity, and discoveries.
+- Home: calm first screen; no recent activity block; no large duplicate cards for discoveries, lessons, quizzes, or diary.
 - Onboarding: calm beginner-friendly questions, no pressure language.
 - Discoveries: seeded articles read as short wine guidance, not placeholder content.
 - Learning: path card shows lesson progress and recommended quiz count.
 - Lesson detail: completion control is clear; after all lessons, next-step CTA points to the quiz.
 - Quizzes: copy says this is not an exam; completed quiz state is calm.
 - Diary: empty state explains why the first note matters.
-- Bottle: zero state feels intentional; progressed state explains lessons, notes, and quizzes.
-- Taste Profile: empty groups say they improve after diary notes.
-- Progress: empty state is not alarming; progressed state reads as private history.
+- Bottle: zero state feels intentional; progressed state explains lessons, notes, and quizzes; fill looks correct at 0%, mid fill, about 77%, and 100%.
+- Taste Profile: empty groups say they improve after diary notes; compact progress statistics live here, not on Home.
+- Progress: empty state is not alarming; progressed state reads as private history and uses readable Russian activity labels.
 - My Path: first action is useful; completed quiz is not pushed again as primary.
 - Admin: member role gets a clear access denied state.
 
@@ -88,7 +88,7 @@ After quiz completion:
 - Quiz detail shows completed state.
 - Learning path recommended quiz shows completed.
 - Bottle quiz contribution increases.
-- Progress activity contains the quiz event.
+- Progress activity contains the quiz event with title `Квиз завершён`.
 - My Path stops pushing the completed quiz as a primary action.
 
 After diary note creation:
@@ -107,3 +107,4 @@ After diary note creation:
 - Quizzes do not store attempts or full answer history.
 - No points, badges, streaks, leaderboards, social feed, comments, sharing, notifications, premium, payments, or AI recommendations.
 - No locked prerequisites or paywall.
+- Future wine room / bottle shelf is documented only and is not implemented in the MVP UI.

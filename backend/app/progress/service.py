@@ -429,7 +429,7 @@ def _map_activity_event(
         description = (
             quiz.title
             if quiz is not None
-            else _metadata_text(event, "quiz_title", "title") or event.source_slug or "РљРІРёР·"
+            else _metadata_text(event, "quiz_title", "title") or event.source_slug or "Квиз"
         )
         href = f"/quizzes/{event.source_slug}" if event.source_slug else None
         return ProgressActivityItem(
@@ -438,7 +438,7 @@ def _map_activity_event(
             source_type=event.source_type,
             source_id=event.source_id,
             source_slug=event.source_slug,
-            title="РљРІРёР· Р·Р°РІРµСЂС€С‘РЅ",
+            title="Квиз завершён",
             description=description,
             occurred_at=event.occurred_at,
             href=href,

@@ -29,6 +29,7 @@ The app is ready for a controlled internal test where a tester can:
 - take the mapped quiz;
 - add diary notes;
 - see Bottle, Taste Profile, Progress, and My Path react to those actions.
+- confirm Home stays lightweight while statistics live in profile/progress surfaces.
 
 This is suitable for checking product coherence, copy, demo flow, and basic technical stability.
 
@@ -53,6 +54,7 @@ The app is not ready for public launch because these areas are intentionally inc
 - Dev auth is used for local testing.
 - My Path is deterministic, not AI-driven.
 - Bottle progress is a calm progress read-model, not gamification.
+- Future wine room / bottle shelf is documented as a direction, not implemented.
 - There are no points, achievements, badges, streaks, leaderboards, locked prerequisites, social features, premium, payments, notifications, or paywall.
 
 ## Readiness Levels
@@ -89,8 +91,16 @@ Sprint 21 - Internal QA / Test Release:
 - bug fixing from internal tester feedback;
 - device/browser checks.
 
-Sprint 22 - Feedback Fixes:
+Sprint 22 - Real Telegram QA / HTTPS Tunnel Test:
+
+- controlled Telegram QA checklist;
+- safe helper scripts for local env checks;
+- HTTPS tunnel requirements documented;
+- no production launch.
+
+Sprint 23 - Manual QA Fixes:
 
 - address findings from internal QA;
-- polish copy and interaction rough edges;
-- prepare a cleaner blogger/client demo package.
+- simplify Home;
+- move statistics to profile/progress areas;
+- fix activity labels and bottle visual rough edges.
