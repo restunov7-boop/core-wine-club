@@ -213,6 +213,10 @@ Sprint 1 auth uses:
 
 - `JWT_SECRET`
 - `TELEGRAM_BOT_TOKEN`
+- `TELEGRAM_WEB_APP_URL`
+- `TELEGRAM_BOT_ENABLED`
+- `TELEGRAM_BOT_NAME`
+- `TELEGRAM_BOT_POLLING_ALLOWED`
 - `TELEGRAM_AUTH_MAX_AGE_SECONDS`
 - `DEV_AUTH_ENABLED`
 - `DEV_TELEGRAM_ID`
@@ -232,6 +236,29 @@ CORS_ORIGINS=http://127.0.0.1:5173,http://localhost:5173
 ```
 
 `MOBILE_PREVIEW_ENABLED=true` is only for local phone preview. When `APP_ENV` is not `production`, `DEV_AUTH_ENABLED=true`, and `MOBILE_PREVIEW_ENABLED=true`, backend CORS also accepts `https://*.trycloudflare.com`.
+
+## Telegram Bot Dev Runner
+
+Sprint 21 adds a minimal local Telegram bot runner. It is a separate process and does not start with FastAPI.
+
+Create a bot manually in `@BotFather`, copy the token, and set local PowerShell variables:
+
+```powershell
+$env:TELEGRAM_BOT_TOKEN="..."
+$env:TELEGRAM_WEB_APP_URL="https://example-tunnel-url.trycloudflare.com"
+$env:TELEGRAM_BOT_ENABLED="true"
+$env:TELEGRAM_BOT_POLLING_ALLOWED="true"
+```
+
+Run the bot from `backend`:
+
+```powershell
+.\.venv\Scripts\python.exe -m scripts.run_telegram_bot
+```
+
+The bot supports `/start`, `/help`, and a simple fallback for unknown text. `/start` sends a welcome message with a Telegram Web App button that opens `TELEGRAM_WEB_APP_URL`.
+
+Do not commit bot tokens, real tunnel URLs, `.env`, or `.env.local`. Telegram Mini Apps require HTTPS for real mobile testing; localhost may not work inside Telegram mobile.
 
 ## Tests
 

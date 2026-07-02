@@ -39,7 +39,8 @@ Do not paste real initData into screenshots, logs, docs, or shared chat.
 
 ## Real Telegram Test Preparation
 
-- A Telegram bot must be configured outside this repository.
+- A Telegram bot must be created manually in `@BotFather`.
+- Sprint 21 provides a local polling runner that can send the Mini App button.
 - The Mini App URL must be HTTPS.
 - Frontend URL must point to the reachable frontend host or tunnel.
 - `VITE_API_BASE_URL` must point to a reachable backend host or tunnel.

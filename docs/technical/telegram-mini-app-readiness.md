@@ -133,10 +133,10 @@ This helper is for dev/mobile preview only. It is not production hosting, does n
 
 ## Known Limitations
 
-- No production bot setup.
+- Sprint 21 adds a local polling bot foundation, but no production bot setup.
 - No production deployment.
 - No paid channel verification.
 - No payments, subscriptions, premium, or paywall logic.
 - No monitoring or public launch hardening.
 - No admin CMS workflow.
-- Real Telegram testing still requires a configured bot and HTTPS frontend URL outside this repository.
+- Real Telegram testing still requires a manually configured BotFather bot and HTTPS frontend URL outside committed config.
