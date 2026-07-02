@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from pydantic import Field
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -21,7 +21,10 @@ class Settings(BaseSettings):
     dev_telegram_first_name: str = Field(default="CORE", alias="DEV_TELEGRAM_FIRST_NAME")
     mobile_preview_enabled: bool = Field(default=False, alias="MOBILE_PREVIEW_ENABLED")
     access_token_expire_minutes: int = Field(default=10080, alias="ACCESS_TOKEN_EXPIRE_MINUTES")
-    cors_origins_raw: str = Field(default="http://localhost:5173", alias="CORS_ORIGINS")
+    cors_origins_raw: str = Field(
+        default="http://localhost:5173",
+        validation_alias=AliasChoices("CORS_ORIGINS", "BACKEND_CORS_ORIGINS", "ALLOWED_ORIGINS"),
+    )
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

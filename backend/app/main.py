@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.health import router as health_router
 from app.auth.router import router as auth_router
+from app.bot.router import router as bot_router
 from app.bottle.router import router as bottle_router
 from app.config import settings
 from app.diary.router import router as diary_router
@@ -33,6 +34,7 @@ def create_app() -> FastAPI:
 
     app.include_router(health_router, prefix=settings.api_v1_prefix)
     app.include_router(auth_router, prefix=settings.api_v1_prefix)
+    app.include_router(bot_router, prefix=settings.api_v1_prefix)
     app.include_router(onboarding_router, prefix=settings.api_v1_prefix)
     app.include_router(discoveries_router, prefix=settings.api_v1_prefix)
     app.include_router(learning_router, prefix=settings.api_v1_prefix)

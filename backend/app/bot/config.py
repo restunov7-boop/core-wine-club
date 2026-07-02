@@ -22,7 +22,7 @@ class BotConfig:
     polling_allowed: bool = True
 
     @classmethod
-    def from_env(cls) -> "BotConfig":
+    def from_env(cls, *, validate: bool = True, require_polling: bool = True) -> "BotConfig":
         token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
         web_app_url = os.getenv("TELEGRAM_WEB_APP_URL", "").strip()
         enabled = _read_bool(os.getenv("TELEGRAM_BOT_ENABLED"), False)
@@ -36,10 +36,11 @@ class BotConfig:
             bot_name=bot_name,
             polling_allowed=polling_allowed,
         )
-        config.validate()
+        if validate:
+            config.validate(require_polling=require_polling)
         return config
 
-    def validate(self) -> None:
+    def validate(self, *, require_polling: bool = True) -> None:
         if not self.token or self.token == "change_me":
             raise BotConfigError("TELEGRAM_BOT_TOKEN is required to start the Telegram bot.")
         if not self.web_app_url:
@@ -52,5 +53,5 @@ class BotConfig:
                 "Telegram Web App button requires HTTPS; localhost/http is not accepted by Telegram."
             )
 
-        if not self.polling_allowed:
+        if require_polling and not self.polling_allowed:
             raise BotConfigError("TELEGRAM_BOT_POLLING_ALLOWED must be true for the local polling runner.")
