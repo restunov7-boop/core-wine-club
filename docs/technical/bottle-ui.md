@@ -3,6 +3,7 @@
 Sprint 10 adds a Wine Club bottle visualization powered by the existing progress ledger.
 Sprint 11 extends the same visualization with a diary contribution from existing private tasting notes.
 Sprint 12 adds a small activity preview so the user can see recent actions that contributed to progress.
+Sprint 17 includes published quiz completion as another unit source.
 
 ## Source Of Truth
 
@@ -16,9 +17,12 @@ source_type: lesson
 
 event_type: diary.note.created
 source_type: diary_note
+
+event_type: quiz.completed
+source_type: quiz
 ```
 
-Bottle progress does not create, update, or delete progress events. It reads the current user's learning summary and current private diary note count. Diary note creation writes a ledger event in the diary service.
+Bottle progress does not create, update, or delete progress events. It reads the current user's learning summary, current private diary note count, and quiz completion summary.
 
 ## Endpoint
 
@@ -32,22 +36,22 @@ Response includes:
 - `fill_percent`;
 - `completed_units`;
 - `total_units`;
-- `source = learning_and_diary`;
-- nested learning and diary breakdown;
+- `source = learning_diary_and_quizzes`;
+- nested learning, diary, and quizzes breakdown;
 - next action;
 - `activity_preview` with up to 3 recent progress activity items.
 
 ## Calculation
 
-`total_units` = published lessons in the current project + diary target notes count.
+`total_units` = published lessons in the current project + diary target notes count + published quizzes in the current project.
 
 Diary target notes count is `3`.
 
-`completed_units` = current user's completed published lessons + `min(current_private_notes_count, 3)`.
+`completed_units` = current user's completed published lessons + `min(current_private_notes_count, 3)` + current user's completed published quizzes.
 
 `fill_percent` is `0` when `total_units` is `0`, otherwise an integer percentage capped at `100`.
 
-Unpublished lessons are ignored.
+Unpublished lessons and unpublished quizzes are ignored.
 
 Deleting a diary note reduces the current diary contribution because the bottle reads existing `tasting_notes`. The historical `diary.note.created` ledger event remains append-style and is not deleted for bottle recalculation.
 
@@ -63,6 +67,10 @@ Deleting a diary note reduces the current diary contribution because the bottle 
     "notes_count": 1,
     "target_notes_count": 3,
     "contributed_units": 1
+  },
+  "quizzes": {
+    "completed_quizzes_count": 1,
+    "available_quizzes_count": 1
   }
 }
 ```
@@ -89,4 +97,4 @@ Sprint 12 also adds a separate `activity` section on `/home` with recent progres
 
 ## Non-Goals
 
-No new bottle table, points, achievements, badges, streaks, weekly bottle, history table, skins, quizzes, or new progress source of truth are added in Sprint 10, Sprint 11, or Sprint 12.
+No new bottle table, points, achievements, badges, streaks, weekly bottle, history table, skins, or new progress source of truth are added. Quiz completion is read from the generic progress ledger.

@@ -11,9 +11,15 @@ export type BottleDiaryBreakdown = {
   contributed_units: number;
 };
 
+export type BottleQuizBreakdown = {
+  completed_quizzes_count: number;
+  available_quizzes_count: number;
+};
+
 export type BottleBreakdown = {
   learning: BottleLearningBreakdown;
   diary: BottleDiaryBreakdown;
+  quizzes: BottleQuizBreakdown;
 };
 
 export type BottleNextAction = {
@@ -27,7 +33,7 @@ export type BottleProgress = {
   fill_percent: number;
   completed_units: number;
   total_units: number;
-  source: "learning_and_diary";
+  source: "learning_diary_and_quizzes";
   breakdown: BottleBreakdown;
   next_action: BottleNextAction;
   activity_preview: ProgressActivityPreviewItem[];

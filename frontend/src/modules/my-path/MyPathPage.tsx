@@ -79,6 +79,10 @@ export function MyPathPage() {
           label="Дневник"
           value={`${myPath.summary.diary_notes_count} из ${myPath.summary.diary_target_notes_count}`}
         />
+        <SummaryCard
+          label="Квизы"
+          value={`${myPath.summary.completed_quizzes_count} из ${myPath.summary.available_quizzes_count}`}
+        />
         <SummaryCard label="Бутылка" value={`${myPath.summary.bottle_fill_percent}%`} />
         <SummaryCard label="Активность" value={String(myPath.summary.recent_activity_count)} />
       </div>

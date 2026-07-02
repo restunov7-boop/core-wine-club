@@ -2,7 +2,7 @@
 
 Windows-first local development workspace for the CORE / Wine Club MVP.
 
-Current implemented foundation includes auth, onboarding, home, discoveries, learning paths and lessons, quizzes foundation, lesson completion events, Bottle UI foundation, private diary, private taste profile, deterministic My Path, and Sprint 14 UX readiness. Sprint 16 adds simple quizzes as a learning-support layer; it does not add quiz attempts, progress events, bottle integration, AI recommendations, achievements, or gamification.
+Current implemented foundation includes auth, onboarding, home, discoveries, learning paths and lessons, quizzes foundation, quiz completion events, lesson completion events, Bottle UI foundation, private diary, private taste profile, deterministic My Path, and Sprint 14 UX readiness. Sprint 17 connects perfect quiz completion to the existing progress ledger; it does not add quiz attempts, answer history, AI recommendations, achievements, points, streaks, or gamification.
 
 ## Required Tools
 
@@ -210,6 +210,8 @@ Sprint 14 adds UX polish, route safety, clearer states, Home hub ordering, and m
 
 Sprint 15 Lite adds frontend route manifest and route smoke only. It does not add product features.
 
-Sprint 16 adds project-scoped quiz content and local answer checking only. It does not add quiz attempts, quiz completion events, progress ledger events for quizzes, bottle fill from quizzes, achievements, points, badges, streaks, or gamification.
+Sprint 16 adds project-scoped quiz content and local answer checking only.
+
+Sprint 17 adds idempotent `quiz.completed` events for perfect quiz submissions and includes quiz completion in progress summary, bottle progress, activity, My Path, and Home read models. It does not add quiz attempts, full answer history, achievements, points, badges, streaks, leaderboards, or gamification.
 
 Club/feed/comments, achievements, notifications, premium features beyond `ProjectUser` access-state fields, admin CRUD, AI, recommendations, uploads, external wine databases, and deployment are intentionally not implemented.

@@ -24,6 +24,8 @@ def test_fresh_user_receives_start_learning_and_first_diary_actions(client):
     assert data["summary"] == {
         "completed_lessons_count": 0,
         "available_lessons_count": 5,
+        "completed_quizzes_count": 0,
+        "available_quizzes_count": 1,
         "diary_notes_count": 0,
         "diary_target_notes_count": 3,
         "bottle_fill_percent": 0,
@@ -42,12 +44,15 @@ def test_my_path_changes_to_continue_learning_after_lesson(client):
     assert response.status_code == 200, response.text
     data = response.json()["data"]
     assert data["summary"]["completed_lessons_count"] == 1
-    assert data["summary"]["bottle_fill_percent"] == 12
+    assert data["summary"]["completed_quizzes_count"] == 0
+    assert data["summary"]["available_quizzes_count"] == 1
+    assert data["summary"]["bottle_fill_percent"] == 11
     keys = _action_keys(data)
     assert "continue_learning" in keys
     assert "start_learning" not in keys
+    assert "try_quiz" in keys
     assert "view_bottle" in keys
-    assert "view_activity" in keys
+    assert "view_activity" not in keys
 
 
 def test_my_path_diary_actions_change_after_notes(client):
@@ -85,9 +90,9 @@ def test_my_path_returns_max_four_actions(client):
     assert len(data["next_actions"]) == 4
     assert _action_keys(data) == [
         "continue_learning",
+        "try_quiz",
         "view_bottle",
         "view_taste_profile",
-        "view_activity",
     ]
 
 
@@ -103,6 +108,8 @@ def test_second_user_does_not_see_first_users_my_path_state(client):
     assert response.status_code == 200, response.text
     data = response.json()["data"]
     assert data["summary"]["completed_lessons_count"] == 0
+    assert data["summary"]["completed_quizzes_count"] == 0
+    assert data["summary"]["available_quizzes_count"] == 1
     assert data["summary"]["diary_notes_count"] == 0
     assert data["summary"]["bottle_fill_percent"] == 0
     assert data["summary"]["recent_activity_count"] == 0

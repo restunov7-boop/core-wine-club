@@ -108,6 +108,17 @@ export function QuizDetailPage() {
         })),
       );
       setResult(response);
+      if (response.is_completed) {
+        setQuiz((current) =>
+          current
+            ? {
+                ...current,
+                is_completed: true,
+                completed_at: response.completed_at,
+              }
+            : current,
+        );
+      }
     } catch (caught) {
       setActionError(caught instanceof Error ? caught.message : "Не удалось проверить ответы");
     } finally {
@@ -138,13 +149,25 @@ export function QuizDetailPage() {
         {quiz.description && <p>{quiz.description}</p>}
       </header>
 
+      {quiz.is_completed && (
+        <section className="quiz-completed-notice" aria-live="polite">
+          <span>Завершён</span>
+          <h2>Квиз уже завершён</h2>
+          <p>Можно пройти вопросы ещё раз для себя. Повторная идеальная проверка не создаст дубль в прогрессе.</p>
+        </section>
+      )}
+
       {result && (
         <section className="quiz-result-card" aria-live="polite">
           <span>Результат</span>
           <h2>
-            Правильно {result.correct_count} из {result.total_questions}
+            {result.is_completed ? "Квиз завершён" : `Правильно ${result.correct_count} из ${result.total_questions}`}
           </h2>
-          <p>Это локальная проверка: результат не сохраняется и не влияет на прогресс или бутылку.</p>
+          <p>
+            {result.is_completed
+              ? "Идеальная проверка сохранена в прогрессе. Без баллов, бейджей и оценок."
+              : "Это локальная попытка: результат не сохраняется и не влияет на прогресс или бутылку."}
+          </p>
           <button className="ghost-action" type="button" onClick={retry}>
             Попробовать ещё раз
           </button>

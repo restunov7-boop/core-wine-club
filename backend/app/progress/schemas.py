@@ -27,9 +27,16 @@ class DiaryProgressSummary(BaseModel):
     created_note_events_count: int
 
 
+class QuizProgressSummary(BaseModel):
+    completed_quizzes_count: int
+    available_quizzes_count: int
+    completed_quiz_slugs: list[str]
+
+
 class ProgressSummary(BaseModel):
     learning: LearningProgressSummary
     diary: DiaryProgressSummary
+    quizzes: QuizProgressSummary
 
 
 class ProgressActivityItem(BaseModel):

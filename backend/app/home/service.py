@@ -7,7 +7,7 @@ from app.discoveries.service import list_discovery_previews
 from app.home.schemas import HomeHero, HomeProject, HomeResponse, HomeSection, HomeSectionItem, HomeUser
 from app.learning.service import list_learning_path_previews
 from app.my_path.service import build_my_path
-from app.progress.service import build_learning_progress_summary
+from app.progress.service import build_learning_progress_summary, build_quiz_progress_summary
 from app.projects.models import ProjectUser
 from app.taste_profile.service import build_taste_profile_preview
 from app.users.models import User
@@ -20,6 +20,7 @@ def build_home_response(db: Session, user: User, project_user: ProjectUser) -> H
     ]
     learning_items = [item.model_dump(mode="json") for item in list_learning_path_previews(db, project_user)]
     learning_progress = build_learning_progress_summary(db, project_user)
+    quiz_progress = build_quiz_progress_summary(db, project_user)
     bottle_progress = build_bottle_progress(db, project_user)
     my_path = build_my_path(db, project_user)
     activity_items = [
@@ -77,6 +78,10 @@ def build_home_response(db: Session, user: User, project_user: ProjectUser) -> H
                 title="Квизы",
                 description="Короткие проверки без оценок и давления.",
                 href="/quizzes",
+                stats={
+                    "completed_quizzes_count": quiz_progress.completed_quizzes_count,
+                    "available_quizzes_count": quiz_progress.available_quizzes_count,
+                },
             ),
             HomeSection(
                 key="bottle",

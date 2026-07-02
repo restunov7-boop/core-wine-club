@@ -14,9 +14,15 @@ class BottleDiaryBreakdown(BaseModel):
     contributed_units: int
 
 
+class BottleQuizBreakdown(BaseModel):
+    completed_quizzes_count: int
+    available_quizzes_count: int
+
+
 class BottleBreakdown(BaseModel):
     learning: BottleLearningBreakdown
     diary: BottleDiaryBreakdown
+    quizzes: BottleQuizBreakdown
 
 
 class BottleNextAction(BaseModel):

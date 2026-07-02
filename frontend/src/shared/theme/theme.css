@@ -443,6 +443,7 @@ textarea:focus-visible {
 .quizzes-header,
 .quiz-card,
 .quiz-detail-header,
+.quiz-completed-notice,
 .quiz-question,
 .quiz-result-card,
 .progress-header,
@@ -470,6 +471,7 @@ textarea:focus-visible {
 .learning-header,
 .quizzes-header,
 .quiz-detail-header,
+.quiz-completed-notice,
 .quiz-result-card,
 .progress-header,
 .my-path-header,
@@ -488,6 +490,7 @@ textarea:focus-visible {
 .learning-meta span,
 .quizzes-header > span,
 .quiz-meta span,
+.quiz-completed-notice > span,
 .quiz-result-card > span,
 .lesson-card__topline span,
 .back-link,
@@ -537,6 +540,7 @@ textarea:focus-visible {
 .quizzes-header p,
 .quiz-card p,
 .quiz-detail-header p,
+.quiz-completed-notice p,
 .quiz-question p,
 .quiz-result-card p,
 .progress-header p,
@@ -625,6 +629,24 @@ textarea:focus-visible {
   border: 1px solid rgba(214, 168, 79, 0.28);
   border-radius: var(--radius-card);
   background: rgba(214, 168, 79, 0.08);
+}
+
+.quiz-meta .quiz-status {
+  border-color: rgba(245, 239, 232, 0.16);
+  background: rgba(245, 239, 232, 0.06);
+  color: var(--color-text-muted);
+}
+
+.quiz-meta .quiz-status--complete {
+  border-color: rgba(214, 168, 79, 0.42);
+  background: rgba(214, 168, 79, 0.12);
+  color: var(--color-accent);
+}
+
+.quiz-completed-notice h2 {
+  margin: 10px 0 0;
+  font-size: 22px;
+  line-height: 1.18;
 }
 
 .discovery-detail,
@@ -1652,6 +1674,7 @@ textarea:focus-visible {
   .lesson-detail,
   .quizzes-header,
   .quiz-detail-header,
+  .quiz-completed-notice,
   .quiz-question,
   .quiz-result-card,
   .progress-header,

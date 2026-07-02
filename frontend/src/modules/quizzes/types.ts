@@ -10,6 +10,8 @@ export type QuizListItem = {
   difficulty: QuizDifficulty;
   estimated_minutes: number | null;
   questions_count: number;
+  is_completed: boolean;
+  completed_at: string | null;
 };
 
 export type QuizOption = {
@@ -34,6 +36,8 @@ export type QuizDetail = {
   description: string | null;
   difficulty: QuizDifficulty;
   estimated_minutes: number | null;
+  is_completed: boolean;
+  completed_at: string | null;
   questions: QuizQuestion[];
 };
 
@@ -58,5 +62,7 @@ export type QuizCheckResult = {
   quiz_slug: string;
   total_questions: number;
   correct_count: number;
+  is_completed: boolean;
+  completed_at: string | null;
   items: QuizCheckItem[];
 };

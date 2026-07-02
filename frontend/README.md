@@ -1,6 +1,6 @@
 # Frontend
 
-React + TypeScript + Vite frontend for CORE Wine Club auth, onboarding, home, discoveries, learning paths and lesson completion, quizzes foundation, Bottle UI foundation, diary, taste profile, My Path, UX readiness, and build validation.
+React + TypeScript + Vite frontend for CORE Wine Club auth, onboarding, home, discoveries, learning paths and lesson completion, quizzes foundation and completion state, Bottle UI foundation, diary, taste profile, My Path, UX readiness, and build validation.
 
 ## Windows PowerShell Setup
 
@@ -129,7 +129,8 @@ Sprint 16 adds protected quiz routes:
 - `/quizzes/:quizSlug` lets the user answer single-choice questions and check answers.
 - Results are local to the page and can be cleared with `Попробовать ещё раз`.
 - Quiz detail does not show correct answers before submit.
-- Quiz checks do not persist attempts, create progress events, fill the bottle, or show points/achievements.
+- Perfect quiz checks mark the quiz completed through the backend progress ledger.
+- Quiz checks do not persist attempts, full answer history, points, achievements, badges, or streaks.
 
 The bottom navigation is unchanged; quizzes are reachable from Home and direct route.
 
@@ -146,7 +147,7 @@ Sprint 10 adds a protected bottle route. Sprint 11 extends its progress source t
 
 Bottle is not in bottom navigation yet; it is reachable from Home.
 
-No achievements, points, streaks, badges, weekly bottle, quizzes, or social features are added.
+No achievements, points, streaks, badges, weekly bottle, or social features are added.
 
 ## Progress Activity
 
@@ -164,12 +165,12 @@ This is not a feed and does not add points, badges, streaks, comments, likes, or
 
 Sprint 13 adds a protected personal route:
 
-- `/my-path` shows summary cards for lessons, diary, bottle, and recent activity.
+- `/my-path` shows summary cards for lessons, diary, quizzes, bottle, and recent activity.
 - It renders deterministic next actions from the backend.
 - `/home` shows the `Что дальше` preview with up to 2 actions.
 - The bottom navigation is unchanged.
 
-This is not an AI recommendation engine and does not add achievements, points, badges, streaks, quizzes, or social features.
+This is not an AI recommendation engine and does not add achievements, points, badges, streaks, or social features.
 
 ## Taste Profile
 
@@ -234,4 +235,4 @@ The route smoke expects the frontend dev server to be running on `http://127.0.0
 
 ## Sprint Boundary
 
-Sprint 16 adds Quizzes Foundation only. It does not add quiz attempt persistence, quiz completion events, bottle integration, AI, recommendations, public profile, sharing, social features, achievements, points, streaks, badges, weekly bottle, premium/payments, notifications, admin CRUD, CMS/editor, uploads, OCR/barcode, or external wine databases.
+Sprint 17 adds quiz completion state and progress read-model integration only. It does not add quiz attempt persistence, full answer history, AI, recommendations, public profile, sharing, social features, achievements, points, streaks, badges, weekly bottle, premium/payments, notifications, admin CRUD, CMS/editor, uploads, OCR/barcode, or external wine databases.

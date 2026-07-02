@@ -43,6 +43,17 @@ source_slug: null
 
 `metadata_json` stores small context such as wine name and rating when present.
 
+Sprint 17 adds quiz completion events:
+
+```text
+event_type: quiz.completed
+source_type: quiz
+source_id: quizzes.id
+source_slug: quizzes.slug
+```
+
+`metadata_json` stores small context: quiz title, correct count, and total questions.
+
 ## Idempotency
 
 The service first checks for an existing completion event before inserting a new one. The table also has a unique constraint on:
@@ -51,7 +62,7 @@ The service first checks for an existing completion event before inserting a new
 project_id, project_user_id, event_type, source_type, source_id
 ```
 
-This keeps lesson completion idempotent for the same user/project/lesson and diary note creation idempotent for the same user/project/note. Events with a null `source_id` remain a future design topic; current lesson and diary events always use a non-null `source_id`.
+This keeps lesson completion idempotent for the same user/project/lesson, diary note creation idempotent for the same user/project/note, and quiz completion idempotent for the same user/project/quiz. Events with a null `source_id` remain a future design topic; current lesson, diary, and quiz events always use a non-null `source_id`.
 
 ## Reads
 
@@ -68,6 +79,12 @@ It also returns a diary block:
 - `notes_count`: current private tasting notes for the current user/project;
 - `created_note_events_count`: historical `diary.note.created` events for the current user/project.
 
+It also returns a quizzes block:
+
+- `completed_quizzes_count`;
+- `available_quizzes_count`;
+- `completed_quiz_slugs`.
+
 It does not return points, bottle percentage, achievements, streaks, or scores.
 
 Deleting a diary note does not delete or mutate the historical `diary.note.created` event. Current bottle diary contribution is based on existing `tasting_notes`, while the ledger remains append-style for creation history.
@@ -78,6 +95,7 @@ Deleting a diary note does not delete or mutate the historical `diary.note.creat
 - current project and current `ProjectUser` only;
 - lesson events mapped to lesson titles and lesson detail hrefs;
 - diary note events mapped to wine names and diary hrefs only when the note still exists.
+- quiz completion events mapped to quiz titles and quiz detail hrefs.
 
 Deleted diary note events can remain visible as history, but they do not link to deleted detail pages.
 
@@ -87,4 +105,4 @@ Progress endpoints use `require_capability("view_app")`. Frontend state is not t
 
 ## Bottle Read Model
 
-The Bottle UI reads progress summaries, current diary notes, and a small activity preview as read models. The ledger itself remains generic and does not encode bottle-specific concepts.
+The Bottle UI reads progress summaries, current diary notes, current quiz completion, and a small activity preview as read models. The ledger itself remains generic and does not encode bottle-specific concepts.

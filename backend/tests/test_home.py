@@ -34,11 +34,15 @@ def test_home_returns_previews_and_empty_stats(client):
     assert sections["learning"]["stats"]["completed_lessons_count"] == 0
     assert sections["learning"]["stats"]["available_lessons_count"] == 5
     assert sections["quizzes"]["href"] == "/quizzes"
+    assert sections["quizzes"]["stats"] == {
+        "completed_quizzes_count": 0,
+        "available_quizzes_count": 1,
+    }
     assert sections["bottle"]["href"] == "/bottle"
     assert sections["bottle"]["stats"] == {
         "fill_percent": 0,
         "completed_units": 0,
-        "total_units": 8,
+        "total_units": 9,
     }
     assert sections["activity"]["href"] == "/progress"
     assert sections["activity"]["items"] == []
@@ -97,4 +101,4 @@ def test_home_my_path_preview_returns_max_two_actions(client):
     my_path = _sections_by_key(response.json()["data"])["my_path"]
     assert my_path["href"] == "/my-path"
     assert len(my_path["items"]) == 2
-    assert [item["href"] for item in my_path["items"]] == ["/learn", "/bottle"]
+    assert [item["href"] for item in my_path["items"]] == ["/learn", "/quizzes"]

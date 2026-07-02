@@ -98,16 +98,36 @@ Assert-True ([string]::IsNullOrWhiteSpace($lesson.data.body) -eq $false) "Lesson
 Write-Ok "learning lesson detail"
 
 $progressBeforeQuiz = Invoke-Api -Method Get -Path "/progress/summary" -Headers $headers
+Assert-True ($progressBeforeQuiz.data.quizzes.available_quizzes_count -eq 1) "Initial quiz summary total mismatch"
+Assert-True ($progressBeforeQuiz.data.quizzes.completed_quizzes_count -eq 0) "Initial quiz summary completed mismatch"
 $quizzes = Invoke-Api -Method Get -Path "/quizzes" -Headers $headers
 Assert-True ($quizzes.data.items.Count -ge 1) "Quizzes list is empty"
 Assert-True ($quizzes.data.items[0].slug -eq "wine-basics-check") "Unexpected quiz slug"
+Assert-True ($quizzes.data.items[0].is_completed -eq $false) "Initial quiz list completion mismatch"
 Write-Ok "quizzes list"
 
 $quiz = Invoke-Api -Method Get -Path "/quizzes/wine-basics-check" -Headers $headers
 Assert-True ($quiz.data.slug -eq "wine-basics-check") "Quiz detail slug mismatch"
+Assert-True ($quiz.data.is_completed -eq $false) "Initial quiz detail completion mismatch"
 Assert-True ($quiz.data.questions.Count -eq 5) "Quiz question count mismatch"
 Assert-True (($quiz.data.questions[0].PSObject.Properties.Name -contains "correct_option_key") -eq $false) "Quiz detail exposed correct answer"
 Write-Ok "quiz detail"
+
+$partialQuizAnswerKeys = @("a", "a", "a", "b", "b")
+$partialQuizAnswers = @()
+for ($i = 0; $i -lt $quiz.data.questions.Count; $i++) {
+    $partialQuizAnswers += @{
+        question_id = $quiz.data.questions[$i].id
+        selected_option_key = $partialQuizAnswerKeys[$i]
+    }
+}
+$partialQuizCheck = Invoke-Api -Method Post -Path "/quizzes/wine-basics-check/check" -Headers $headers -Body @{ answers = $partialQuizAnswers }
+Assert-True ($partialQuizCheck.data.correct_count -eq 4) "Partial quiz check correct count mismatch"
+Assert-True ($partialQuizCheck.data.is_completed -eq $false) "Partial quiz unexpectedly completed"
+Assert-True ($null -eq $partialQuizCheck.data.completed_at) "Partial quiz unexpectedly returned completed_at"
+$progressAfterPartialQuiz = Invoke-Api -Method Get -Path "/progress/summary" -Headers $headers
+Assert-True ($progressAfterPartialQuiz.data.quizzes.completed_quizzes_count -eq 0) "Partial quiz created completion event"
+Write-Ok "partial quiz check does not complete"
 
 $quizAnswerKeys = @("a", "b", "a", "b", "b")
 $quizAnswers = @()
@@ -120,14 +140,27 @@ for ($i = 0; $i -lt $quiz.data.questions.Count; $i++) {
 $quizCheck = Invoke-Api -Method Post -Path "/quizzes/wine-basics-check/check" -Headers $headers -Body @{ answers = $quizAnswers }
 Assert-True ($quizCheck.data.total_questions -eq 5) "Quiz check total question mismatch"
 Assert-True ($quizCheck.data.correct_count -eq 5) "Quiz check correct count mismatch"
+Assert-True ($quizCheck.data.is_completed -eq $true) "Perfect quiz did not complete"
+Assert-True ([string]::IsNullOrWhiteSpace($quizCheck.data.completed_at) -eq $false) "Perfect quiz completed_at missing"
 Assert-True ($quizCheck.data.items.Count -eq 5) "Quiz check item count mismatch"
 Assert-True ([string]::IsNullOrWhiteSpace($quizCheck.data.items[0].explanation) -eq $false) "Quiz check explanation missing"
 Write-Ok "quiz check"
 
+$quizCheckAgain = Invoke-Api -Method Post -Path "/quizzes/wine-basics-check/check" -Headers $headers -Body @{ answers = $quizAnswers }
+Assert-True ($quizCheckAgain.data.is_completed -eq $true) "Repeated perfect quiz did not return completed"
+Assert-True ($quizCheckAgain.data.completed_at -eq $quizCheck.data.completed_at) "Repeated perfect quiz was not idempotent"
+Write-Ok "quiz completion idempotent"
+
 $progressAfterQuiz = Invoke-Api -Method Get -Path "/progress/summary" -Headers $headers
 Assert-True ($progressAfterQuiz.data.learning.completed_lessons_count -eq $progressBeforeQuiz.data.learning.completed_lessons_count) "Quiz changed lesson progress"
-Assert-True ($progressAfterQuiz.data.diary.created_note_events_count -eq $progressBeforeQuiz.data.diary.created_note_events_count) "Quiz created progress events"
-Write-Ok "quiz does not change progress"
+Assert-True ($progressAfterQuiz.data.diary.created_note_events_count -eq $progressBeforeQuiz.data.diary.created_note_events_count) "Quiz changed diary events"
+Assert-True ($progressAfterQuiz.data.quizzes.completed_quizzes_count -eq 1) "Quiz completion did not update progress summary"
+Assert-True ($progressAfterQuiz.data.quizzes.completed_quiz_slugs[0] -eq "wine-basics-check") "Quiz completion slug missing"
+Write-Ok "quiz completion updates progress"
+
+$quizAfterCompletion = Invoke-Api -Method Get -Path "/quizzes/wine-basics-check" -Headers $headers
+Assert-True ($quizAfterCompletion.data.is_completed -eq $true) "Quiz detail did not expose completion state"
+Write-Ok "quiz detail completion state"
 
 Invoke-Api -Method Delete -Path "/progress/lessons/$firstLessonSlug/complete" -Headers $headers | Out-Null
 $progressBefore = Invoke-Api -Method Get -Path "/progress/summary" -Headers $headers
@@ -135,22 +168,26 @@ Assert-True ($progressBefore.data.learning.completed_lessons_count -eq 0) "Initi
 Assert-True ($progressBefore.data.learning.available_lessons_count -eq 5) "Available lesson count mismatch"
 Assert-True ($progressBefore.data.diary.notes_count -eq 0) "Initial diary notes count mismatch"
 Assert-True ($progressBefore.data.diary.created_note_events_count -eq 0) "Initial diary event count mismatch"
+Assert-True ($progressBefore.data.quizzes.completed_quizzes_count -eq 1) "Initial quiz completion count mismatch after quiz"
 Write-Ok "progress summary initial"
 
 $myPathBefore = Invoke-Api -Method Get -Path "/my-path" -Headers $headers
 Assert-True ($myPathBefore.data.summary.completed_lessons_count -eq 0) "Initial my-path lesson count mismatch"
+Assert-True ($myPathBefore.data.summary.completed_quizzes_count -eq 1) "Initial my-path quiz count mismatch"
 Assert-True ($myPathBefore.data.summary.diary_notes_count -eq 0) "Initial my-path diary count mismatch"
 Assert-True ($myPathBefore.data.next_actions.Count -ge 2) "Initial my-path next actions missing"
 Assert-True ($myPathBefore.data.next_actions[0].key -eq "start_learning") "Initial my-path first action mismatch"
 Write-Ok "my-path initial"
 
 $bottleBefore = Invoke-Api -Method Get -Path "/bottle/progress" -Headers $headers
-Assert-True ($bottleBefore.data.completed_units -eq 0) "Initial bottle completed units mismatch"
-Assert-True ($bottleBefore.data.total_units -eq 8) "Initial bottle total units mismatch"
-Assert-True ($bottleBefore.data.fill_percent -eq 0) "Initial bottle fill mismatch"
-Assert-True ($bottleBefore.data.source -eq "learning_and_diary") "Initial bottle source mismatch"
+Assert-True ($bottleBefore.data.completed_units -eq 1) "Initial bottle completed units mismatch"
+Assert-True ($bottleBefore.data.total_units -eq 9) "Initial bottle total units mismatch"
+Assert-True ($bottleBefore.data.fill_percent -eq 11) "Initial bottle fill mismatch"
+Assert-True ($bottleBefore.data.source -eq "learning_diary_and_quizzes") "Initial bottle source mismatch"
 Assert-True ($bottleBefore.data.breakdown.learning.available_lessons_count -eq 5) "Initial bottle learning total mismatch"
 Assert-True ($bottleBefore.data.breakdown.diary.target_notes_count -eq 3) "Initial bottle diary target mismatch"
+Assert-True ($bottleBefore.data.breakdown.quizzes.available_quizzes_count -eq 1) "Initial bottle quiz total mismatch"
+Assert-True ($bottleBefore.data.breakdown.quizzes.completed_quizzes_count -eq 1) "Initial bottle quiz completed mismatch"
 Write-Ok "bottle progress initial"
 
 $completedLesson = Invoke-Api -Method Post -Path "/progress/lessons/$firstLessonSlug/complete" -Headers $headers
@@ -165,8 +202,8 @@ Assert-True ($myPathAfterLesson.data.next_actions.Count -le 4) "My-path returned
 Write-Ok "my-path after lesson"
 
 $bottleAfterComplete = Invoke-Api -Method Get -Path "/bottle/progress" -Headers $headers
-Assert-True ($bottleAfterComplete.data.completed_units -eq 1) "Bottle completed units did not update"
-Assert-True ($bottleAfterComplete.data.fill_percent -eq 12) "Bottle fill did not update"
+Assert-True ($bottleAfterComplete.data.completed_units -eq 2) "Bottle completed units did not update"
+Assert-True ($bottleAfterComplete.data.fill_percent -eq 22) "Bottle fill did not update"
 Assert-True ($bottleAfterComplete.data.breakdown.learning.completed_lessons_count -eq 1) "Bottle learning count did not update"
 Write-Ok "bottle progress after complete"
 
@@ -189,8 +226,8 @@ Assert-True ($progressAfterUncomplete.data.learning.completed_lessons_count -eq 
 Write-Ok "progress summary after uncomplete"
 
 $bottleAfterUncomplete = Invoke-Api -Method Get -Path "/bottle/progress" -Headers $headers
-Assert-True ($bottleAfterUncomplete.data.completed_units -eq 0) "Bottle completed units did not reset"
-Assert-True ($bottleAfterUncomplete.data.fill_percent -eq 0) "Bottle fill did not reset"
+Assert-True ($bottleAfterUncomplete.data.completed_units -eq 1) "Bottle completed units did not reset"
+Assert-True ($bottleAfterUncomplete.data.fill_percent -eq 11) "Bottle fill did not reset"
 Write-Ok "bottle progress after uncomplete"
 
 $note = Invoke-Api -Method Post -Path "/diary/notes" -Headers $headers -Body @{
@@ -230,7 +267,7 @@ $completedLessonForActivity = Invoke-Api -Method Post -Path "/progress/lessons/$
 Assert-True ($completedLessonForActivity.data.is_completed -eq $true) "Lesson completion for activity failed"
 $activity = Invoke-Api -Method Get -Path "/progress/activity" -Headers $headers
 Assert-True ($activity.data.items.Count -ge 2) "Progress activity did not include lesson and diary events"
-Assert-True ($activity.data.items[0].event_type -in @("learning.lesson.completed", "diary.note.created")) "Unexpected activity event type"
+Assert-True (@($activity.data.items | Where-Object { $_.event_type -eq "quiz.completed" }).Count -ge 1) "Progress activity did not include quiz completion"
 Assert-True ($activity.meta.limit -eq 20) "Progress activity default limit mismatch"
 Write-Ok "progress activity"
 
@@ -246,8 +283,8 @@ Assert-True ($myPathSection.items.Count -le 2) "Home my-path preview returned to
 Write-Ok "home activity preview"
 
 $bottleAfterDiaryCreate = Invoke-Api -Method Get -Path "/bottle/progress" -Headers $headers
-Assert-True ($bottleAfterDiaryCreate.data.completed_units -eq 2) "Bottle diary and lesson contribution did not update"
-Assert-True ($bottleAfterDiaryCreate.data.fill_percent -eq 25) "Bottle diary and lesson fill did not update"
+Assert-True ($bottleAfterDiaryCreate.data.completed_units -eq 3) "Bottle diary and lesson contribution did not update"
+Assert-True ($bottleAfterDiaryCreate.data.fill_percent -eq 33) "Bottle diary and lesson fill did not update"
 Assert-True ($bottleAfterDiaryCreate.data.breakdown.diary.notes_count -eq 1) "Bottle diary notes count did not update"
 Assert-True ($bottleAfterDiaryCreate.data.breakdown.diary.contributed_units -eq 1) "Bottle diary contributed units mismatch"
 Assert-True ($bottleAfterDiaryCreate.data.activity_preview.Count -ge 2) "Bottle activity preview did not include recent events"
@@ -297,8 +334,8 @@ Assert-True ($progressAfterDiaryDelete.data.diary.created_note_events_count -eq 
 Write-Ok "progress summary after diary delete"
 
 $bottleAfterDiaryDelete = Invoke-Api -Method Get -Path "/bottle/progress" -Headers $headers
-Assert-True ($bottleAfterDiaryDelete.data.completed_units -eq 0) "Bottle diary contribution did not reset after delete"
-Assert-True ($bottleAfterDiaryDelete.data.fill_percent -eq 0) "Bottle diary fill did not reset after delete"
+Assert-True ($bottleAfterDiaryDelete.data.completed_units -eq 1) "Bottle diary contribution did not reset after delete"
+Assert-True ($bottleAfterDiaryDelete.data.fill_percent -eq 11) "Bottle diary fill did not reset after delete"
 Assert-True ($bottleAfterDiaryDelete.data.breakdown.diary.notes_count -eq 0) "Bottle diary notes did not reset after delete"
 Write-Ok "bottle progress after diary delete"
 

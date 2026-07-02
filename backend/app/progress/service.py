@@ -17,8 +17,10 @@ from app.progress.schemas import (
     ProgressActivityPreviewItem,
     ProgressActivityResponse,
     ProgressSummary,
+    QuizProgressSummary,
 )
 from app.projects.models import ProjectUser
+from app.quizzes.models import Quiz
 from app.shared.errors import NotFoundError
 
 
@@ -26,6 +28,8 @@ LESSON_COMPLETED_EVENT = "learning.lesson.completed"
 LESSON_SOURCE_TYPE = "lesson"
 DIARY_NOTE_CREATED_EVENT = "diary.note.created"
 DIARY_NOTE_SOURCE_TYPE = "diary_note"
+QUIZ_COMPLETED_EVENT = "quiz.completed"
+QUIZ_SOURCE_TYPE = "quiz"
 DEFAULT_ACTIVITY_LIMIT = 20
 MAX_ACTIVITY_LIMIT = 50
 
@@ -75,6 +79,7 @@ def build_progress_summary(db: Session, project_user: ProjectUser) -> ProgressSu
     return ProgressSummary(
         learning=build_learning_progress_summary(db, project_user),
         diary=build_diary_progress_summary(db, project_user),
+        quizzes=build_quiz_progress_summary(db, project_user),
     )
 
 
@@ -236,12 +241,95 @@ def build_diary_progress_summary(db: Session, project_user: ProjectUser) -> Diar
     )
 
 
+def build_quiz_progress_summary(db: Session, project_user: ProjectUser) -> QuizProgressSummary:
+    available_quizzes_count = (
+        db.query(Quiz)
+        .filter(
+            Quiz.project_id == project_user.project_id,
+            Quiz.is_published.is_(True),
+        )
+        .count()
+    )
+    completed_events = (
+        _quiz_completion_events_query(db, project_user)
+        .join(Quiz, Quiz.id == ProgressEvent.source_id)
+        .filter(
+            Quiz.project_id == project_user.project_id,
+            Quiz.is_published.is_(True),
+        )
+        .order_by(ProgressEvent.occurred_at.asc(), ProgressEvent.created_at.asc())
+        .all()
+    )
+    completed_quiz_slugs = [event.source_slug for event in completed_events if event.source_slug]
+
+    return QuizProgressSummary(
+        completed_quizzes_count=len(completed_quiz_slugs),
+        available_quizzes_count=available_quizzes_count,
+        completed_quiz_slugs=completed_quiz_slugs,
+    )
+
+
+def get_quiz_completion_event(db: Session, project_user: ProjectUser, quiz_id: UUID) -> ProgressEvent | None:
+    return (
+        _quiz_completion_events_query(db, project_user)
+        .filter(ProgressEvent.source_id == quiz_id)
+        .one_or_none()
+    )
+
+
+def get_quiz_completion_map(
+    db: Session,
+    project_user: ProjectUser,
+    quiz_ids: list[UUID],
+) -> dict[UUID, ProgressEvent]:
+    if not quiz_ids:
+        return {}
+
+    events = (
+        _quiz_completion_events_query(db, project_user)
+        .filter(ProgressEvent.source_id.in_(quiz_ids))
+        .all()
+    )
+    return {event.source_id: event for event in events if event.source_id is not None}
+
+
+def record_quiz_completed_event(
+    db: Session,
+    project_user: ProjectUser,
+    quiz: Quiz,
+    correct_count: int,
+    total_questions: int,
+) -> ProgressEvent:
+    event = get_quiz_completion_event(db, project_user, quiz.id)
+    if event is not None:
+        return event
+
+    event = ProgressEvent(
+        project_id=project_user.project_id,
+        project_user_id=project_user.id,
+        event_type=QUIZ_COMPLETED_EVENT,
+        source_type=QUIZ_SOURCE_TYPE,
+        source_id=quiz.id,
+        source_slug=quiz.slug,
+        metadata_json={
+            "quiz_title": quiz.title,
+            "correct_count": correct_count,
+            "total_questions": total_questions,
+        },
+        occurred_at=datetime.now(timezone.utc),
+    )
+    db.add(event)
+    db.commit()
+    db.refresh(event)
+    return event
+
+
 def _progress_activity_events_query(db: Session, project_user: ProjectUser):
     return db.query(ProgressEvent).filter(
         ProgressEvent.project_id == project_user.project_id,
         ProgressEvent.project_user_id == project_user.id,
-        ProgressEvent.event_type.in_([LESSON_COMPLETED_EVENT, DIARY_NOTE_CREATED_EVENT]),
-        ProgressEvent.source_type.in_([LESSON_SOURCE_TYPE, DIARY_NOTE_SOURCE_TYPE]),
+        ProgressEvent.event_type.in_([LESSON_COMPLETED_EVENT, DIARY_NOTE_CREATED_EVENT, QUIZ_COMPLETED_EVENT]),
+        ProgressEvent.source_type.in_([LESSON_SOURCE_TYPE, DIARY_NOTE_SOURCE_TYPE, QUIZ_SOURCE_TYPE]),
     )
 
 
@@ -259,6 +347,11 @@ def _map_activity_events(
         event.source_id
         for event in events
         if event.event_type == DIARY_NOTE_CREATED_EVENT and event.source_id is not None
+    ]
+    quiz_ids = [
+        event.source_id
+        for event in events
+        if event.event_type == QUIZ_COMPLETED_EVENT and event.source_id is not None
     ]
     lessons_by_id = {
         lesson.id: lesson
@@ -288,14 +381,28 @@ def _map_activity_events(
             else []
         )
     }
+    quizzes_by_id = {
+        quiz.id: quiz
+        for quiz in (
+            db.query(Quiz)
+            .filter(
+                Quiz.project_id == project_user.project_id,
+                Quiz.id.in_(quiz_ids),
+            )
+            .all()
+            if quiz_ids
+            else []
+        )
+    }
 
-    return [_map_activity_event(event, lessons_by_id, notes_by_id) for event in events]
+    return [_map_activity_event(event, lessons_by_id, notes_by_id, quizzes_by_id) for event in events]
 
 
 def _map_activity_event(
     event: ProgressEvent,
     lessons_by_id: dict[UUID, Lesson],
     notes_by_id: dict[UUID, TastingNote],
+    quizzes_by_id: dict[UUID, Quiz],
 ) -> ProgressActivityItem:
     if event.event_type == LESSON_COMPLETED_EVENT:
         lesson = lessons_by_id.get(event.source_id) if event.source_id is not None else None
@@ -312,6 +419,26 @@ def _map_activity_event(
             source_id=event.source_id,
             source_slug=event.source_slug,
             title="Урок завершён",
+            description=description,
+            occurred_at=event.occurred_at,
+            href=href,
+        )
+
+    if event.event_type == QUIZ_COMPLETED_EVENT:
+        quiz = quizzes_by_id.get(event.source_id) if event.source_id is not None else None
+        description = (
+            quiz.title
+            if quiz is not None
+            else _metadata_text(event, "quiz_title", "title") or event.source_slug or "РљРІРёР·"
+        )
+        href = f"/quizzes/{event.source_slug}" if event.source_slug else None
+        return ProgressActivityItem(
+            id=event.id,
+            event_type=event.event_type,
+            source_type=event.source_type,
+            source_id=event.source_id,
+            source_slug=event.source_slug,
+            title="РљРІРёР· Р·Р°РІРµСЂС€С‘РЅ",
             description=description,
             occurred_at=event.occurred_at,
             href=href,
@@ -355,6 +482,15 @@ def _lesson_completion_events_query(db: Session, project_user: ProjectUser):
         ProgressEvent.project_user_id == project_user.id,
         ProgressEvent.event_type == LESSON_COMPLETED_EVENT,
         ProgressEvent.source_type == LESSON_SOURCE_TYPE,
+    )
+
+
+def _quiz_completion_events_query(db: Session, project_user: ProjectUser):
+    return db.query(ProgressEvent).filter(
+        ProgressEvent.project_id == project_user.project_id,
+        ProgressEvent.project_user_id == project_user.id,
+        ProgressEvent.event_type == QUIZ_COMPLETED_EVENT,
+        ProgressEvent.source_type == QUIZ_SOURCE_TYPE,
     )
 
 

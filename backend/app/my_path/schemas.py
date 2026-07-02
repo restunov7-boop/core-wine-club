@@ -4,6 +4,8 @@ from pydantic import BaseModel, Field
 class MyPathSummary(BaseModel):
     completed_lessons_count: int
     available_lessons_count: int
+    completed_quizzes_count: int
+    available_quizzes_count: int
     diary_notes_count: int
     diary_target_notes_count: int
     bottle_fill_percent: int

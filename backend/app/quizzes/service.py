@@ -6,6 +6,7 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
+from app.progress.service import get_quiz_completion_event, get_quiz_completion_map, record_quiz_completed_event
 from app.projects.models import Project, ProjectUser
 from app.quizzes.models import Quiz, QuizQuestion
 from app.quizzes.schemas import (
@@ -117,23 +118,16 @@ def list_quizzes(db: Session, project_user: ProjectUser) -> list[QuizListItem]:
         .order_by(Quiz.sort_order.asc(), Quiz.published_at.desc(), Quiz.created_at.asc())
         .all()
     )
+    completion_map = get_quiz_completion_map(db, project_user, [quiz.id for quiz in quizzes])
     return [
-        QuizListItem(
-            id=quiz.id,
-            slug=quiz.slug,
-            title=quiz.title,
-            subtitle=quiz.subtitle,
-            summary=quiz.summary,
-            difficulty=quiz.difficulty,
-            estimated_minutes=quiz.estimated_minutes,
-            questions_count=_ordered_questions_query(db, project_user, quiz).count(),
-        )
+        _build_quiz_list_item(db, project_user, quiz, completion_map.get(quiz.id))
         for quiz in quizzes
     ]
 
 
 def get_quiz_detail(db: Session, project_user: ProjectUser, slug: str) -> QuizDetail:
     quiz = _get_published_quiz(db, project_user, slug)
+    completion_event = get_quiz_completion_event(db, project_user, quiz.id)
     questions = [
         QuizQuestionPublic(
             id=question.id,
@@ -153,6 +147,8 @@ def get_quiz_detail(db: Session, project_user: ProjectUser, slug: str) -> QuizDe
         description=quiz.description,
         difficulty=quiz.difficulty,
         estimated_minutes=quiz.estimated_minutes,
+        is_completed=completion_event is not None,
+        completed_at=completion_event.occurred_at if completion_event is not None else None,
         questions=questions,
     )
 
@@ -167,8 +163,13 @@ def check_quiz_answers(
     questions = _ordered_questions_query(db, project_user, quiz).all()
     questions_by_id = {question.id: question for question in questions}
     items: list[QuizCheckItem] = []
+    answered_question_ids: set[UUID] = set()
 
     for question_id, selected_option_key in answers:
+        if question_id in answered_question_ids:
+            raise ValidationAppError("Answer references a quiz question more than once")
+        answered_question_ids.add(question_id)
+
         question = questions_by_id.get(question_id)
         if question is None:
             raise ValidationAppError("Answer references an unknown quiz question")
@@ -187,11 +188,44 @@ def check_quiz_answers(
             )
         )
 
+    correct_count = sum(1 for item in items if item.is_correct)
+    completion_event = None
+    if len(questions) > 0 and len(answered_question_ids) == len(questions) and correct_count == len(questions):
+        completion_event = record_quiz_completed_event(
+            db,
+            project_user,
+            quiz,
+            correct_count=correct_count,
+            total_questions=len(questions),
+        )
+
     return QuizCheckResult(
         quiz_slug=quiz.slug,
         total_questions=len(questions),
-        correct_count=sum(1 for item in items if item.is_correct),
+        correct_count=correct_count,
+        is_completed=completion_event is not None,
+        completed_at=completion_event.occurred_at if completion_event is not None else None,
         items=items,
+    )
+
+
+def _build_quiz_list_item(
+    db: Session,
+    project_user: ProjectUser,
+    quiz: Quiz,
+    completion_event,
+) -> QuizListItem:
+    return QuizListItem(
+        id=quiz.id,
+        slug=quiz.slug,
+        title=quiz.title,
+        subtitle=quiz.subtitle,
+        summary=quiz.summary,
+        difficulty=quiz.difficulty,
+        estimated_minutes=quiz.estimated_minutes,
+        questions_count=_ordered_questions_query(db, project_user, quiz).count(),
+        is_completed=completion_event is not None,
+        completed_at=completion_event.occurred_at if completion_event is not None else None,
     )
 
 

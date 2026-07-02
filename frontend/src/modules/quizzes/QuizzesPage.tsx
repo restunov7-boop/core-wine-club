@@ -93,6 +93,9 @@ export function QuizzesPage() {
                   <span>{difficultyLabels[item.difficulty] ?? item.difficulty}</span>
                   {item.estimated_minutes && <span>{item.estimated_minutes} мин</span>}
                   <span>{item.questions_count} вопросов</span>
+                  <span className={item.is_completed ? "quiz-status quiz-status--complete" : "quiz-status"}>
+                    {item.is_completed ? "Завершён" : "Не завершён"}
+                  </span>
                 </div>
                 <h2>{item.title}</h2>
                 {item.subtitle && <p className="quiz-card__subtitle">{item.subtitle}</p>}

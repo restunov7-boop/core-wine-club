@@ -198,6 +198,18 @@ function buildStats(stats: Record<string, number | null>): Array<{ value: string
       label: "уроков доступно",
     });
   }
+  if (typeof stats.completed_quizzes_count === "number") {
+    output.push({
+      value: String(stats.completed_quizzes_count),
+      label: "квизов завершено",
+    });
+  }
+  if (typeof stats.available_quizzes_count === "number") {
+    output.push({
+      value: String(stats.available_quizzes_count),
+      label: "квизов доступно",
+    });
+  }
   if (typeof stats.fill_percent === "number") {
     output.push({
       value: `${stats.fill_percent}%`,

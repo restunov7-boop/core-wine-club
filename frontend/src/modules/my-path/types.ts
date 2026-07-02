@@ -1,6 +1,8 @@
 export type MyPathSummary = {
   completed_lessons_count: number;
   available_lessons_count: number;
+  completed_quizzes_count: number;
+  available_quizzes_count: number;
   diary_notes_count: number;
   diary_target_notes_count: number;
   bottle_fill_percent: number;

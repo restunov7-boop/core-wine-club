@@ -1,10 +1,13 @@
 from app.database import SessionLocal
 from app.learning.models import Lesson
 from app.projects.service import ensure_default_project
+from app.quizzes.models import Quiz
 from tests.conftest import complete_onboarding, login, set_dev_user
 
 
 LESSON_SLUG = "how-wine-is-made"
+QUIZ_SLUG = "wine-basics-check"
+QUIZ_ANSWER_KEYS = ["a", "b", "a", "b", "b"]
 
 
 def _complete_first_lessons(client, headers: dict[str, str], count: int) -> None:
@@ -15,6 +18,23 @@ def _complete_first_lessons(client, headers: dict[str, str], count: int) -> None
         assert response.status_code == 200, response.text
 
 
+def _complete_quiz(client, headers: dict[str, str]) -> None:
+    detail_response = client.get(f"/api/v1/quizzes/{QUIZ_SLUG}", headers=headers)
+    assert detail_response.status_code == 200, detail_response.text
+    detail = detail_response.json()["data"]
+    response = client.post(
+        f"/api/v1/quizzes/{QUIZ_SLUG}/check",
+        headers=headers,
+        json={
+            "answers": [
+                {"question_id": question["id"], "selected_option_key": QUIZ_ANSWER_KEYS[index]}
+                for index, question in enumerate(detail["questions"])
+            ]
+        },
+    )
+    assert response.status_code == 200, response.text
+
+
 def test_bottle_progress_starts_at_zero_for_fresh_user(client):
     headers = login(client)
 
@@ -23,9 +43,9 @@ def test_bottle_progress_starts_at_zero_for_fresh_user(client):
     assert response.status_code == 200, response.text
     data = response.json()["data"]
     assert data["title"] == "Моя бутылка"
-    assert data["source"] == "learning_and_diary"
+    assert data["source"] == "learning_diary_and_quizzes"
     assert data["completed_units"] == 0
-    assert data["total_units"] == 8
+    assert data["total_units"] == 9
     assert data["fill_percent"] == 0
     assert data["breakdown"] == {
         "learning": {
@@ -36,6 +56,10 @@ def test_bottle_progress_starts_at_zero_for_fresh_user(client):
             "notes_count": 0,
             "target_notes_count": 3,
             "contributed_units": 0,
+        },
+        "quizzes": {
+            "completed_quizzes_count": 0,
+            "available_quizzes_count": 1,
         },
     }
     assert data["next_action"] == {
@@ -55,12 +79,12 @@ def test_bottle_progress_updates_after_complete_and_uncomplete(client):
 
     assert after_complete.status_code == 200, after_complete.text
     assert after_complete.json()["data"]["completed_units"] == 1
-    assert after_complete.json()["data"]["total_units"] == 8
-    assert after_complete.json()["data"]["fill_percent"] == 12
+    assert after_complete.json()["data"]["total_units"] == 9
+    assert after_complete.json()["data"]["fill_percent"] == 11
 
     assert after_uncomplete.status_code == 200, after_uncomplete.text
     assert after_uncomplete.json()["data"]["completed_units"] == 0
-    assert after_uncomplete.json()["data"]["total_units"] == 8
+    assert after_uncomplete.json()["data"]["total_units"] == 9
     assert after_uncomplete.json()["data"]["fill_percent"] == 0
 
 
@@ -75,7 +99,7 @@ def test_second_user_does_not_see_first_users_bottle_progress(client):
     assert response.status_code == 200, response.text
     data = response.json()["data"]
     assert data["completed_units"] == 0
-    assert data["total_units"] == 8
+    assert data["total_units"] == 9
     assert data["fill_percent"] == 0
 
 
@@ -103,7 +127,32 @@ def test_unpublished_lessons_are_not_counted_in_bottle_total(client):
 
     assert response.status_code == 200, response.text
     assert response.json()["data"]["breakdown"]["learning"]["available_lessons_count"] == 5
-    assert response.json()["data"]["total_units"] == 8
+    assert response.json()["data"]["total_units"] == 9
+
+
+def test_unpublished_quizzes_are_not_counted_in_bottle_total(client):
+    headers = login(client)
+    db = SessionLocal()
+    try:
+        project = ensure_default_project(db)
+        hidden_quiz = Quiz(
+            project_id=project.id,
+            slug="hidden-bottle-quiz",
+            title="Hidden bottle quiz",
+            summary="Hidden summary",
+            difficulty="beginner",
+            is_published=False,
+        )
+        db.add(hidden_quiz)
+        db.commit()
+    finally:
+        db.close()
+
+    response = client.get("/api/v1/bottle/progress", headers=headers)
+
+    assert response.status_code == 200, response.text
+    assert response.json()["data"]["breakdown"]["quizzes"]["available_quizzes_count"] == 1
+    assert response.json()["data"]["total_units"] == 9
 
 
 def test_home_includes_bottle_preview(client):
@@ -118,9 +167,9 @@ def test_home_includes_bottle_preview(client):
     assert sections["bottle"]["title"] == "Моя бутылка"
     assert sections["bottle"]["href"] == "/bottle"
     assert sections["bottle"]["stats"] == {
-        "fill_percent": 12,
+        "fill_percent": 11,
         "completed_units": 1,
-        "total_units": 8,
+        "total_units": 9,
     }
 
 
@@ -144,8 +193,8 @@ def test_bottle_combines_learning_and_diary_progress(client):
     assert response.status_code == 200, response.text
     data = response.json()["data"]
     assert data["completed_units"] == 2
-    assert data["total_units"] == 8
-    assert data["fill_percent"] == 25
+    assert data["total_units"] == 9
+    assert data["fill_percent"] == 22
     assert data["breakdown"]["learning"] == {
         "completed_lessons_count": 1,
         "available_lessons_count": 5,
@@ -154,6 +203,10 @@ def test_bottle_combines_learning_and_diary_progress(client):
         "notes_count": 1,
         "target_notes_count": 3,
         "contributed_units": 1,
+    }
+    assert data["breakdown"]["quizzes"] == {
+        "completed_quizzes_count": 0,
+        "available_quizzes_count": 1,
     }
     assert len(data["activity_preview"]) == 2
     assert {item["title"] for item in data["activity_preview"]} == {"Урок завершён", "Заметка добавлена"}
@@ -182,6 +235,23 @@ def test_deleting_diary_note_reduces_current_bottle_diary_contribution(client):
     assert before_delete.json()["data"]["completed_units"] == 1
     assert after_delete.json()["data"]["breakdown"]["diary"]["notes_count"] == 0
     assert after_delete.json()["data"]["completed_units"] == 0
+
+
+def test_bottle_includes_completed_quiz_units(client):
+    headers = login(client)
+    _complete_quiz(client, headers)
+
+    response = client.get("/api/v1/bottle/progress", headers=headers)
+
+    assert response.status_code == 200, response.text
+    data = response.json()["data"]
+    assert data["completed_units"] == 1
+    assert data["total_units"] == 9
+    assert data["fill_percent"] == 11
+    assert data["breakdown"]["quizzes"] == {
+        "completed_quizzes_count": 1,
+        "available_quizzes_count": 1,
+    }
 
 
 def test_bottle_activity_preview_returns_max_three_items(client):

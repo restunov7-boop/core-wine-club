@@ -5,6 +5,7 @@ from app.my_path.schemas import MyPathAction, MyPathResponse, MyPathSection, MyP
 from app.progress.service import (
     build_diary_progress_summary,
     build_learning_progress_summary,
+    build_quiz_progress_summary,
     count_progress_activity_events,
 )
 from app.projects.models import ProjectUser
@@ -16,12 +17,15 @@ MAX_NEXT_ACTIONS = 4
 def build_my_path(db: Session, project_user: ProjectUser) -> MyPathResponse:
     learning = build_learning_progress_summary(db, project_user)
     diary = build_diary_progress_summary(db, project_user)
+    quizzes = build_quiz_progress_summary(db, project_user)
     bottle = build_bottle_progress(db, project_user)
     recent_activity_count = count_progress_activity_events(db, project_user)
 
     summary = MyPathSummary(
         completed_lessons_count=learning.completed_lessons_count,
         available_lessons_count=learning.available_lessons_count,
+        completed_quizzes_count=quizzes.completed_quizzes_count,
+        available_quizzes_count=quizzes.available_quizzes_count,
         diary_notes_count=diary.notes_count,
         diary_target_notes_count=DIARY_TARGET_NOTES_COUNT,
         bottle_fill_percent=bottle.fill_percent,
@@ -102,6 +106,20 @@ def _build_next_actions(summary: MyPathSummary) -> list[MyPathAction]:
             )
         )
 
+    if (
+        summary.completed_lessons_count > 0
+        and summary.completed_quizzes_count < summary.available_quizzes_count
+    ):
+        actions.append(
+            MyPathAction(
+                key="try_quiz",
+                title="Закрепить знания в квизе",
+                description="Ответь на несколько спокойных вопросов без оценок и давления.",
+                href="/quizzes",
+                priority=25,
+            )
+        )
+
     if summary.recent_activity_count > 0:
         actions.append(
             MyPathAction(
@@ -129,6 +147,12 @@ def _build_sections(summary: MyPathSummary) -> list[MyPathSection]:
             title="Дневник",
             description=f"Добавлено {summary.diary_notes_count} из {summary.diary_target_notes_count} стартовых заметок.",
             href="/diary",
+        ),
+        MyPathSection(
+            key="quizzes",
+            title="Квизы",
+            description=f"Завершено {summary.completed_quizzes_count} из {summary.available_quizzes_count}.",
+            href="/quizzes",
         ),
         MyPathSection(
             key="bottle",

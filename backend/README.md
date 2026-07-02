@@ -131,7 +131,7 @@ Invoke-RestMethod `
   } | ConvertTo-Json -Depth 10)
 ```
 
-Quiz detail does not expose `correct_option_key`. Quiz checks do not persist attempts and do not create progress events.
+Quiz detail does not expose `correct_option_key`. Quiz checks do not persist attempts. Perfect checks create an idempotent `quiz.completed` progress event; partial checks do not.
 
 Progress:
 
@@ -142,7 +142,7 @@ Invoke-RestMethod -Method Post http://127.0.0.1:8000/api/v1/progress/lessons/how
 Invoke-RestMethod -Method Delete http://127.0.0.1:8000/api/v1/progress/lessons/how-wine-is-made/complete -Headers $headers
 ```
 
-`/progress/summary` returns both learning counts and diary counts. Sprint 11 writes `diary.note.created` events when tasting notes are created; deleting a note does not delete that historical event.
+`/progress/summary` returns learning, diary, and quiz counts. Sprint 11 writes `diary.note.created` events when tasting notes are created; deleting a note does not delete that historical event. Sprint 17 writes `quiz.completed` only when a quiz is answered perfectly.
 
 `/progress/activity` returns a read-only personal activity projection over existing `progress_events`, scoped to the current project user. It supports `limit`, default `20`, capped at `50`.
 
@@ -160,7 +160,7 @@ Bottle:
 Invoke-RestMethod http://127.0.0.1:8000/api/v1/bottle/progress -Headers $headers
 ```
 
-Bottle progress uses published lesson completion plus up to 3 existing private diary notes. The source is `learning_and_diary`; no bottle table or gamification state is created. Sprint 12 adds a small `activity_preview` array.
+Bottle progress uses published lesson completion, up to 3 existing private diary notes, and completed published quizzes. The source is `learning_diary_and_quizzes`; no bottle table or gamification state is created. Sprint 12 adds a small `activity_preview` array.
 
 Diary:
 
@@ -253,7 +253,7 @@ Start the backend on port `8000`, then from the repository root run:
 .\backend\scripts\smoke_sprint6.ps1
 ```
 
-The smoke script includes Sprint 16 quizzes checks plus the Sprint 13 My Path checks and Sprint 12 bottle, diary, and progress activity checks.
+The smoke script includes Sprint 17 quiz completion checks plus the Sprint 13 My Path checks and Sprint 12 bottle, diary, and progress activity checks.
 
 The script checks health, dev auth, `/auth/me`, onboarding reset/complete, home, discoveries, learning paths/lessons, progress summary, lesson complete/uncomplete, bottle progress, diary CRUD, taste profile, and deleted-note 404 behavior. Successful steps print `[OK] ...`.
 
@@ -300,10 +300,11 @@ Sprint 16 adds project-scoped quiz content:
 - published-only filtering for normal reads;
 - `GET /quizzes`, `GET /quizzes/{slug}`, and `POST /quizzes/{slug}/check`;
 - quiz detail hides `correct_option_key`;
-- checks are not persisted and do not create `ProgressEvent`;
+- checks are not persisted as attempts;
+- perfect checks create idempotent `quiz.completed` progress events;
 - idempotent demo seed for `wine-basics-check`.
 
-Sprint 16 does not add attempts, quiz progress, bottle contribution, points, achievements, badges, streaks, or gamification.
+Sprint 17 does not add attempts, full answer history, points, achievements, badges, streaks, leaderboards, or gamification.
 
 ## Progress Ledger
 
@@ -313,11 +314,11 @@ Sprint 9 adds generic project-scoped, user-owned progress events:
 - every row has `project_id` and `project_user_id`;
 - current event: `learning.lesson.completed` for `source_type = lesson`;
 - idempotency is enforced by service lookup plus unique `(project_id, project_user_id, event_type, source_type, source_id)`;
-- `/progress/summary` returns learning and diary counts;
+- `/progress/summary` returns learning, diary, and quiz counts;
 - `/progress/activity` returns a read-only activity projection;
 - learning endpoints compute completion state from the current user's events.
 
-Sprint 9 does not add Bottle UI, points, achievements, quizzes, scores, or gamification.
+Sprint 17 adds `quiz.completed` to the same ledger without adding attempts, points, achievements, scores, or gamification.
 
 Sprint 12 activity is read-only. It does not add a separate activity table, social feed, points, achievements, badges, comments, likes, or rankings.
 
@@ -355,4 +356,4 @@ Sprint 5 adds a private dynamic taste profile:
 
 ## Sprint Boundary
 
-Sprint 16 adds Quizzes Foundation only. It does not add quiz attempts, quiz progress events, bottle integration, AI, recommendations, public profiles, sharing, social features, achievements, points, badges, streaks, premium/payments, notifications, admin CRUD, CMS/editor, uploads, OCR/barcode, inventory, external wine databases, production hosting, or deployment.
+Sprint 17 adds quiz completion events and read-model integration only. It does not add quiz attempts, full answer history, AI, recommendations, public profiles, sharing, social features, achievements, points, badges, streaks, premium/payments, notifications, admin CRUD, CMS/editor, uploads, OCR/barcode, inventory, external wine databases, production hosting, or deployment.

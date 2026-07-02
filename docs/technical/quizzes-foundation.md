@@ -1,6 +1,7 @@
 # Quizzes Foundation
 
 Sprint 16 adds project-scoped quiz content and a local answer-check flow.
+Sprint 17 adds completion state through the existing `ProgressEvent` ledger.
 
 ## Tables
 
@@ -23,22 +24,26 @@ Sprint 16 adds project-scoped quiz content and a local answer-check flow.
 
 - `GET /api/v1/quizzes` returns published quizzes for the current project.
 - `GET /api/v1/quizzes/{slug}` returns a published quiz with ordered questions and public options.
-- `POST /api/v1/quizzes/{slug}/check` checks submitted answers without saving an attempt.
+- `POST /api/v1/quizzes/{slug}/check` checks submitted answers and creates a `quiz.completed` event only when all answers are correct.
 
 All endpoints require auth, active current `ProjectUser`, and `view_app`.
 
 ## Privacy And Progress
 
-Sprint 16 does not create user-owned quiz attempts. The check endpoint is read/check only and does not write `ProgressEvent`.
+Sprint 17 still does not create user-owned quiz attempts. The check endpoint does not persist full answer history.
 
-Quizzes do not affect:
+Completion is stored only as a generic progress event:
 
-- Bottle progress;
-- My Path;
-- Progress Activity;
-- lesson completion;
-- diary stats;
-- taste profile.
+```text
+event_type: quiz.completed
+source_type: quiz
+source_id: quizzes.id
+source_slug: quizzes.slug
+```
+
+The completion rule is `correct_count == total_questions`. Partial checks return results and explanations but do not create progress.
+
+Quiz completion affects Bottle, My Path, Progress Activity, and Home through existing read models. It does not affect lesson completion, diary stats, or taste profile.
 
 ## Seed Content
 
@@ -46,4 +51,4 @@ The dev seed creates one published beginner quiz, `wine-basics-check`, with 5 si
 
 ## Future Work
 
-Sprint 17 may add quiz completion events to the existing progress ledger. That is intentionally outside Sprint 16.
+Future work may add richer quiz history as a separate product design. That is intentionally not part of Sprint 17.

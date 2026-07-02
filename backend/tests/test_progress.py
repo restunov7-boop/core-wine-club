@@ -9,6 +9,8 @@ from app.progress.service import (
     DIARY_NOTE_SOURCE_TYPE,
     LESSON_COMPLETED_EVENT,
     LESSON_SOURCE_TYPE,
+    QUIZ_COMPLETED_EVENT,
+    QUIZ_SOURCE_TYPE,
     record_diary_note_created_event,
 )
 from app.projects.models import ProjectUser
@@ -17,6 +19,8 @@ from tests.conftest import complete_onboarding, create_note, login, set_dev_user
 
 LESSON_SLUG = "how-wine-is-made"
 SECOND_LESSON_SLUG = "how-to-taste-wine"
+QUIZ_SLUG = "wine-basics-check"
+QUIZ_ANSWER_KEYS = ["a", "b", "a", "b", "b"]
 
 
 def _count_progress_events(
@@ -35,6 +39,24 @@ def _count_progress_events(
         )
     finally:
         db.close()
+
+
+def _complete_quiz(client, headers: dict[str, str]) -> dict:
+    detail_response = client.get(f"/api/v1/quizzes/{QUIZ_SLUG}", headers=headers)
+    assert detail_response.status_code == 200, detail_response.text
+    detail = detail_response.json()["data"]
+    response = client.post(
+        f"/api/v1/quizzes/{QUIZ_SLUG}/check",
+        headers=headers,
+        json={
+            "answers": [
+                {"question_id": question["id"], "selected_option_key": QUIZ_ANSWER_KEYS[index]}
+                for index, question in enumerate(detail["questions"])
+            ]
+        },
+    )
+    assert response.status_code == 200, response.text
+    return response.json()["data"]
 
 
 def test_complete_lesson_creates_one_progress_event(client):
@@ -102,6 +124,11 @@ def test_progress_summary_returns_current_user_counts(client):
         "notes_count": 0,
         "created_note_events_count": 0,
     }
+    assert response_before.json()["data"]["quizzes"] == {
+        "completed_quizzes_count": 0,
+        "available_quizzes_count": 1,
+        "completed_quiz_slugs": [],
+    }
     assert response_after.status_code == 200, response_after.text
     assert response_after.json()["data"]["learning"] == {
         "completed_lessons_count": 1,
@@ -111,6 +138,32 @@ def test_progress_summary_returns_current_user_counts(client):
     assert response_after.json()["data"]["diary"] == {
         "notes_count": 0,
         "created_note_events_count": 0,
+    }
+    assert response_after.json()["data"]["quizzes"] == {
+        "completed_quizzes_count": 0,
+        "available_quizzes_count": 1,
+        "completed_quiz_slugs": [],
+    }
+
+
+def test_progress_summary_includes_quiz_counts(client):
+    headers = login(client)
+
+    response_before = client.get("/api/v1/progress/summary", headers=headers)
+    _complete_quiz(client, headers)
+    response_after = client.get("/api/v1/progress/summary", headers=headers)
+
+    assert response_before.status_code == 200, response_before.text
+    assert response_before.json()["data"]["quizzes"] == {
+        "completed_quizzes_count": 0,
+        "available_quizzes_count": 1,
+        "completed_quiz_slugs": [],
+    }
+    assert response_after.status_code == 200, response_after.text
+    assert response_after.json()["data"]["quizzes"] == {
+        "completed_quizzes_count": 1,
+        "available_quizzes_count": 1,
+        "completed_quiz_slugs": [QUIZ_SLUG],
     }
 
 
@@ -219,6 +272,24 @@ def test_progress_activity_maps_lesson_and_diary_events_newest_first(client):
     assert items[1]["title"] == "Урок завершён"
     assert items[1]["description"] == "Как рождается вино"
     assert items[1]["href"] == f"/learn/lessons/{LESSON_SLUG}"
+
+
+def test_progress_activity_maps_quiz_completion_event(client):
+    headers = login(client)
+    _complete_quiz(client, headers)
+    quiz_detail = client.get(f"/api/v1/quizzes/{QUIZ_SLUG}", headers=headers).json()["data"]
+
+    response = client.get("/api/v1/progress/activity", headers=headers)
+
+    assert response.status_code == 200, response.text
+    items = response.json()["data"]["items"]
+    assert len(items) == 1
+    assert items[0]["event_type"] == QUIZ_COMPLETED_EVENT
+    assert items[0]["source_type"] == QUIZ_SOURCE_TYPE
+    assert items[0]["source_slug"] == QUIZ_SLUG
+    assert items[0]["title"] == "РљРІРёР· Р·Р°РІРµСЂС€С‘РЅ"
+    assert items[0]["description"] == quiz_detail["title"]
+    assert items[0]["href"] == f"/quizzes/{QUIZ_SLUG}"
 
 
 def test_progress_activity_returns_only_current_users_events(client):

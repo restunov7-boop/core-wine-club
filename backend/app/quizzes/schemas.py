@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Literal
 from uuid import UUID
 
@@ -22,6 +23,8 @@ class QuizListItem(BaseModel):
     difficulty: QuizDifficulty
     estimated_minutes: int | None = None
     questions_count: int
+    is_completed: bool
+    completed_at: datetime | None = None
 
 
 class QuizQuestionPublic(BaseModel):
@@ -41,6 +44,8 @@ class QuizDetail(BaseModel):
     description: str | None = None
     difficulty: QuizDifficulty
     estimated_minutes: int | None = None
+    is_completed: bool
+    completed_at: datetime | None = None
     questions: list[QuizQuestionPublic]
 
 
@@ -65,4 +70,6 @@ class QuizCheckResult(BaseModel):
     quiz_slug: str
     total_questions: int
     correct_count: int
+    is_completed: bool
+    completed_at: datetime | None = None
     items: list[QuizCheckItem]
