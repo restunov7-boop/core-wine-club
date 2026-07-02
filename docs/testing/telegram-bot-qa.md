@@ -2,12 +2,21 @@
 
 Use this checklist for Sprint 21 bot foundation checks.
 
+Layer summary:
+
+- Sprint 20: app readiness for Telegram runtime.
+- Sprint 21: bot foundation.
+- Sprint 22: real Telegram QA with HTTPS tunnel.
+
+For the full real Telegram QA flow, use `docs/testing/telegram-real-qa.md`.
+
 ## Local Configuration
 
 - A bot was created manually in `@BotFather`.
 - `TELEGRAM_BOT_TOKEN` is set locally and is not committed.
 - `TELEGRAM_WEB_APP_URL` is set locally.
 - For real Telegram mobile testing, `TELEGRAM_WEB_APP_URL` is HTTPS.
+- Telegram rejects `http://localhost:5173` for Web App buttons.
 - Temporary tunnel URLs are not committed.
 
 PowerShell example:

@@ -46,8 +46,11 @@ class BotConfig:
             raise BotConfigError("TELEGRAM_WEB_APP_URL is required to create the Mini App button.")
 
         parsed_url = urlparse(self.web_app_url)
-        if parsed_url.scheme not in {"http", "https"} or not parsed_url.netloc:
-            raise BotConfigError("TELEGRAM_WEB_APP_URL must be a valid http or https URL.")
+        if parsed_url.scheme != "https" or not parsed_url.netloc:
+            raise BotConfigError(
+                "TELEGRAM_WEB_APP_URL must be a valid HTTPS URL. "
+                "Telegram Web App button requires HTTPS; localhost/http is not accepted by Telegram."
+            )
 
         if not self.polling_allowed:
             raise BotConfigError("TELEGRAM_BOT_POLLING_ALLOWED must be true for the local polling runner.")

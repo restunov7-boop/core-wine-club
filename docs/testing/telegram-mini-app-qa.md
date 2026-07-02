@@ -2,6 +2,14 @@
 
 Use this checklist for controlled Telegram Mini App readiness testing.
 
+Layer summary:
+
+- Sprint 20: app readiness for Telegram runtime.
+- Sprint 21: bot foundation.
+- Sprint 22: real Telegram QA with HTTPS tunnel.
+
+For the end-to-end Telegram bot + HTTPS tunnel flow, see `docs/testing/telegram-real-qa.md`.
+
 ## Browser Dev Mode
 
 - `VITE_DEV_TELEGRAM_MOCK=true` is set in `frontend/.env.local`.
@@ -42,6 +50,7 @@ Do not paste real initData into screenshots, logs, docs, or shared chat.
 - A Telegram bot must be created manually in `@BotFather`.
 - Sprint 21 provides a local polling runner that can send the Mini App button.
 - The Mini App URL must be HTTPS.
+- Telegram rejects `http://localhost:5173` for Web App buttons.
 - Frontend URL must point to the reachable frontend host or tunnel.
 - `VITE_API_BASE_URL` must point to a reachable backend host or tunnel.
 - Backend CORS must include the frontend HTTPS origin.

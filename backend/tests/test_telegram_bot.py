@@ -33,7 +33,15 @@ def test_bot_config_rejects_invalid_web_app_url(monkeypatch):
     monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "123456:fake-token-for-test")
     monkeypatch.setenv("TELEGRAM_WEB_APP_URL", "not-a-url")
 
-    with pytest.raises(BotConfigError, match="valid http or https URL"):
+    with pytest.raises(BotConfigError, match="valid HTTPS URL"):
+        BotConfig.from_env()
+
+
+def test_bot_config_rejects_http_localhost_web_app_url(monkeypatch):
+    monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "123456:fake-token-for-test")
+    monkeypatch.setenv("TELEGRAM_WEB_APP_URL", "http://localhost:5173")
+
+    with pytest.raises(BotConfigError, match="requires HTTPS"):
         BotConfig.from_env()
 
 
@@ -42,6 +50,15 @@ def test_bot_config_repr_does_not_leak_token():
 
     assert "secret-token" not in repr(config)
     assert "https://example.com" in repr(config)
+
+
+def test_bot_config_accepts_https_web_app_url(monkeypatch):
+    monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "123456:fake-token-for-test")
+    monkeypatch.setenv("TELEGRAM_WEB_APP_URL", "https://example.com")
+
+    config = BotConfig.from_env()
+
+    assert config.web_app_url == "https://example.com"
 
 
 def test_open_app_keyboard_uses_web_app_button():

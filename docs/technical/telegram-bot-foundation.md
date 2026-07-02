@@ -4,6 +4,12 @@ Sprint 21 adds a minimal local Telegram bot runner that opens the Wine Club Mini
 
 This sprint does not add production webhook deployment, hosting, payments, subscriptions, paid channel checks, premium logic, admin CRUD, CMS, social features, notifications, AI, gamification, or new product systems.
 
+Layer summary:
+
+- Sprint 20: app readiness for Telegram runtime.
+- Sprint 21: bot foundation.
+- Sprint 22: real Telegram QA with HTTPS tunnel.
+
 ## Structure
 
 ```text
@@ -33,7 +39,7 @@ $env:TELEGRAM_BOT_POLLING_ALLOWED="true"
 
 Do not commit bot tokens, tunnel URLs, `.env`, or `.env.local`.
 
-`TELEGRAM_WEB_APP_URL` is used for the Mini App button. Telegram mobile testing requires an HTTPS URL. Localhost can be useful for browser development, but may not open correctly inside Telegram mobile.
+`TELEGRAM_WEB_APP_URL` is used for the Mini App button. Telegram Web App buttons require an HTTPS URL. `http://localhost:5173` is useful for browser development, but Telegram rejects it for Web App buttons.
 
 ## BotFather Setup
 
@@ -54,6 +60,12 @@ cd C:\Users\restu\Documents\core\core-wine-club\backend
 ```
 
 The runner validates required env first. If `TELEGRAM_BOT_TOKEN` or `TELEGRAM_WEB_APP_URL` is missing, it exits with a clear safe message and does not print the token.
+
+For real Telegram QA with a temporary HTTPS tunnel, see:
+
+```text
+docs/testing/telegram-real-qa.md
+```
 
 ## Bot Commands
 

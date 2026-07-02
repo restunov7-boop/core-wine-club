@@ -2,6 +2,12 @@
 
 Sprint 20 prepares the app for controlled Telegram Mini App testing. It does not add production deployment, paid channel access verification, payments, subscriptions, premium logic, or public launch workflow.
 
+Layer summary:
+
+- Sprint 20: app readiness for Telegram runtime.
+- Sprint 21: bot foundation.
+- Sprint 22: real Telegram QA with HTTPS tunnel.
+
 ## Runtime Isolation
 
 Frontend Telegram access is isolated in:
@@ -130,6 +136,12 @@ The repository includes an optional helper:
 ```
 
 This helper is for dev/mobile preview only. It is not production hosting, does not configure a Telegram bot, and should not be used with production credentials.
+
+For the full real Telegram QA flow, see:
+
+```text
+docs/testing/telegram-real-qa.md
+```
 
 ## Known Limitations
 
