@@ -17,6 +17,7 @@ from app.quizzes.router import router as quizzes_router
 from app.shared.errors import AppError
 from app.shared.responses import app_error_handler
 from app.taste_profile.router import router as taste_profile_router
+from app.wine_shelf.router import router as wine_shelf_router
 
 
 def create_app() -> FastAPI:
@@ -44,6 +45,7 @@ def create_app() -> FastAPI:
     app.include_router(diary_router, prefix=settings.api_v1_prefix)
     app.include_router(taste_profile_router, prefix=settings.api_v1_prefix)
     app.include_router(my_path_router, prefix=settings.api_v1_prefix)
+    app.include_router(wine_shelf_router, prefix=settings.api_v1_prefix)
     app.include_router(home_router, prefix=settings.api_v1_prefix)
     return app
 

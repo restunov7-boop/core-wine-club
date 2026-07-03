@@ -26,6 +26,7 @@ from app.projects.service import ensure_default_project
 from app.quizzes import models as quiz_models  # noqa: F401
 from app.quizzes.service import seed_demo_quizzes
 from app.users import models as user_models  # noqa: F401
+from app.wine_shelf import models as wine_shelf_models  # noqa: F401
 
 
 def _reset_dev_user() -> None:
