@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap");
+
 :root {
   --color-bg: #141313;
   --color-surface: #211d1f;
@@ -14,7 +16,7 @@
   color: var(--color-text);
   background: var(--color-bg);
   font-family:
-    Inter, "SF Pro Text", "Segoe UI", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    Manrope, "SF Pro Text", "Segoe UI", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -1988,4 +1990,98 @@ textarea:focus-visible {
   .bottle-visual--home {
     margin-bottom: -78px;
   }
+}
+
+.home-page__intro h1,
+.home-hero h2,
+.discoveries-header h1,
+.discovery-detail h1,
+.learning-header h1,
+.learning-detail h1,
+.lesson-detail h1,
+.progress-header h1,
+.my-path-header h1,
+.diary-header h1,
+.diary-detail h1,
+.taste-profile-header h1,
+.bottle-header h1,
+.onboarding-panel h1 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-weight: 700;
+}
+
+.back-button {
+  width: 48px;
+  height: 42px;
+  display: inline-grid;
+  place-items: center;
+  margin-bottom: 18px;
+  border: 1px solid rgba(214, 168, 79, 0.22);
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(245, 239, 232, 0.08), rgba(245, 239, 232, 0.03)),
+    rgba(20, 19, 19, 0.42);
+  color: var(--color-text);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+.back-button svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.15;
+}
+
+.back-button:hover {
+  border-color: rgba(214, 168, 79, 0.48);
+  background:
+    linear-gradient(180deg, rgba(214, 168, 79, 0.12), rgba(245, 239, 232, 0.04)),
+    rgba(20, 19, 19, 0.56);
+}
+
+.wine-suggestion-list {
+  display: none;
+}
+
+.wine-autocomplete {
+  display: grid;
+  gap: 6px;
+  margin-top: -4px;
+  padding: 8px;
+  border: 1px solid rgba(245, 239, 232, 0.1);
+  border-radius: var(--radius-card);
+  background: rgba(20, 19, 19, 0.58);
+}
+
+.wine-autocomplete__item {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  min-height: 54px;
+  padding: 10px 11px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-card);
+  background: rgba(245, 239, 232, 0.035);
+  color: var(--color-text);
+  text-align: left;
+}
+
+.wine-autocomplete__item:hover,
+.wine-autocomplete__item:focus-visible {
+  border-color: rgba(214, 168, 79, 0.34);
+  background: rgba(245, 239, 232, 0.065);
+}
+
+.wine-autocomplete__item strong {
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.wine-autocomplete__item span {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  line-height: 1.35;
 }

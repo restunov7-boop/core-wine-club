@@ -1,5 +1,6 @@
-import type { FormEvent } from "react";
+import { useMemo, type FormEvent } from "react";
 
+import { wineSuggestions, type WineSuggestion } from "./data/wineSuggestions";
 import type { Sweetness, TastingNoteDetail, TastingNotePayload, WineColor } from "./types";
 
 export type DiaryNoteFormState = {
@@ -29,24 +30,6 @@ type DiaryNoteFormProps = {
   onChange: (next: DiaryNoteFormState) => void;
   onSubmit: () => void;
 };
-
-type WineSuggestion = {
-  name: string;
-  country: string;
-  region: string;
-  grape: string;
-};
-
-const wineSuggestions: WineSuggestion[] = [
-  { name: "Prosecco Valdobbiadene", country: "Italy", region: "Veneto", grape: "Glera" },
-  { name: "Chianti Classico", country: "Italy", region: "Tuscany", grape: "Sangiovese" },
-  { name: "Chablis", country: "France", region: "Burgundy", grape: "Chardonnay" },
-  { name: "Rioja Crianza", country: "Spain", region: "Rioja", grape: "Tempranillo" },
-  { name: "Marlborough Sauvignon Blanc", country: "New Zealand", region: "Marlborough", grape: "Sauvignon Blanc" },
-  { name: "Riesling Kabinett", country: "Germany", region: "Mosel", grape: "Riesling" },
-  { name: "Malbec Mendoza", country: "Argentina", region: "Mendoza", grape: "Malbec" },
-  { name: "Pinot Noir Oregon", country: "USA", region: "Oregon", grape: "Pinot Noir" },
-];
 
 export const emptyDiaryNoteForm: DiaryNoteFormState = {
   wine_name: "",
@@ -113,6 +96,24 @@ export function payloadFromForm(form: DiaryNoteFormState): TastingNotePayload {
 }
 
 export function DiaryNoteForm({ form, isSubmitting, submitLabel, onChange, onSubmit }: DiaryNoteFormProps) {
+  const matchingSuggestions = useMemo(() => {
+    const query = form.wine_name.trim().toLowerCase();
+    if (query.length < 2) {
+      return [];
+    }
+
+    return wineSuggestions
+      .filter((suggestion) => {
+        const searchable = [suggestion.name, suggestion.country, suggestion.region, suggestion.grape];
+        if (suggestion.style) {
+          searchable.push(suggestion.style);
+        }
+
+        return searchable.some((value) => value.toLowerCase().includes(query));
+      })
+      .slice(0, 6);
+  }, [form.wine_name]);
+
   function update<Key extends keyof DiaryNoteFormState>(key: Key, value: DiaryNoteFormState[Key]) {
     onChange({ ...form, [key]: value });
   }
@@ -144,47 +145,43 @@ export function DiaryNoteForm({ form, isSubmitting, submitLabel, onChange, onSub
 
   return (
     <form className="diary-form" onSubmit={submit}>
-      <datalist id="wine-suggestions">
-        {wineSuggestions.map((suggestion) => (
-          <option key={suggestion.name} value={suggestion.name} />
-        ))}
-      </datalist>
-
       <section className="diary-form-section">
         <div className="diary-form-section__header">
           <span>Вино</span>
           <h2>Что пробовали?</h2>
-          <p>Начни с названия. Если выберешь demo-подсказку, страна, регион и сорт заполнятся сами.</p>
+          <p>Начни с названия. Подходящие demo-подсказки появятся ниже и заполнят страну, регион и сорт.</p>
         </div>
 
         <label>
           <span>Название вина *</span>
           <input
             className="text-input"
-            list="wine-suggestions"
             required
             value={form.wine_name}
             placeholder="Chianti Classico"
+            autoComplete="off"
             onChange={(event) => updateWineName(event.target.value)}
           />
-          <small className="field-hint">Это demo-подсказки, не полная база вин.</small>
+          <small className="field-hint">Это demo suggestions для быстрого ввода, не полная база всех вин.</small>
         </label>
 
-        <div className="wine-suggestion-list" aria-label="Demo wine suggestions">
-          {wineSuggestions.slice(0, 4).map((suggestion) => (
-            <button
-              className="wine-suggestion"
-              key={suggestion.name}
-              type="button"
-              onClick={() => applySuggestion(suggestion)}
-            >
-              <strong>{suggestion.name}</strong>
-              <span>
-                {suggestion.country} · {suggestion.region} · {suggestion.grape}
-              </span>
-            </button>
-          ))}
-        </div>
+        {matchingSuggestions.length > 0 && (
+          <div className="wine-autocomplete" aria-label="Wine suggestions">
+            {matchingSuggestions.map((suggestion) => (
+              <button
+                className="wine-autocomplete__item"
+                key={`${suggestion.name}-${suggestion.region}`}
+                type="button"
+                onClick={() => applySuggestion(suggestion)}
+              >
+                <strong>{suggestion.name}</strong>
+                <span>
+                  {[suggestion.country, suggestion.region, suggestion.grape, suggestion.style].filter(Boolean).join(" · ")}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
 
         <div className="form-grid">
           <TextField label="Производитель" value={form.producer} onChange={(value) => update("producer", value)} />
@@ -264,7 +261,7 @@ export function DiaryNoteForm({ form, isSubmitting, submitLabel, onChange, onSub
             className="textarea-input"
             value={form.personal_note}
             rows={5}
-            placeholder="Например: взяла к ужину, понравилась свежесть и легкая минеральность."
+            placeholder="Например: взяла к ужину, понравилась свежесть и лёгкая минеральность."
             onChange={(event) => update("personal_note", event.target.value)}
           />
         </label>
