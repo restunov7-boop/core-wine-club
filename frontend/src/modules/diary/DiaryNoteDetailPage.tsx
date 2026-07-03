@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { getOnboardingStatus } from "../onboarding/api";
 import { BackButton } from "../../shared/ui/BackButton";
+import { EmptyState } from "../../shared/ui/EmptyState";
 import { ErrorState } from "../../shared/ui/ErrorState";
 import { LoadingState } from "../../shared/ui/LoadingState";
 
@@ -97,11 +98,35 @@ export function DiaryNoteDetailPage() {
   }
 
   if (error) {
-    return <ErrorState title="Не удалось открыть заметку" description={error} />;
+    return (
+      <ErrorState
+        title="Заметка не открылась"
+        description={error}
+        action={
+          <Link className="primary-action state-card__action" to="/diary">
+            Вернуться в дневник
+          </Link>
+        }
+      />
+    );
   }
 
-  if (isLoading || !note) {
+  if (isLoading) {
     return <LoadingState title="Дневник вкуса" description="Открываем заметку..." />;
+  }
+
+  if (!note) {
+    return (
+      <EmptyState
+        title="Заметка не найдена"
+        description="Возможно, она была удалена или ссылка устарела. Дневник рядом, можно вернуться к списку заметок."
+        action={
+          <Link className="primary-action" to="/diary">
+            Вернуться в дневник
+          </Link>
+        }
+      />
+    );
   }
 
   return (

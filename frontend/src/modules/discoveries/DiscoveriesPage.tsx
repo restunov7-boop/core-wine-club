@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
+import { EmptyState } from "../../shared/ui/EmptyState";
 import { ErrorState } from "../../shared/ui/ErrorState";
 import { LoadingState } from "../../shared/ui/LoadingState";
 import { getOnboardingStatus } from "../onboarding/api";
@@ -96,7 +97,17 @@ export function DiscoveriesPage() {
   }, [navigate]);
 
   if (error) {
-    return <ErrorState title="Не удалось открыть открытия" description={error} />;
+    return (
+      <ErrorState
+        title="Открытия сейчас не открылись"
+        description={error}
+        action={
+          <Link className="primary-action state-card__action" to="/home">
+            На главную
+          </Link>
+        }
+      />
+    );
   }
 
   if (isLoading) {
@@ -111,8 +122,19 @@ export function DiscoveriesPage() {
         <p>Короткие посты, идеи и lifestyle-подсказки. Обучение теперь живёт в уроках, а здесь — лёгкая лента.</p>
       </header>
 
-      <div className="discovery-feed">
-        {discoveryPosts.map((post) => (
+      {discoveryPosts.length === 0 ? (
+        <EmptyState
+          title="Скоро здесь появятся заметки, находки и винные мысли"
+          description="Лента останется лёгкой и редакционной: короткие идеи, подсказки и вдохновение без тяжёлой социальной механики."
+          action={
+            <Link className="primary-action" to="/home">
+              На главную
+            </Link>
+          }
+        />
+      ) : (
+        <div className="discovery-feed">
+          {discoveryPosts.map((post) => (
           <article className={`discovery-feed-card discovery-feed-card--${post.type}`} key={post.id}>
             <div className="discovery-meta">
               <span>{typeLabels[post.type]}</span>
@@ -122,8 +144,9 @@ export function DiscoveriesPage() {
             <p>{post.body}</p>
             {post.type === "video" && <div className="discovery-video-placeholder">Video placeholder</div>}
           </article>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

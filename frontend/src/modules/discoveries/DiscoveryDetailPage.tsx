@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { getOnboardingStatus } from "../onboarding/api";
 import { BackButton } from "../../shared/ui/BackButton";
+import { EmptyState } from "../../shared/ui/EmptyState";
 import { ErrorState } from "../../shared/ui/ErrorState";
 import { LoadingState } from "../../shared/ui/LoadingState";
 
@@ -79,11 +80,40 @@ export function DiscoveryDetailPage() {
   );
 
   if (error) {
-    return <ErrorState title="Не удалось открыть материал" description={error} />;
+    return (
+      <ErrorState
+        title="Материал не открылся"
+        description={error}
+        action={
+          <Link className="primary-action state-card__action" to="/discoveries">
+            К открытиям
+          </Link>
+        }
+      />
+    );
   }
 
-  if (isLoading || !discovery) {
+  if (isLoading) {
     return <LoadingState title="Открытие" description="Открываем материал..." />;
+  }
+
+  if (!discovery) {
+    return (
+      <EmptyState
+        title="Материал не найден"
+        description="Возможно, ссылка устарела. Вернись к открытиям или на главную."
+        action={
+          <>
+            <Link className="primary-action" to="/discoveries">
+              К открытиям
+            </Link>
+            <Link className="ghost-action" to="/home">
+              На главную
+            </Link>
+          </>
+        }
+      />
+    );
   }
 
   return (

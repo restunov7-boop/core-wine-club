@@ -64,7 +64,7 @@ export function HomePage() {
   const bottle = sections.get("bottle");
   const nextAction = myPath?.items[0];
   const nextActionHref = nextAction?.href ?? myPath?.href ?? "/my-path";
-  const bottleFill = typeof bottle?.stats.fill_percent === "number" ? bottle.stats.fill_percent : 0;
+  const bottleFill = typeof bottle?.stats?.fill_percent === "number" ? bottle.stats.fill_percent : 0;
 
   return (
     <section className="home-page home-page--alive">
@@ -137,7 +137,8 @@ export function HomePage() {
           </div>
         ) : (
           <div className="home-diary-empty">
-            <p>Пока нет заметок. Начни с одного вина, которое хочется запомнить.</p>
+            <h2>Первую заметку можно начать с любого бокала</h2>
+            <p>Запиши название вина и пару честных слов о вкусе. Остальное можно добавить позже, когда появится настроение.</p>
             <Link className="primary-action" to="/diary/new">
               Добавить первую заметку
             </Link>

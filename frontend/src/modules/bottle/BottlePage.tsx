@@ -126,9 +126,17 @@ export function BottlePage() {
         </div>
 
         {progress.activity_preview.length === 0 ? (
-          <p className="activity-preview-panel__empty">
-            Пока нет действий. Уроки, квизы и заметки появятся здесь, когда начнут наполнять бутылку.
-          </p>
+          <div className="activity-preview-panel__empty">
+            <p>Пока нет действий. Уроки, квизы и заметки появятся здесь, когда начнут наполнять бутылку.</p>
+            <div className="empty-state__action">
+              <Link className="primary-action" to="/learn">
+                Начать с урока
+              </Link>
+              <Link className="ghost-action" to="/diary/new">
+                Добавить заметку
+              </Link>
+            </div>
+          </div>
         ) : (
           <div className="activity-preview-list">
             {progress.activity_preview.map((item) => {

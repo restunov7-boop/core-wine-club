@@ -59,7 +59,17 @@ export function LearningPathsPage() {
   }, [navigate]);
 
   if (error) {
-    return <ErrorState title="Не удалось открыть уроки" description={error} />;
+    return (
+      <ErrorState
+        title="Уроки сейчас не открылись"
+        description={error}
+        action={
+          <Link className="primary-action state-card__action" to="/home">
+            На главную
+          </Link>
+        }
+      />
+    );
   }
 
   if (isLoading) {
@@ -76,12 +86,17 @@ export function LearningPathsPage() {
 
       {items.length === 0 ? (
         <EmptyState
-          title="Уроков пока нет"
-          description="Первые маршруты появятся здесь после локального seed. Пока можно открыть главную."
+          title="Уроки скоро появятся"
+          description="Здесь будут короткие винные маршруты. Попробуй обновить позже или вернись на главную."
           action={
-            <Link className="primary-action" to="/home">
-              На главную
-            </Link>
+            <>
+              <Link className="primary-action" to="/home">
+                На главную
+              </Link>
+              <Link className="ghost-action" to="/diary/new">
+                Добавить заметку
+              </Link>
+            </>
           }
         />
       ) : (

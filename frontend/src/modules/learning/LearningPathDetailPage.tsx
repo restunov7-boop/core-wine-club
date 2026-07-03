@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { getOnboardingStatus } from "../onboarding/api";
 import { BackButton } from "../../shared/ui/BackButton";
+import { EmptyState } from "../../shared/ui/EmptyState";
 import { ErrorState } from "../../shared/ui/ErrorState";
 import { LoadingState } from "../../shared/ui/LoadingState";
 
@@ -72,11 +73,35 @@ export function LearningPathDetailPage() {
   }, [navigate, pathSlug]);
 
   if (error) {
-    return <ErrorState title="Не удалось открыть маршрут" description={error} />;
+    return (
+      <ErrorState
+        title="Маршрут не открылся"
+        description={error}
+        action={
+          <Link className="primary-action state-card__action" to="/learn">
+            К урокам
+          </Link>
+        }
+      />
+    );
   }
 
-  if (isLoading || !path) {
+  if (isLoading) {
     return <LoadingState title="Уроки" description="Открываем маршрут..." />;
+  }
+
+  if (!path) {
+    return (
+      <EmptyState
+        title="Маршрут не найден"
+        description="Возможно, ссылка устарела. Вернись к списку уроков и выбери доступный маршрут."
+        action={
+          <Link className="primary-action" to="/learn">
+            К урокам
+          </Link>
+        }
+      />
+    );
   }
 
   return (
@@ -98,11 +123,16 @@ export function LearningPathDetailPage() {
 
       {path.lessons.length === 0 ? (
         <div className="lesson-empty">
-          <h2>Уроки ещё не опубликованы</h2>
-          <p>Вернись к списку маршрутов — там появятся доступные уроки.</p>
-          <Link className="primary-action" to="/learn">
-            Назад к урокам
-          </Link>
+          <h2>Уроки скоро появятся</h2>
+          <p>Этот маршрут уже на месте, но материалы ещё не опубликованы. Попробуй обновить позже или вернись к списку уроков.</p>
+          <div className="empty-state__action">
+            <Link className="primary-action" to="/learn">
+              Назад к урокам
+            </Link>
+            <Link className="ghost-action" to="/home">
+              На главную
+            </Link>
+          </div>
         </div>
       ) : (
         <div className="lesson-list">

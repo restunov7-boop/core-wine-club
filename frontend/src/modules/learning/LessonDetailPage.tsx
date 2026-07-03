@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { getOnboardingStatus } from "../onboarding/api";
 import { BackButton } from "../../shared/ui/BackButton";
+import { EmptyState } from "../../shared/ui/EmptyState";
 import { ErrorState } from "../../shared/ui/ErrorState";
 import { LoadingState } from "../../shared/ui/LoadingState";
 
@@ -87,11 +88,35 @@ export function LessonDetailPage() {
   );
 
   if (error) {
-    return <ErrorState title="Не удалось открыть урок" description={error} />;
+    return (
+      <ErrorState
+        title="Урок не открылся"
+        description={error}
+        action={
+          <Link className="primary-action state-card__action" to="/learn">
+            К урокам
+          </Link>
+        }
+      />
+    );
   }
 
-  if (isLoading || !lesson) {
+  if (isLoading) {
     return <LoadingState title="Урок" description="Открываем материал..." />;
+  }
+
+  if (!lesson) {
+    return (
+      <EmptyState
+        title="Урок не найден"
+        description="Возможно, материал ещё не опубликован или ссылка устарела. Вернись к списку уроков."
+        action={
+          <Link className="primary-action" to="/learn">
+            К урокам
+          </Link>
+        }
+      />
+    );
   }
 
   async function handleComplete() {

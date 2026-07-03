@@ -7,9 +7,14 @@ export function OfflineTastingsPage() {
         <span>Скоро</span>
         <h1>Офлайн-дегустации</h1>
         <p>Встречи, вино и спокойное знакомство со вкусами. Пока это только витрина будущего раздела без оплаты и брони.</p>
-        <Link className="primary-action" to="/home">
-          На главную
-        </Link>
+        <div className="empty-state__action">
+          <Link className="primary-action" to="/home">
+            На главную
+          </Link>
+          <Link className="ghost-action" to="/discoveries">
+            К открытиям
+          </Link>
+        </div>
       </header>
       <section className="offline-tastings-note">
         <h2>Где потом появятся реальные данные</h2>

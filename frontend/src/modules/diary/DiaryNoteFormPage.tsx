@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { BackButton } from "../../shared/ui/BackButton";
 import { ErrorState } from "../../shared/ui/ErrorState";
@@ -78,7 +78,17 @@ export function DiaryNoteFormPage() {
   }
 
   if (isEditing && error && !form.wine_name) {
-    return <ErrorState title="Не удалось открыть форму" description={error} />;
+    return (
+      <ErrorState
+        title="Не удалось открыть форму"
+        description={error}
+        action={
+          <Link className="primary-action state-card__action" to="/diary">
+            Вернуться в дневник
+          </Link>
+        }
+      />
+    );
   }
 
   return (

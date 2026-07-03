@@ -91,12 +91,17 @@ export function DiaryPage() {
 
       {total === 0 ? (
         <EmptyState
-          title="Пока нет заметок"
-          description="Добавь первое вино в дневник, чтобы профиль вкуса стал точнее, а бутылка получила новый вклад."
+          title="Дневник пока чистый"
+          description="Здесь будут личные заметки о винах: что пробовала, что понравилось, что хочется повторить. Начать можно с любого бокала, без идеальной структуры."
           action={
-            <Link className="primary-action" to="/diary/new">
-              Добавить первую заметку
-            </Link>
+            <>
+              <Link className="primary-action" to="/diary/new">
+                Добавить первую заметку
+              </Link>
+              <Link className="ghost-action" to="/home">
+                На главную
+              </Link>
+            </>
           }
         />
       ) : (

@@ -110,34 +110,43 @@ export function TasteProfilePage() {
       <section className="taste-profile-card">
         <h2>Наблюдение</h2>
         <div className="taste-insight-list">
-          {profile.insights.map((insight) => (
-            <article key={insight.key} className="taste-insight">
-              <h3>{insight.title}</h3>
-              <p>{insight.description}</p>
+          {profile.insights.length > 0 ? (
+            profile.insights.map((insight) => (
+              <article key={insight.key} className="taste-insight">
+                <h3>{insight.title}</h3>
+                <p>{insight.description}</p>
+              </article>
+            ))
+          ) : (
+            <article className="taste-insight">
+              <h3>Наблюдения появятся позже</h3>
+              <p>Когда в дневнике станет больше заметок, здесь появятся спокойные выводы о твоём вкусе.</p>
             </article>
-          ))}
+          )}
         </div>
       </section>
 
-      {progress && bottle && (
-        <section className="taste-profile-card taste-profile-card--rhythm">
-          <div className="taste-profile-card__header">
-            <div>
-              <span>Личный ритм</span>
-              <h2>Прогресс</h2>
-            </div>
-            <Link className="ghost-action" to="/progress">
-              Архив
-            </Link>
+      <section className="taste-profile-card taste-profile-card--rhythm">
+        <div className="taste-profile-card__header">
+          <div>
+            <span>Личный ритм</span>
+            <h2>Прогресс</h2>
           </div>
+          <Link className="ghost-action" to="/progress">
+            Архив
+          </Link>
+        </div>
+        {progress && bottle ? (
           <div className="taste-stat-grid">
             <StatCard label="Уроки" value={`Пройдено: ${progress.learning.completed_lessons_count}`} />
             <StatCard label="Квизы" value={`Пройдено: ${progress.quizzes.completed_quizzes_count}`} />
             <StatCard label="Дневник" value={`Заметок: ${progress.diary.notes_count}`} />
             <StatCard label="Бутылка" value={`${bottle.fill_percent}%`} />
           </div>
-        </section>
-      )}
+        ) : (
+          <p>Прогресс появится здесь после уроков, квизов и первых заметок в дневнике.</p>
+        )}
+      </section>
     </section>
   );
 }

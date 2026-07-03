@@ -59,7 +59,17 @@ export function QuizzesPage() {
   }, [navigate]);
 
   if (error) {
-    return <ErrorState title="Не удалось открыть квизы" description={error} />;
+    return (
+      <ErrorState
+        title="Квизы сейчас не открылись"
+        description={error}
+        action={
+          <Link className="primary-action state-card__action" to="/learn">
+            Продолжить уроки
+          </Link>
+        }
+      />
+    );
   }
 
   if (isLoading) {
@@ -77,12 +87,17 @@ export function QuizzesPage() {
 
       {items.length === 0 ? (
         <EmptyState
-          title="Квизов пока нет"
-          description="Первые короткие проверки появятся здесь после seed."
+          title="Квизы скоро появятся"
+          description="Короткие проверки появятся после уроков. Пока можно продолжить обучение или вернуться на главную."
           action={
-            <Link className="primary-action" to="/learn">
-              Продолжить уроки
-            </Link>
+            <>
+              <Link className="primary-action" to="/learn">
+                Продолжить уроки
+              </Link>
+              <Link className="ghost-action" to="/home">
+                На главную
+              </Link>
+            </>
           }
         />
       ) : (

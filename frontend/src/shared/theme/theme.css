@@ -2319,6 +2319,22 @@ textarea:focus-visible {
   order: 10;
 }
 
+.home-diary-empty h2,
+.activity-preview-panel__empty h3 {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.activity-preview-panel__empty {
+  display: grid;
+  gap: 12px;
+}
+
+.activity-preview-panel__empty p {
+  margin: 0;
+}
+
 /* Sprint 29: light wine diary visual system. */
 .state-card,
 .empty-state,

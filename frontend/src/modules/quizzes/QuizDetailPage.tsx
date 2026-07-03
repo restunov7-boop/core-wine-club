@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { getOnboardingStatus } from "../onboarding/api";
 import { BackButton } from "../../shared/ui/BackButton";
+import { EmptyState } from "../../shared/ui/EmptyState";
 import { ErrorState } from "../../shared/ui/ErrorState";
 import { LoadingState } from "../../shared/ui/LoadingState";
 
@@ -77,11 +78,35 @@ export function QuizDetailPage() {
   }, [result]);
 
   if (error) {
-    return <ErrorState title="Не удалось открыть квиз" description={error} />;
+    return (
+      <ErrorState
+        title="Квиз не открылся"
+        description={error}
+        action={
+          <Link className="primary-action state-card__action" to="/learn">
+            Продолжить обучение
+          </Link>
+        }
+      />
+    );
   }
 
-  if (isLoading || !quiz) {
+  if (isLoading) {
     return <LoadingState title="Квиз" description="Открываем вопросы..." />;
+  }
+
+  if (!quiz) {
+    return (
+      <EmptyState
+        title="Квиз не найден"
+        description="Возможно, ссылка устарела или вопросы ещё не опубликованы. Можно вернуться к урокам и продолжить маршрут."
+        action={
+          <Link className="primary-action" to="/learn">
+            Продолжить обучение
+          </Link>
+        }
+      />
+    );
   }
 
   const answeredCount = Object.keys(selectedAnswers).length;
@@ -158,6 +183,14 @@ export function QuizDetailPage() {
           <span>Завершён</span>
           <h2>Квиз уже завершён</h2>
           <p>Можно пройти вопросы ещё раз для себя. Повторная идеальная проверка не создаст дубль в прогрессе.</p>
+          <div className="empty-state__action">
+            <Link className="primary-action" to="/learn">
+              Продолжить обучение
+            </Link>
+            <Link className="ghost-action" to="/quizzes">
+              Все квизы
+            </Link>
+          </div>
         </section>
       )}
 
@@ -175,6 +208,9 @@ export function QuizDetailPage() {
           <button className="ghost-action" type="button" onClick={retry}>
             Попробовать ещё раз
           </button>
+          <Link className="primary-action" to="/learn">
+            Продолжить обучение
+          </Link>
         </section>
       )}
 
