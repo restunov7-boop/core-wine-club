@@ -1,16 +1,16 @@
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap");
 
 :root {
-  --color-bg: #141313;
-  --color-surface: #211d1f;
-  --color-surface-soft: #2b2527;
+  --color-bg: #faf6ef;
+  --color-surface: #fffdf8;
+  --color-surface-soft: #f4eee5;
   --color-primary: #8f2638;
-  --color-accent: #d6a84f;
-  --color-text: #f5efe8;
-  --color-text-muted: #b9aca4;
-  --color-border: rgba(245, 239, 232, 0.08);
+  --color-accent: #b88946;
+  --color-text: #2c2523;
+  --color-text-muted: #786c66;
+  --color-border: rgba(89, 72, 64, 0.14);
   --radius-card: 8px;
-  --shadow-soft: 0 18px 48px rgba(143, 38, 56, 0.22);
+  --shadow-soft: 0 12px 26px rgba(83, 64, 52, 0.08);
   --bottom-nav-height: 82px;
 
   color: var(--color-text);
@@ -31,7 +31,10 @@ body {
   min-width: 320px;
   min-height: 100vh;
   overflow-x: hidden;
-  background: linear-gradient(145deg, #141313 0%, #1d1719 48%, #141313 100%);
+  background:
+    linear-gradient(180deg, rgba(255, 253, 248, 0.92), rgba(250, 246, 239, 0.96)),
+    radial-gradient(circle at top left, rgba(184, 137, 70, 0.13), transparent 22rem),
+    var(--color-bg);
 }
 
 a {
@@ -76,8 +79,8 @@ textarea:focus-visible {
   top: 0;
   z-index: 20;
   border-bottom: 1px solid var(--color-border);
-  background: rgba(20, 19, 19, 0.86);
-  backdrop-filter: blur(18px);
+  background: rgba(255, 253, 248, 0.88);
+  backdrop-filter: blur(16px);
 }
 
 .app-header__brand {
@@ -120,10 +123,10 @@ textarea:focus-visible {
   min-height: var(--bottom-nav-height);
   padding: 10px 10px calc(12px + env(safe-area-inset-bottom));
   transform: translateX(-50%);
-  background: rgba(20, 19, 19, 0.92);
-  border-top: 1px solid rgba(245, 239, 232, 0.08);
-  border-right: 1px solid rgba(245, 239, 232, 0.06);
-  border-left: 1px solid rgba(245, 239, 232, 0.06);
+  background: rgba(255, 253, 248, 0.94);
+  border-top: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
+  border-left: 1px solid var(--color-border);
   border-radius: 16px 16px 0 0;
   backdrop-filter: blur(16px);
 }
@@ -143,8 +146,8 @@ textarea:focus-visible {
 
 .bottom-nav__link--active,
 .bottom-nav__link.active {
-  color: var(--color-text);
-  background: rgba(143, 38, 56, 0.34);
+  color: var(--color-primary);
+  background: rgba(143, 38, 56, 0.08);
 }
 
 .state-card,
@@ -2314,4 +2317,334 @@ textarea:focus-visible {
 
 .taste-profile-card--rhythm {
   order: 10;
+}
+
+/* Sprint 29: light wine diary visual system. */
+.state-card,
+.empty-state,
+.page,
+.home-page__intro,
+.home-hero,
+.home-section-card,
+.onboarding-panel,
+.discoveries-header,
+.discovery-card,
+.discovery-detail,
+.learning-header,
+.learning-card,
+.learning-recommended,
+.learning-detail,
+.lesson-card,
+.lesson-detail,
+.lesson-next-step,
+.quizzes-header,
+.quiz-card,
+.quiz-detail-header,
+.quiz-completed-notice,
+.quiz-question,
+.quiz-result-card,
+.progress-header,
+.activity-card,
+.activity-preview-panel,
+.my-path-header,
+.my-path-panel,
+.my-path-summary-card,
+.diary-header,
+.diary-empty,
+.diary-note-card,
+.diary-detail,
+.diary-form,
+.diary-form-section,
+.taste-profile-header,
+.taste-summary-card,
+.taste-profile-card,
+.taste-stat-card,
+.bottle-header,
+.bottle-panel,
+.home-bottle-card,
+.home-tasting-banner,
+.home-atmosphere,
+.home-diary-panel,
+.diary-shelf-placeholder,
+.offline-tastings-hero,
+.offline-tastings-note,
+.discovery-feed-card {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.home-page,
+.discoveries-page,
+.learning-page,
+.quizzes-page,
+.quiz-detail-page,
+.progress-page,
+.my-path-page,
+.diary-page,
+.taste-profile-page,
+.bottle-page,
+.offline-tastings-page {
+  gap: 14px;
+}
+
+.home-page__intro,
+.discoveries-header,
+.learning-header,
+.quizzes-header,
+.quiz-detail-header,
+.progress-header,
+.my-path-header,
+.diary-header,
+.taste-profile-header,
+.bottle-header,
+.offline-tastings-hero,
+.onboarding-panel {
+  background:
+    linear-gradient(180deg, rgba(255, 253, 248, 0.98), rgba(248, 241, 232, 0.72)),
+    var(--color-surface);
+}
+
+.home-page__intro h1,
+.home-hero h2,
+.discoveries-header h1,
+.discovery-detail h1,
+.learning-header h1,
+.learning-detail h1,
+.lesson-detail h1,
+.quizzes-header h1,
+.quiz-detail-header h1,
+.progress-header h1,
+.my-path-header h1,
+.diary-header h1,
+.diary-detail h1,
+.taste-profile-header h1,
+.bottle-header h1,
+.offline-tastings-hero h1,
+.onboarding-panel h1 {
+  color: #2a201e;
+  letter-spacing: 0;
+}
+
+.home-page__intro span,
+.home-hero span,
+.home-section-card span,
+.discoveries-header > span,
+.discovery-meta span,
+.learning-header > span,
+.learning-meta span,
+.learning-recommended__header span,
+.lesson-next-step > span,
+.quizzes-header > span,
+.quiz-meta span,
+.quiz-completed-notice > span,
+.quiz-result-card > span,
+.lesson-card__topline span,
+.back-link,
+.progress-header > span,
+.activity-card > span,
+.activity-preview-panel__header span,
+.activity-preview-item > span,
+.my-path-header > span,
+.my-path-panel__header span,
+.my-path-summary-card span,
+.diary-header > span,
+.diary-note-card__topline span,
+.diary-field span,
+.diary-field strong,
+.diary-form-section__header span,
+.taste-profile-header > span,
+.taste-profile-card__header span,
+.taste-stat-card span,
+.bottle-header > span,
+.bottle-panel__content > span,
+.home-tasting-banner span,
+.home-atmosphere span,
+.home-diary-panel__header span,
+.diary-shelf-placeholder span,
+.offline-tastings-hero span,
+.offline-tastings-note span,
+.taste-profile-card--placeholder > span,
+.discoveries-promo span {
+  color: var(--color-accent);
+}
+
+.home-hero,
+.home-tasting-banner,
+.discoveries-promo {
+  border-color: rgba(143, 38, 56, 0.16);
+  background:
+    linear-gradient(135deg, rgba(143, 38, 56, 0.075), rgba(184, 137, 70, 0.09)),
+    var(--color-surface);
+}
+
+.home-atmosphere {
+  background:
+    radial-gradient(circle at 92% 86%, rgba(143, 38, 56, 0.08), transparent 14rem),
+    var(--color-surface);
+}
+
+.discovery-card,
+.learning-card,
+.quiz-card,
+.lesson-card,
+.diary-note-card,
+.activity-card,
+.activity-preview-item,
+.my-path-action article,
+.my-path-section-link article,
+.home-note-item,
+.taste-profile-group,
+.taste-insight,
+.diary-field,
+.lesson-completion,
+.my-path-empty,
+.quiz-option,
+.wine-autocomplete,
+.wine-autocomplete__item {
+  border-color: var(--color-border);
+  background: rgba(255, 253, 248, 0.72);
+}
+
+.discovery-card:hover,
+.learning-card:hover,
+.quiz-card:hover,
+.lesson-card:hover,
+.diary-note-card:hover,
+.activity-card-link:hover .activity-card,
+.activity-preview-link:hover .activity-preview-item,
+.my-path-action:hover article,
+.my-path-section-link:hover article,
+.home-note-item:hover {
+  border-color: rgba(143, 38, 56, 0.28);
+  transform: translateY(-1px);
+}
+
+.discovery-meta span,
+.learning-meta span,
+.quiz-meta span,
+.lesson-card__topline span,
+.diary-note-card__topline span,
+.diary-chip-row span,
+.taste-chip-row span,
+.home-stat,
+.bottle-panel__stats div {
+  border-color: rgba(184, 137, 70, 0.24);
+  background: rgba(184, 137, 70, 0.09);
+  color: #594439;
+}
+
+.quiz-meta .quiz-status,
+.option-pill,
+.choice-chip,
+.ghost-action,
+.text-input,
+.select-input,
+.textarea-input,
+.back-button,
+.icon-action {
+  border-color: var(--color-border);
+  background: rgba(255, 253, 248, 0.78);
+  color: var(--color-text);
+}
+
+.option-pill--active,
+.choice-chip--active,
+.quiz-meta .quiz-status--complete,
+.lesson-completion--done {
+  border-color: rgba(143, 38, 56, 0.32);
+  background: rgba(143, 38, 56, 0.08);
+  color: var(--color-primary);
+}
+
+.primary-action {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: #fffaf4;
+}
+
+.ghost-action:hover,
+.back-button:hover,
+.icon-action:hover,
+.wine-autocomplete__item:hover,
+.wine-autocomplete__item:focus-visible {
+  border-color: rgba(143, 38, 56, 0.28);
+  background: rgba(143, 38, 56, 0.055);
+}
+
+.diary-form {
+  background: transparent;
+  box-shadow: none;
+}
+
+.diary-photo-placeholder,
+.discovery-video-placeholder {
+  border-color: rgba(184, 137, 70, 0.36);
+  background: rgba(184, 137, 70, 0.055);
+}
+
+.diary-photo-placeholder span {
+  background: rgba(143, 38, 56, 0.1);
+  color: var(--color-primary);
+}
+
+.danger-action {
+  border-color: rgba(143, 38, 56, 0.24);
+  background: rgba(143, 38, 56, 0.07);
+  color: var(--color-primary);
+}
+
+.form-error {
+  color: #a13a35;
+}
+
+.bottle-visual {
+  filter: drop-shadow(0 20px 30px rgba(83, 64, 52, 0.17));
+}
+
+.bottle-visual__cap {
+  border-color: rgba(184, 137, 70, 0.46);
+  background: linear-gradient(180deg, #d8b36f, #a87635);
+}
+
+.bottle-visual__neck {
+  border-color: rgba(67, 88, 74, 0.2);
+  background: linear-gradient(90deg, rgba(58, 90, 76, 0.84), rgba(29, 54, 45, 0.96));
+}
+
+.bottle-visual__shoulders,
+.bottle-visual__body {
+  border-color: rgba(67, 88, 74, 0.22);
+}
+
+.bottle-visual__shoulders {
+  background: linear-gradient(140deg, rgba(70, 105, 88, 0.84), rgba(31, 61, 50, 0.96));
+}
+
+.bottle-visual__body {
+  background:
+    linear-gradient(110deg, rgba(255, 255, 255, 0.18), transparent 30%),
+    linear-gradient(150deg, rgba(65, 101, 84, 0.86), rgba(26, 58, 48, 0.98));
+}
+
+.bottle-visual__label {
+  border-color: rgba(184, 137, 70, 0.42);
+  background: rgba(255, 253, 248, 0.86);
+  color: var(--color-text);
+}
+
+.admin-shell,
+.admin-shell__sidebar {
+  background: var(--color-bg);
+}
+
+.admin-shell__topbar,
+.admin-shell__sidebar {
+  border-color: var(--color-border);
+}
+
+@media (max-width: 760px) {
+  .admin-shell__sidebar {
+    border-bottom-color: var(--color-border);
+  }
 }
