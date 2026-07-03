@@ -68,6 +68,7 @@ def test_open_app_keyboard_uses_web_app_button():
     assert button.text == OPEN_APP_BUTTON_TEXT
     assert button.web_app is not None
     assert button.web_app.url == "https://example.com"
+    assert button.url is None
 
 
 def test_bot_messages_are_available():

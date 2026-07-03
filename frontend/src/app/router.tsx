@@ -20,6 +20,7 @@ import { ProgressActivityPage } from "../modules/progress/ProgressActivityPage";
 import { QuizDetailPage } from "../modules/quizzes/QuizDetailPage";
 import { QuizzesPage } from "../modules/quizzes/QuizzesPage";
 import { TasteProfilePage } from "../modules/taste-profile/TasteProfilePage";
+import { TelegramDebugPage } from "../modules/debug/TelegramDebugPage";
 import { PlaceholderPage } from "../shared/ui/PlaceholderPage";
 
 export const router = createBrowserRouter([
@@ -30,6 +31,10 @@ export const router = createBrowserRouter([
   {
     path: "/loading",
     element: <PlaceholderPage title="Loading" />,
+  },
+  {
+    path: "/telegram-debug",
+    element: <TelegramDebugPage />,
   },
   {
     path: "/onboarding",
