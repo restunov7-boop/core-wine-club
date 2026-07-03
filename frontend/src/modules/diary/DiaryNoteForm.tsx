@@ -147,9 +147,9 @@ export function DiaryNoteForm({ form, isSubmitting, submitLabel, onChange, onSub
     <form className="diary-form" onSubmit={submit}>
       <section className="diary-form-section diary-form-section--identity">
         <div className="diary-form-section__header">
-          <span>Вино</span>
-          <h2>Что пробовали?</h2>
-          <p>Начни с названия. Подходящие demo-подсказки появятся ниже и заполнят страну, регион и сорт.</p>
+          <span>Бутылка</span>
+          <h2>Что пробовала?</h2>
+          <p>Начни с названия вина. Подсказки помогут быстро заполнить страну, регион и сорт, если вино есть в демо-каталоге.</p>
         </div>
 
         <label>
@@ -162,7 +162,7 @@ export function DiaryNoteForm({ form, isSubmitting, submitLabel, onChange, onSub
             autoComplete="off"
             onChange={(event) => updateWineName(event.target.value)}
           />
-          <small className="field-hint">Это demo suggestions для быстрого ввода, не полная база всех вин.</small>
+          <small className="field-hint">Достаточно названия. Остальные детали можно заполнить сейчас или вернуться к ним позже.</small>
         </label>
 
         {matchingSuggestions.length > 0 && (
@@ -185,24 +185,35 @@ export function DiaryNoteForm({ form, isSubmitting, submitLabel, onChange, onSub
 
         <div className="form-grid">
           <TextField label="Производитель" value={form.producer} onChange={(value) => update("producer", value)} />
+          <TextField label="Винтаж" type="number" value={form.vintage} onChange={(value) => update("vintage", value)} />
+        </div>
+      </section>
+
+      <section className="diary-form-section diary-form-section--origin">
+        <div className="diary-form-section__header">
+          <span>Происхождение</span>
+          <h2>Откуда оно?</h2>
+          <p>Страна, регион и сорт помогают потом находить похожие вина и замечать свой вкус.</p>
+        </div>
+
+        <div className="form-grid">
           <TextField label="Страна" value={form.country} onChange={(value) => update("country", value)} />
           <TextField label="Регион" value={form.region} onChange={(value) => update("region", value)} />
-          <TextField label="Сорт" value={form.grape} onChange={(value) => update("grape", value)} />
-          <TextField label="Винтаж" type="number" value={form.vintage} onChange={(value) => update("vintage", value)} />
+          <TextField label="Сорт или blend" value={form.grape} onChange={(value) => update("grape", value)} />
           <TextField label="Дата дегустации" type="date" value={form.tasted_at} onChange={(value) => update("tasted_at", value)} />
         </div>
       </section>
 
       <section className="diary-form-section diary-form-section--taste">
         <div className="diary-form-section__header">
-          <span>Впечатления</span>
-          <h2>Как оно ощущалось?</h2>
-          <p>Пиши простыми словами: яблоко, мёд, свежесть, терпкость, сливочность. Всё подходит.</p>
+          <span>Вкус</span>
+          <h2>Что почувствовала?</h2>
+          <p>Пиши простыми словами: яблоко, мёд, свежесть, терпкость, сливочность. Это личный дневник, не экзамен.</p>
         </div>
 
         <div className="form-grid">
           <label>
-            <span>Цвет</span>
+            <span>Стиль вина</span>
             <select className="select-input" value={form.wine_color} onChange={(event) => update("wine_color", event.target.value as DiaryNoteFormState["wine_color"])}>
               <option value="">Не указано</option>
               <option value="red">Красное</option>
@@ -228,20 +239,19 @@ export function DiaryNoteForm({ form, isSubmitting, submitLabel, onChange, onSub
           </label>
         </div>
 
-        <TextField label="Ароматы через запятую" value={form.aroma_notes} onChange={(value) => update("aroma_notes", value)} />
-        <TextField label="Вкус через запятую" value={form.taste_notes} onChange={(value) => update("taste_notes", value)} />
-        <TextField label="Сочетание с едой" value={form.pairing} onChange={(value) => update("pairing", value)} />
+        <TextField label="Ароматы через запятую" placeholder="ягоды, ваниль, цитрус" value={form.aroma_notes} onChange={(value) => update("aroma_notes", value)} />
+        <TextField label="Вкус через запятую" placeholder="свежее, мягкое, терпкое" value={form.taste_notes} onChange={(value) => update("taste_notes", value)} />
+        <TextField label="С чем хорошо сочеталось" value={form.pairing} onChange={(value) => update("pairing", value)} />
       </section>
 
-      <section className="diary-form-section diary-form-section--personal">
+      <section className="diary-form-section diary-form-section--impression">
         <div className="diary-form-section__header">
-          <span>Личная заметка</span>
-          <h2>Что хочется запомнить?</h2>
+          <span>Впечатление</span>
+          <h2>Насколько понравилось?</h2>
+          <p>Оценка и “повторила бы” нужны только для тебя: чтобы потом быстро вспомнить удачные бутылки.</p>
         </div>
 
         <div className="form-grid">
-          <TextField label="Повод" value={form.occasion} onChange={(value) => update("occasion", value)} />
-          <TextField label="Цена" value={form.price_text} onChange={(value) => update("price_text", value)} />
           <label>
             <span>Оценка</span>
             <select className="select-input" value={form.rating} onChange={(event) => update("rating", event.target.value)}>
@@ -253,6 +263,24 @@ export function DiaryNoteForm({ form, isSubmitting, submitLabel, onChange, onSub
               <option value="5">5</option>
             </select>
           </label>
+          <TextField label="Повод" value={form.occasion} onChange={(value) => update("occasion", value)} />
+          <TextField label="Цена" value={form.price_text} onChange={(value) => update("price_text", value)} />
+        </div>
+
+        <label className="toggle-row">
+          <input
+            type="checkbox"
+            checked={form.would_buy_again}
+            onChange={(event) => update("would_buy_again", event.target.checked)}
+          />
+          <span>Повторила бы это вино</span>
+        </label>
+      </section>
+
+      <section className="diary-form-section diary-form-section--personal">
+        <div className="diary-form-section__header">
+          <span>Личная заметка</span>
+          <h2>Что хочется запомнить?</h2>
         </div>
 
         <label>
@@ -264,15 +292,6 @@ export function DiaryNoteForm({ form, isSubmitting, submitLabel, onChange, onSub
             placeholder="Например: взяла к ужину, понравилась свежесть и лёгкая минеральность."
             onChange={(event) => update("personal_note", event.target.value)}
           />
-        </label>
-
-        <label className="toggle-row">
-          <input
-            type="checkbox"
-            checked={form.would_buy_again}
-            onChange={(event) => update("would_buy_again", event.target.checked)}
-          />
-          <span>Купила бы снова</span>
         </label>
       </section>
 
@@ -297,11 +316,13 @@ export function DiaryNoteForm({ form, isSubmitting, submitLabel, onChange, onSub
 
 function TextField({
   label,
+  placeholder,
   type = "text",
   value,
   onChange,
 }: {
   label: string;
+  placeholder?: string;
   type?: string;
   value: string;
   onChange: (value: string) => void;
@@ -309,7 +330,13 @@ function TextField({
   return (
     <label>
       <span>{label}</span>
-      <input className="text-input" type={type} value={value} onChange={(event) => onChange(event.target.value)} />
+      <input
+        className="text-input"
+        type={type}
+        value={value}
+        placeholder={placeholder}
+        onChange={(event) => onChange(event.target.value)}
+      />
     </label>
   );
 }

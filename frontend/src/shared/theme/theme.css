@@ -3073,8 +3073,16 @@ body {
   background: rgba(143, 38, 56, 0.28);
 }
 
+.diary-form-section--origin::before {
+  background: rgba(92, 126, 107, 0.32);
+}
+
 .diary-form-section--taste::before {
   background: rgba(184, 137, 70, 0.38);
+}
+
+.diary-form-section--impression::before {
+  background: rgba(143, 38, 56, 0.2);
 }
 
 .diary-form-section--personal::before {
@@ -3086,7 +3094,11 @@ body {
 }
 
 .diary-form .primary-action[type="submit"] {
+  position: sticky;
+  bottom: calc(var(--bottom-nav-height) + 10px);
+  z-index: 3;
   width: 100%;
+  box-shadow: 0 12px 24px rgba(143, 38, 56, 0.16);
 }
 
 .home-note-item {
