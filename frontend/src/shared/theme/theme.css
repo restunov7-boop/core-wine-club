@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap");
-
 :root {
   --color-bg: #faf6ef;
   --color-surface: #fffdf8;
@@ -16,7 +14,9 @@
   color: var(--color-text);
   background: var(--color-bg);
   font-family:
-    Manrope, "SF Pro Text", "Segoe UI", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -2009,7 +2009,6 @@ textarea:focus-visible {
 .taste-profile-header h1,
 .bottle-header h1,
 .onboarding-panel h1 {
-  font-family: "Playfair Display", Georgia, serif;
   font-weight: 700;
 }
 
@@ -2310,7 +2309,6 @@ textarea:focus-visible {
 
 .offline-tastings-hero h1 {
   margin: 0;
-  font-family: "Playfair Display", Georgia, serif;
   font-size: 34px;
   line-height: 1.08;
 }
@@ -2662,5 +2660,247 @@ textarea:focus-visible {
 @media (max-width: 760px) {
   .admin-shell__sidebar {
     border-bottom-color: var(--color-border);
+  }
+}
+
+/* Sprint 31: iPhone Notes-inspired system typography. */
+body {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.app-header__brand span,
+.home-page__intro h1,
+.page h1,
+.discoveries-header h1,
+.discovery-detail h1,
+.learning-header h1,
+.learning-detail h1,
+.lesson-detail h1,
+.quizzes-header h1,
+.quiz-detail-header h1,
+.progress-header h1,
+.my-path-header h1,
+.diary-header h1,
+.diary-detail h1,
+.taste-profile-header h1,
+.bottle-header h1,
+.offline-tastings-hero h1,
+.onboarding-panel h1,
+.state-card h1 {
+  font-family: inherit;
+  font-weight: 670;
+  letter-spacing: 0;
+}
+
+.home-page__intro h1,
+.page h1,
+.discoveries-header h1,
+.discovery-detail h1,
+.learning-header h1,
+.learning-detail h1,
+.lesson-detail h1,
+.quizzes-header h1,
+.quiz-detail-header h1,
+.progress-header h1,
+.my-path-header h1,
+.diary-header h1,
+.diary-detail h1,
+.taste-profile-header h1,
+.bottle-header h1,
+.offline-tastings-hero h1,
+.onboarding-panel h1 {
+  font-size: 32px;
+  line-height: 1.16;
+}
+
+.home-hero h2,
+.home-section-card h3,
+.discovery-card h2,
+.learning-card h2,
+.quiz-card h2,
+.lesson-card h2,
+.quiz-completed-notice h2,
+.quiz-result-card h2,
+.activity-preview-panel__header h2,
+.my-path-panel__header h2,
+.diary-note-card h2,
+.diary-note-text h2,
+.taste-summary-card h2,
+.taste-profile-card h2,
+.offline-tastings-note h2,
+.diary-shelf-placeholder h2,
+.home-diary-panel__header h2,
+.home-atmosphere__copy h2,
+.diary-form-section__header h2 {
+  font-family: inherit;
+  font-size: 21px;
+  font-weight: 640;
+  line-height: 1.22;
+  letter-spacing: 0;
+}
+
+.app-header__brand small,
+.home-page__intro span,
+.home-hero span,
+.home-section-card span,
+.discoveries-header > span,
+.discovery-meta span,
+.learning-header > span,
+.learning-meta span,
+.learning-recommended__header span,
+.lesson-next-step > span,
+.quizzes-header > span,
+.quiz-meta span,
+.quiz-completed-notice > span,
+.quiz-result-card > span,
+.lesson-card__topline span,
+.back-link,
+.progress-header > span,
+.activity-card > span,
+.activity-preview-panel__header span,
+.activity-preview-item > span,
+.my-path-header > span,
+.my-path-panel__header span,
+.my-path-summary-card span,
+.diary-header > span,
+.diary-note-card__topline span,
+.diary-field span,
+.diary-form-section__header span,
+.taste-profile-header > span,
+.taste-profile-card__header span,
+.taste-stat-card span,
+.bottle-header > span,
+.bottle-panel__content > span,
+.home-tasting-banner span,
+.home-atmosphere span,
+.home-diary-panel__header span,
+.diary-shelf-placeholder span,
+.offline-tastings-hero span,
+.offline-tastings-note span,
+.taste-profile-card--placeholder > span,
+.discoveries-promo span {
+  font-size: 13px;
+  font-weight: 590;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.state-card p,
+.empty-state p,
+.page p,
+.home-page__intro p,
+.home-hero p,
+.home-section-card p,
+.discoveries-header p,
+.discovery-card p,
+.discovery-detail p,
+.learning-header p,
+.learning-card p,
+.learning-detail p,
+.lesson-card p,
+.lesson-detail p,
+.lesson-next-step p,
+.quizzes-header p,
+.quiz-card p,
+.quiz-detail-header p,
+.quiz-completed-notice p,
+.quiz-question p,
+.quiz-result-card p,
+.progress-header p,
+.activity-card p,
+.activity-preview-panel p,
+.my-path-header p,
+.my-path-panel p,
+.diary-header p,
+.diary-empty p,
+.diary-note-card p,
+.diary-detail p,
+.taste-profile-header p,
+.taste-summary-card p,
+.taste-profile-card p,
+.taste-insight p,
+.bottle-header p,
+.bottle-panel p,
+.offline-tastings-hero p,
+.offline-tastings-note p {
+  font-weight: 400;
+  line-height: 1.58;
+}
+
+.discovery-body p,
+.lesson-body p,
+.diary-note-text p {
+  font-size: 16px;
+  line-height: 1.64;
+}
+
+.primary-action,
+.ghost-action,
+.danger-action,
+.option-pill,
+.choice-chip,
+.quiz-option,
+.text-input,
+.select-input,
+.textarea-input,
+.wine-autocomplete__item {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.diary-form label > span,
+.field-hint,
+.wine-autocomplete__item span,
+.wine-suggestion span,
+.home-note-item span {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.text-input,
+.select-input,
+.textarea-input {
+  line-height: 1.45;
+}
+
+.textarea-input {
+  min-height: 116px;
+}
+
+.bottom-nav__link {
+  font-size: 12px;
+  font-weight: 520;
+  letter-spacing: 0;
+}
+
+.taste-stat-card strong,
+.my-path-summary-card strong,
+.bottle-panel__content > strong,
+.bottle-panel__stats strong {
+  font-weight: 650;
+}
+
+@media (max-width: 430px) {
+  .home-page__intro h1,
+  .page h1,
+  .discoveries-header h1,
+  .discovery-detail h1,
+  .learning-header h1,
+  .learning-detail h1,
+  .lesson-detail h1,
+  .quizzes-header h1,
+  .quiz-detail-header h1,
+  .progress-header h1,
+  .my-path-header h1,
+  .diary-header h1,
+  .diary-detail h1,
+  .taste-profile-header h1,
+  .bottle-header h1,
+  .offline-tastings-hero h1,
+  .onboarding-panel h1 {
+    font-size: 28px;
+    line-height: 1.17;
   }
 }
