@@ -72,21 +72,32 @@ export function DiaryPage() {
     return <LoadingState title="Дневник вкуса" description="Открываем твои личные заметки..." />;
   }
 
+  const ratedCount = items.filter((item) => item.rating !== null).length;
+  const repeatCount = items.filter((item) => item.would_buy_again).length;
+
   return (
     <section className="diary-page">
       <header className="diary-header">
-        <span>Только для тебя</span>
-        <h1>Дневник вкуса</h1>
-        <p>Личные заметки о винах, которые постепенно делают профиль вкуса точнее.</p>
+        <div className="diary-header__content">
+          <span>Личный журнал</span>
+          <h1>Дневник вкуса</h1>
+          <p>Структурированные записи о винах: происхождение, стиль, впечатления и маленькие детали, которые легко забыть.</p>
+        </div>
         <Link className="primary-action diary-header__action" to="/diary/new">
           Добавить заметку
         </Link>
       </header>
 
+      <section className="diary-summary-strip" aria-label="Сводка дневника">
+        <SummaryCell label="Записей" value={String(total)} />
+        <SummaryCell label="С оценкой" value={String(ratedCount)} />
+        <SummaryCell label="Повторила бы" value={String(repeatCount)} />
+      </section>
+
       <aside className="diary-shelf-placeholder">
         <span>Скоро</span>
         <h2>Винная полка</h2>
-        <p>Здесь появятся вина, которые ты захочешь сохранить. Пока это место под будущую систему, без новой логики.</p>
+        <p>Будущий раздел для сохранённых бутылок. Сейчас это аккуратная страница-закладка в журнале, без новой логики.</p>
       </aside>
 
       {total === 0 ? (
@@ -109,21 +120,34 @@ export function DiaryPage() {
           {items.map((item) => (
             <Link className="diary-note-card" key={item.id} to={`/diary/${item.id}`}>
               <article>
-                <div className="diary-note-card__topline">
-                  {item.rating && <span>{item.rating}/5</span>}
-                  {item.wine_color && <span>{colorLabels[item.wine_color] ?? item.wine_color}</span>}
-                  {item.would_buy_again !== null && <span>{item.would_buy_again ? "Купила бы снова" : "Не повторю"}</span>}
+                <div className="diary-note-card__row">
+                  <div>
+                    <span className="diary-note-card__label">{item.tasted_at ? formatDate(item.tasted_at) : "Без даты"}</span>
+                    <h2>{item.wine_name}</h2>
+                  </div>
+                  {item.rating && <strong className="diary-rating">{item.rating}/5</strong>}
                 </div>
-                <h2>{item.wine_name}</h2>
                 {item.producer && <p>{item.producer}</p>}
-                {(item.country || item.region) && <small>{[item.country, item.region].filter(Boolean).join(", ")}</small>}
-                {item.tasted_at && <small>{formatDate(item.tasted_at)}</small>}
+                <div className="diary-note-card__topline">
+                  {(item.country || item.region) && <span>{[item.country, item.region].filter(Boolean).join(", ")}</span>}
+                  {item.wine_color && <span>{colorLabels[item.wine_color] ?? item.wine_color}</span>}
+                  {item.would_buy_again !== null && <span>{item.would_buy_again ? "Повторила бы" : "Не повторю"}</span>}
+                </div>
               </article>
             </Link>
           ))}
         </div>
       )}
     </section>
+  );
+}
+
+function SummaryCell({ label, value }: { label: string; value: string }) {
+  return (
+    <article>
+      <span>{label}</span>
+      <strong>{value}</strong>
+    </article>
   );
 }
 

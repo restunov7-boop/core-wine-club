@@ -135,32 +135,65 @@ export function DiaryNoteDetailPage() {
 
       <header className="diary-detail__header">
         <div className="diary-note-card__topline">
-          {note.rating && <span>{note.rating}/5</span>}
           {note.wine_color && <span>{colorLabels[note.wine_color] ?? note.wine_color}</span>}
           {note.tasted_at && <span>{formatDate(note.tasted_at)}</span>}
+          {note.rating && <span>{note.rating}/5</span>}
         </div>
         <h1>{note.wine_name}</h1>
         {note.producer && <p>{note.producer}</p>}
-        {(note.country || note.region) && <p>{[note.country, note.region].filter(Boolean).join(", ")}</p>}
       </header>
 
-      <div className="diary-detail-grid">
-        <Field label="Сорт" value={note.grape} />
-        <Field label="Винтаж" value={note.vintage ? String(note.vintage) : null} />
-        <Field label="Сладость" value={note.sweetness ? sweetnessLabels[note.sweetness] : null} />
-        <Field label="Повод" value={note.occasion} />
-        <Field label="Цена" value={note.price_text} />
-        <Field label="Сочетание" value={note.pairing} />
-        <Field label="Купил бы снова" value={note.would_buy_again === null ? null : note.would_buy_again ? "Да" : "Нет"} />
-      </div>
+      <section className="diary-entry-section">
+        <div className="diary-entry-section__header">
+          <span>Wine identity</span>
+          <h2>Бутылка</h2>
+        </div>
+        <div className="diary-detail-grid">
+          <Field label="Производитель" value={note.producer} />
+          <Field label="Сорт" value={note.grape} />
+          <Field label="Винтаж" value={note.vintage ? String(note.vintage) : null} />
+          <Field label="Стиль" value={note.wine_color ? colorLabels[note.wine_color] : null} />
+        </div>
+      </section>
 
-      <NoteList title="Ароматы" items={note.aroma_notes} />
-      <NoteList title="Вкус" items={note.taste_notes} />
+      <section className="diary-entry-section">
+        <div className="diary-entry-section__header">
+          <span>Origin</span>
+          <h2>Место и контекст</h2>
+        </div>
+        <div className="diary-detail-grid">
+          <Field label="Страна" value={note.country} />
+          <Field label="Регион" value={note.region} />
+          <Field label="Дата" value={note.tasted_at ? formatDate(note.tasted_at) : null} />
+          <Field label="Повод" value={note.occasion} />
+          <Field label="Цена" value={note.price_text} />
+          <Field label="Сочетание" value={note.pairing} />
+        </div>
+      </section>
+
+      <section className="diary-entry-section">
+        <div className="diary-entry-section__header">
+          <span>Tasting</span>
+          <h2>Вкус и ощущения</h2>
+        </div>
+        <div className="diary-detail-grid">
+          <Field label="Сладость" value={note.sweetness ? sweetnessLabels[note.sweetness] : null} />
+          <Field label="Оценка" value={note.rating ? `${note.rating}/5` : null} />
+          <Field label="Повторила бы" value={note.would_buy_again === null ? null : note.would_buy_again ? "Да" : "Нет"} />
+        </div>
+        <NoteList title="Ароматы" items={note.aroma_notes} />
+        <NoteList title="Вкус" items={note.taste_notes} />
+      </section>
 
       {note.personal_note && (
-        <section className="diary-note-text">
-          <h2>Личная заметка</h2>
-          <p>{note.personal_note}</p>
+        <section className="diary-entry-section diary-entry-section--note">
+          <div className="diary-entry-section__header">
+            <span>Personal note</span>
+            <h2>Личная заметка</h2>
+          </div>
+          <div className="diary-note-text">
+            <p>{note.personal_note}</p>
+          </div>
         </section>
       )}
 

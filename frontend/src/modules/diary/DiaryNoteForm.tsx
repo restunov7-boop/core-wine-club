@@ -145,7 +145,7 @@ export function DiaryNoteForm({ form, isSubmitting, submitLabel, onChange, onSub
 
   return (
     <form className="diary-form" onSubmit={submit}>
-      <section className="diary-form-section">
+      <section className="diary-form-section diary-form-section--identity">
         <div className="diary-form-section__header">
           <span>Вино</span>
           <h2>Что пробовали?</h2>
@@ -193,7 +193,7 @@ export function DiaryNoteForm({ form, isSubmitting, submitLabel, onChange, onSub
         </div>
       </section>
 
-      <section className="diary-form-section">
+      <section className="diary-form-section diary-form-section--taste">
         <div className="diary-form-section__header">
           <span>Впечатления</span>
           <h2>Как оно ощущалось?</h2>
@@ -233,7 +233,7 @@ export function DiaryNoteForm({ form, isSubmitting, submitLabel, onChange, onSub
         <TextField label="Сочетание с едой" value={form.pairing} onChange={(value) => update("pairing", value)} />
       </section>
 
-      <section className="diary-form-section">
+      <section className="diary-form-section diary-form-section--personal">
         <div className="diary-form-section__header">
           <span>Личная заметка</span>
           <h2>Что хочется запомнить?</h2>
