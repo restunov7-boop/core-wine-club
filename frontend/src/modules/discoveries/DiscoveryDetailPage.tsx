@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { getOnboardingStatus } from "../onboarding/api";
+import { BackButton } from "../../shared/ui/BackButton";
 import { ErrorState } from "../../shared/ui/ErrorState";
 import { LoadingState } from "../../shared/ui/LoadingState";
 
@@ -87,9 +88,7 @@ export function DiscoveryDetailPage() {
 
   return (
     <article className="discovery-detail">
-      <Link className="back-link" to="/discoveries">
-        Назад к открытиям
-      </Link>
+      <BackButton to="/discoveries" label="Назад к открытиям" />
 
       <header className="discovery-detail__header">
         <div className="discovery-meta">

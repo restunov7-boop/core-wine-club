@@ -2,9 +2,11 @@ import type { CSSProperties } from "react";
 
 type BottleVisualProps = {
   fillPercent: number;
+  showProgressLabel?: boolean;
+  className?: string;
 };
 
-export function BottleVisual({ fillPercent }: BottleVisualProps) {
+export function BottleVisual({ fillPercent, showProgressLabel = true, className }: BottleVisualProps) {
   const normalizedPercent = Number.isFinite(fillPercent) ? fillPercent : 0;
   const clampedPercent = Math.max(0, Math.min(100, normalizedPercent));
   const bodyFillPercent = Math.min(100, (clampedPercent / 72) * 100);
@@ -16,7 +18,7 @@ export function BottleVisual({ fillPercent }: BottleVisualProps) {
   } as CSSProperties;
 
   return (
-    <div className="bottle-visual" style={style} aria-hidden="true">
+    <div className={className ? `bottle-visual ${className}` : "bottle-visual"} style={style} aria-hidden="true">
       <div className="bottle-visual__cap" />
       <div className="bottle-visual__neck">
         <div className="bottle-visual__neck-fill" />
@@ -25,10 +27,12 @@ export function BottleVisual({ fillPercent }: BottleVisualProps) {
       <div className="bottle-visual__body">
         <div className="bottle-visual__fill" />
         <div className="bottle-visual__shine" />
-        <div className="bottle-visual__label">
-          <span>{clampedPercent}%</span>
-          <small>прогресс</small>
-        </div>
+        {showProgressLabel && (
+          <div className="bottle-visual__label">
+            <span>{clampedPercent}%</span>
+            <small>прогресс</small>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import { ErrorState } from "../../shared/ui/ErrorState";
+import { LoadingState } from "../../shared/ui/LoadingState";
 import { getBottleProgress } from "../bottle/api";
 import type { BottleProgress } from "../bottle/types";
 import { getOnboardingStatus } from "../onboarding/api";
 import { getProgressSummary } from "../progress/api";
 import type { ProgressSummary } from "../progress/types";
-import { ErrorState } from "../../shared/ui/ErrorState";
-import { LoadingState } from "../../shared/ui/LoadingState";
 
 import { getTasteProfile } from "./api";
 import type { TasteProfileCountItem, TasteProfileResponse } from "./types";
@@ -25,13 +25,13 @@ const tasteLabels: Record<string, string> = {
   rose: "Розе",
   sweet: "Сладкое",
   dry: "Сухое",
-  not_sure: "Пока не знаю",
+  not_sure: "Пока изучаю",
 };
 
 const goalLabels: Record<string, string> = {
   understand_wine: "Понимать вино",
   choose_bottle: "Выбирать бутылку",
-  build_taste: "Собрать свой вкус",
+  build_taste: "Понять свои предпочтения",
   feel_confident: "Чувствовать уверенность",
   explore_culture: "Исследовать культуру",
 };
@@ -118,7 +118,10 @@ export function TasteProfilePage() {
       <header className="taste-profile-header">
         <span>Личный профиль</span>
         <h1>Профиль вкуса</h1>
-        <p>Личная карта твоих винных предпочтений. Она строится только на твоём онбординге и дневнике.</p>
+        <p>
+          Чистая сводка твоего винного ритма: что уже пробовала, какие слова чаще появляются в дневнике и куда
+          хочется двигаться дальше.
+        </p>
       </header>
 
       <section className="taste-summary-card">
@@ -132,7 +135,16 @@ export function TasteProfilePage() {
       </section>
 
       <section className="taste-profile-card">
-        <h2>Стартовые предпочтения</h2>
+        <div className="taste-profile-card__header">
+          <div>
+            <span>Мои предпочтения</span>
+            <h2>Короткое резюме</h2>
+          </div>
+          <Link className="ghost-action" to="/onboarding">
+            Обновить
+          </Link>
+        </div>
+        <p>{buildPreferenceSummary(profile)}</p>
         <div className="taste-chip-row">
           {profile.onboarding.wine_experience_level && (
             <span>{experienceLabels[profile.onboarding.wine_experience_level] ?? profile.onboarding.wine_experience_level}</span>
@@ -145,14 +157,14 @@ export function TasteProfilePage() {
           ))}
           {!profile.onboarding.wine_experience_level &&
             profile.onboarding.taste_preferences.length === 0 &&
-            profile.onboarding.goals.length === 0 && <span>Онбординг пока без предпочтений</span>}
+            profile.onboarding.goals.length === 0 && <span>Предпочтения появятся после онбординга</span>}
         </div>
       </section>
 
       <section className="taste-stat-grid">
         <StatCard label="Заметок" value={String(profile.stats.notes_count)} />
         <StatCard label="Средняя оценка" value={profile.stats.average_rating ? profile.stats.average_rating.toFixed(1) : "—"} />
-        <StatCard label="Купил бы снова" value={formatRatio(profile.stats.would_buy_again_ratio)} />
+        <StatCard label="Купила бы снова" value={formatRatio(profile.stats.would_buy_again_ratio)} />
       </section>
 
       {progress && bottle && (
@@ -253,6 +265,26 @@ function ProfileListCard({
       </div>
     </section>
   );
+}
+
+function buildPreferenceSummary(profile: TasteProfileResponse): string {
+  const experience = profile.onboarding.wine_experience_level
+    ? experienceLabels[profile.onboarding.wine_experience_level]
+    : null;
+  const tastes = profile.onboarding.taste_preferences.map((item) => tasteLabels[item] ?? item).slice(0, 3);
+  const goals = profile.onboarding.goals.map((item) => goalLabels[item] ?? item).slice(0, 2);
+
+  if (!experience && tastes.length === 0 && goals.length === 0) {
+    return "Пока профиль чистый. Он станет живее после онбординга и первых заметок.";
+  }
+
+  return [
+    experience ? `Сейчас уровень: ${experience.toLowerCase()}.` : null,
+    tastes.length ? `Ближе всего: ${tastes.join(", ").toLowerCase()}.` : null,
+    goals.length ? `Фокус: ${goals.join(", ").toLowerCase()}.` : null,
+  ]
+    .filter(Boolean)
+    .join(" ");
 }
 
 function formatRatio(value: number | null): string {

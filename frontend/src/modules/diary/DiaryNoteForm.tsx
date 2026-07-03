@@ -30,6 +30,24 @@ type DiaryNoteFormProps = {
   onSubmit: () => void;
 };
 
+type WineSuggestion = {
+  name: string;
+  country: string;
+  region: string;
+  grape: string;
+};
+
+const wineSuggestions: WineSuggestion[] = [
+  { name: "Prosecco Valdobbiadene", country: "Italy", region: "Veneto", grape: "Glera" },
+  { name: "Chianti Classico", country: "Italy", region: "Tuscany", grape: "Sangiovese" },
+  { name: "Chablis", country: "France", region: "Burgundy", grape: "Chardonnay" },
+  { name: "Rioja Crianza", country: "Spain", region: "Rioja", grape: "Tempranillo" },
+  { name: "Marlborough Sauvignon Blanc", country: "New Zealand", region: "Marlborough", grape: "Sauvignon Blanc" },
+  { name: "Riesling Kabinett", country: "Germany", region: "Mosel", grape: "Riesling" },
+  { name: "Malbec Mendoza", country: "Argentina", region: "Mendoza", grape: "Malbec" },
+  { name: "Pinot Noir Oregon", country: "USA", region: "Oregon", grape: "Pinot Noir" },
+];
+
 export const emptyDiaryNoteForm: DiaryNoteFormState = {
   wine_name: "",
   producer: "",
@@ -99,6 +117,26 @@ export function DiaryNoteForm({ form, isSubmitting, submitLabel, onChange, onSub
     onChange({ ...form, [key]: value });
   }
 
+  function applySuggestion(suggestion: WineSuggestion) {
+    onChange({
+      ...form,
+      wine_name: suggestion.name,
+      country: suggestion.country,
+      region: suggestion.region,
+      grape: suggestion.grape,
+    });
+  }
+
+  function updateWineName(value: string) {
+    const suggestion = wineSuggestions.find((item) => item.name.toLowerCase() === value.trim().toLowerCase());
+    if (suggestion) {
+      applySuggestion(suggestion);
+      return;
+    }
+
+    update("wine_name", value);
+  }
+
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     onSubmit();
@@ -106,91 +144,152 @@ export function DiaryNoteForm({ form, isSubmitting, submitLabel, onChange, onSub
 
   return (
     <form className="diary-form" onSubmit={submit}>
-      <label>
-        <span>Название вина *</span>
-        <input
-          className="text-input"
-          required
-          value={form.wine_name}
-          placeholder="Chianti Classico"
-          onChange={(event) => update("wine_name", event.target.value)}
-        />
-        <small className="field-hint">Название нужно, чтобы сохранить заметку.</small>
-      </label>
+      <datalist id="wine-suggestions">
+        {wineSuggestions.map((suggestion) => (
+          <option key={suggestion.name} value={suggestion.name} />
+        ))}
+      </datalist>
 
-      <div className="form-grid">
-        <TextField label="Производитель" value={form.producer} onChange={(value) => update("producer", value)} />
-        <TextField label="Страна" value={form.country} onChange={(value) => update("country", value)} />
-        <TextField label="Регион" value={form.region} onChange={(value) => update("region", value)} />
-        <TextField label="Сорт" value={form.grape} onChange={(value) => update("grape", value)} />
-        <TextField label="Винтаж" type="number" value={form.vintage} onChange={(value) => update("vintage", value)} />
-        <TextField label="Повод" value={form.occasion} onChange={(value) => update("occasion", value)} />
-        <TextField label="Цена" value={form.price_text} onChange={(value) => update("price_text", value)} />
-        <TextField label="Дата дегустации" type="date" value={form.tasted_at} onChange={(value) => update("tasted_at", value)} />
-      </div>
-
-      <div className="form-grid">
-        <label>
-          <span>Цвет</span>
-          <select className="select-input" value={form.wine_color} onChange={(event) => update("wine_color", event.target.value as DiaryNoteFormState["wine_color"])}>
-            <option value="">Не указано</option>
-            <option value="red">Красное</option>
-            <option value="white">Белое</option>
-            <option value="rose">Розе</option>
-            <option value="sparkling">Игристое</option>
-            <option value="orange">Оранжевое</option>
-            <option value="dessert">Десертное</option>
-            <option value="unknown">Не знаю</option>
-          </select>
-        </label>
+      <section className="diary-form-section">
+        <div className="diary-form-section__header">
+          <span>Вино</span>
+          <h2>Что пробовали?</h2>
+          <p>Начни с названия. Если выберешь demo-подсказку, страна, регион и сорт заполнятся сами.</p>
+        </div>
 
         <label>
-          <span>Сладость</span>
-          <select className="select-input" value={form.sweetness} onChange={(event) => update("sweetness", event.target.value as DiaryNoteFormState["sweetness"])}>
-            <option value="">Не указано</option>
-            <option value="dry">Сухое</option>
-            <option value="semi_dry">Полусухое</option>
-            <option value="semi_sweet">Полусладкое</option>
-            <option value="sweet">Сладкое</option>
-            <option value="unknown">Не знаю</option>
-          </select>
+          <span>Название вина *</span>
+          <input
+            className="text-input"
+            list="wine-suggestions"
+            required
+            value={form.wine_name}
+            placeholder="Chianti Classico"
+            onChange={(event) => updateWineName(event.target.value)}
+          />
+          <small className="field-hint">Это demo-подсказки, не полная база вин.</small>
         </label>
+
+        <div className="wine-suggestion-list" aria-label="Demo wine suggestions">
+          {wineSuggestions.slice(0, 4).map((suggestion) => (
+            <button
+              className="wine-suggestion"
+              key={suggestion.name}
+              type="button"
+              onClick={() => applySuggestion(suggestion)}
+            >
+              <strong>{suggestion.name}</strong>
+              <span>
+                {suggestion.country} · {suggestion.region} · {suggestion.grape}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        <div className="form-grid">
+          <TextField label="Производитель" value={form.producer} onChange={(value) => update("producer", value)} />
+          <TextField label="Страна" value={form.country} onChange={(value) => update("country", value)} />
+          <TextField label="Регион" value={form.region} onChange={(value) => update("region", value)} />
+          <TextField label="Сорт" value={form.grape} onChange={(value) => update("grape", value)} />
+          <TextField label="Винтаж" type="number" value={form.vintage} onChange={(value) => update("vintage", value)} />
+          <TextField label="Дата дегустации" type="date" value={form.tasted_at} onChange={(value) => update("tasted_at", value)} />
+        </div>
+      </section>
+
+      <section className="diary-form-section">
+        <div className="diary-form-section__header">
+          <span>Впечатления</span>
+          <h2>Как оно ощущалось?</h2>
+          <p>Пиши простыми словами: яблоко, мёд, свежесть, терпкость, сливочность. Всё подходит.</p>
+        </div>
+
+        <div className="form-grid">
+          <label>
+            <span>Цвет</span>
+            <select className="select-input" value={form.wine_color} onChange={(event) => update("wine_color", event.target.value as DiaryNoteFormState["wine_color"])}>
+              <option value="">Не указано</option>
+              <option value="red">Красное</option>
+              <option value="white">Белое</option>
+              <option value="rose">Розе</option>
+              <option value="sparkling">Игристое</option>
+              <option value="orange">Оранжевое</option>
+              <option value="dessert">Десертное</option>
+              <option value="unknown">Не знаю</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Сладость</span>
+            <select className="select-input" value={form.sweetness} onChange={(event) => update("sweetness", event.target.value as DiaryNoteFormState["sweetness"])}>
+              <option value="">Не указано</option>
+              <option value="dry">Сухое</option>
+              <option value="semi_dry">Полусухое</option>
+              <option value="semi_sweet">Полусладкое</option>
+              <option value="sweet">Сладкое</option>
+              <option value="unknown">Не знаю</option>
+            </select>
+          </label>
+        </div>
+
+        <TextField label="Ароматы через запятую" value={form.aroma_notes} onChange={(value) => update("aroma_notes", value)} />
+        <TextField label="Вкус через запятую" value={form.taste_notes} onChange={(value) => update("taste_notes", value)} />
+        <TextField label="Сочетание с едой" value={form.pairing} onChange={(value) => update("pairing", value)} />
+      </section>
+
+      <section className="diary-form-section">
+        <div className="diary-form-section__header">
+          <span>Личная заметка</span>
+          <h2>Что хочется запомнить?</h2>
+        </div>
+
+        <div className="form-grid">
+          <TextField label="Повод" value={form.occasion} onChange={(value) => update("occasion", value)} />
+          <TextField label="Цена" value={form.price_text} onChange={(value) => update("price_text", value)} />
+          <label>
+            <span>Оценка</span>
+            <select className="select-input" value={form.rating} onChange={(event) => update("rating", event.target.value)}>
+              <option value="">Без оценки</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </label>
+        </div>
 
         <label>
-          <span>Оценка</span>
-          <select className="select-input" value={form.rating} onChange={(event) => update("rating", event.target.value)}>
-            <option value="">Без оценки</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-          </select>
+          <span>Заметка</span>
+          <textarea
+            className="textarea-input"
+            value={form.personal_note}
+            rows={5}
+            placeholder="Например: взяла к ужину, понравилась свежесть и легкая минеральность."
+            onChange={(event) => update("personal_note", event.target.value)}
+          />
         </label>
-      </div>
 
-      <TextField label="Ароматы через запятую" value={form.aroma_notes} onChange={(value) => update("aroma_notes", value)} />
-      <TextField label="Вкус через запятую" value={form.taste_notes} onChange={(value) => update("taste_notes", value)} />
-      <TextField label="Сочетание с едой" value={form.pairing} onChange={(value) => update("pairing", value)} />
+        <label className="toggle-row">
+          <input
+            type="checkbox"
+            checked={form.would_buy_again}
+            onChange={(event) => update("would_buy_again", event.target.checked)}
+          />
+          <span>Купила бы снова</span>
+        </label>
+      </section>
 
-      <label>
-        <span>Личная заметка</span>
-        <textarea
-          className="textarea-input"
-          value={form.personal_note}
-          rows={5}
-          onChange={(event) => update("personal_note", event.target.value)}
-        />
-      </label>
-
-      <label className="toggle-row">
-        <input
-          type="checkbox"
-          checked={form.would_buy_again}
-          onChange={(event) => update("would_buy_again", event.target.checked)}
-        />
-        <span>Купил бы снова</span>
-      </label>
+      <section className="diary-form-section diary-form-section--photo">
+        <div className="diary-form-section__header">
+          <span>Фото</span>
+          <h2>Этикетка или момент</h2>
+          <p>Загрузка появится позже. Пока это аккуратное место-подсказка, чтобы не забыть сфотографировать бутылку.</p>
+        </div>
+        <div className="diary-photo-placeholder" aria-hidden="true">
+          <span>+</span>
+          <small>Фото будет здесь</small>
+        </div>
+      </section>
 
       <button className="primary-action" type="submit" disabled={isSubmitting || !form.wine_name.trim()}>
         {isSubmitting ? "Сохраняем..." : submitLabel}

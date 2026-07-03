@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { getOnboardingStatus } from "../onboarding/api";
+import { BackButton } from "../../shared/ui/BackButton";
 import { ErrorState } from "../../shared/ui/ErrorState";
 import { LoadingState } from "../../shared/ui/LoadingState";
 
@@ -131,9 +132,7 @@ export function LessonDetailPage() {
 
   return (
     <article className="lesson-detail">
-      <Link className="back-link" to={backTo}>
-        {backLabel}
-      </Link>
+      <BackButton to={backTo} label={backLabel} />
 
       <header className="lesson-detail__header">
         <div className="learning-meta">

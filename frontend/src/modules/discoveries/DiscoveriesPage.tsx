@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { getOnboardingStatus } from "../onboarding/api";
 import { EmptyState } from "../../shared/ui/EmptyState";
 import { ErrorState } from "../../shared/ui/ErrorState";
 import { LoadingState } from "../../shared/ui/LoadingState";
+import { getOnboardingStatus } from "../onboarding/api";
 
 import { getDiscoveries } from "./api";
 import type { DiscoveryListItem } from "./types";
@@ -71,7 +71,7 @@ export function DiscoveriesPage() {
   }
 
   if (isLoading) {
-    return <LoadingState title="Открытия" description="Собираем первые винные маршруты..." />;
+    return <LoadingState title="Открытия" description="Собираем короткие wine tips..." />;
   }
 
   return (
@@ -79,8 +79,17 @@ export function DiscoveriesPage() {
       <header className="discoveries-header">
         <span>Wine Club</span>
         <h1>Открытия</h1>
-        <p>Короткие винные маршруты, чтобы увереннее выбирать, пробовать и понимать.</p>
+        <p>
+          Короткие посты от винной девочки: идеи для вечера, lifestyle-подсказки, маленькие карточки и поводы
+          попробовать что-то новое.
+        </p>
       </header>
+
+      <aside className="discoveries-promo">
+        <span>Скоро</span>
+        <h2>Офлайн-дегустации</h2>
+        <p>Тёплые камерные встречи появятся здесь позже. Пока без оплаты, бронирования и сложной логики.</p>
+      </aside>
 
       {items.length === 0 ? (
         <EmptyState

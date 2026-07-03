@@ -7,9 +7,9 @@ import { completeOnboarding, getOnboardingStatus } from "./api";
 import type { OnboardingData, OnboardingGoal, TastePreference, WineExperienceLevel } from "./types";
 
 const experienceOptions: Array<{ value: WineExperienceLevel; label: string; description: string }> = [
-  { value: "beginner", label: "Новичок", description: "Хочу спокойно разобраться с основами." },
-  { value: "curious", label: "Любопытно", description: "Уже пробую разное и хочу видеть больше связей." },
-  { value: "confident", label: "Уверенно", description: "Есть опыт, хочется глубины и точности." },
+  { value: "beginner", label: "Новичок", description: "Хочу спокойно разобраться с основами и перестать теряться у полки." },
+  { value: "curious", label: "Любопытно", description: "Уже пробую разное и хочу замечать больше связей во вкусе." },
+  { value: "confident", label: "Уверенно", description: "Есть опыт, хочется глубины, точности и красивого языка описания." },
 ];
 
 const tasteOptions: Array<{ value: TastePreference; label: string }> = [
@@ -25,7 +25,7 @@ const tasteOptions: Array<{ value: TastePreference; label: string }> = [
 const goalOptions: Array<{ value: OnboardingGoal; label: string }> = [
   { value: "understand_wine", label: "Понимать вино" },
   { value: "choose_bottle", label: "Выбирать бутылку" },
-  { value: "build_taste", label: "Собрать свой вкус" },
+  { value: "build_taste", label: "Понять свои предпочтения" },
   { value: "feel_confident", label: "Чувствовать уверенность" },
   { value: "explore_culture", label: "Исследовать культуру" },
 ];
@@ -115,7 +115,7 @@ export function OnboardingPage() {
         <div className="onboarding-panel">
           <span>Дочь винодела</span>
           <h1>Готовим вход</h1>
-          <p>Проверяем твое клубное пространство.</p>
+          <p>Проверяем твоё клубное пространство.</p>
         </div>
       </section>
     );
@@ -143,13 +143,14 @@ export function OnboardingPage() {
         {step === 0 && (
           <>
             <h1>Добро пожаловать в Дочь винодела</h1>
-            <p>Мягкое пространство, где можно спокойно изучать вино, замечать вкус и увереннее выбирать бутылку.</p>
+            <p>Мягкое пространство, где можно изучать вино, замечать вкус и увереннее выбирать бутылку.</p>
           </>
         )}
 
         {step === 1 && (
           <>
             <h1>Как ты сейчас чувствуешь себя с вином?</h1>
+            <p>Это не экзамен. Просто отметь точку, с которой хочется начать.</p>
             <div className="option-list">
               {experienceOptions.map((option) => (
                 <button
@@ -187,7 +188,8 @@ export function OnboardingPage() {
 
         {step === 3 && (
           <>
-            <h1>Что хочется получить от клуба?</h1>
+            <h1>Что тебе хочется чувствовать рядом с вином?</h1>
+            <p>Выбери то, что откликается сейчас. Это поможет собрать личный маршрут, а не сухой список уроков.</p>
             <div className="chip-grid">
               {goalOptions.map((option) => (
                 <button
@@ -206,7 +208,7 @@ export function OnboardingPage() {
         {step === 4 && (
           <>
             <h1>Как к тебе обращаться?</h1>
-            <p>Можно пропустить. Имя нужно только для более теплого приветствия.</p>
+            <p>Можно пропустить. Имя нужно только для более тёплого приветствия.</p>
             <input
               className="text-input"
               type="text"
@@ -219,7 +221,7 @@ export function OnboardingPage() {
 
         {step === 5 && (
           <>
-            <h1>Все готово</h1>
+            <h1>Всё готово</h1>
             <p>Сохраним первые настройки и откроем главную страницу клуба.</p>
           </>
         )}
@@ -228,8 +230,13 @@ export function OnboardingPage() {
 
         <div className="onboarding-actions">
           {step > 0 && (
-            <button className="ghost-action" type="button" onClick={() => setStep((current) => current - 1)}>
-              Назад
+            <button
+              className="ghost-action ghost-action--icon"
+              type="button"
+              aria-label="Назад"
+              onClick={() => setStep((current) => current - 1)}
+            >
+              <span aria-hidden="true">‹</span>
             </button>
           )}
           {step < 5 ? (

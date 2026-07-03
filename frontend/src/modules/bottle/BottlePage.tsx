@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { getOnboardingStatus } from "../onboarding/api";
+import { BackButton } from "../../shared/ui/BackButton";
 import { ErrorState } from "../../shared/ui/ErrorState";
 import { LoadingState } from "../../shared/ui/LoadingState";
 
@@ -36,7 +37,7 @@ export function BottlePage() {
         }
       } catch (caught) {
         if (mounted) {
-          setError(caught instanceof Error ? caught.message : "Не удалось загрузить бутылку");
+          setError(caught instanceof Error ? caught.message : "РќРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РіСЂСѓР·РёС‚СЊ Р±СѓС‚С‹Р»РєСѓ");
         }
       } finally {
         if (mounted) {
@@ -53,19 +54,17 @@ export function BottlePage() {
   }, [navigate]);
 
   if (error) {
-    return <ErrorState title="Не удалось открыть бутылку" description={error} />;
+    return <ErrorState title="РќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РєСЂС‹С‚СЊ Р±СѓС‚С‹Р»РєСѓ" description={error} />;
   }
 
   if (isLoading || !progress) {
-    return <LoadingState title="Моя бутылка" description="Смотрим текущий прогресс..." />;
+    return <LoadingState title="РњРѕСЏ Р±СѓС‚С‹Р»РєР°" description="РЎРјРѕС‚СЂРёРј С‚РµРєСѓС‰РёР№ РїСЂРѕРіСЂРµСЃСЃ..." />;
   }
 
   return (
     <section className="bottle-page">
       <header className="bottle-header">
-        <Link className="back-link" to="/my-path">
-          Назад к маршруту
-        </Link>
+        <BackButton to="/my-path" label="Назад к маршруту" />
         <span>Wine Club</span>
         <h1>{progress.title}</h1>
         <p>{progress.subtitle}</p>
@@ -75,32 +74,32 @@ export function BottlePage() {
         <BottleVisual fillPercent={progress.fill_percent} />
 
         <div className="bottle-panel__content">
-          <span>Что заполняет бутылку</span>
+          <span>Р§С‚Рѕ Р·Р°РїРѕР»РЅСЏРµС‚ Р±СѓС‚С‹Р»РєСѓ</span>
           <strong>{progress.fill_percent}%</strong>
           <p>
-            Заполнено {progress.completed_units} из {progress.total_units}. Сейчас учитываются завершённые уроки,
-            до {progress.breakdown.diary.target_notes_count} заметок дневника и завершённые квизы.
+            Р—Р°РїРѕР»РЅРµРЅРѕ {progress.completed_units} РёР· {progress.total_units}. РЎРµР№С‡Р°СЃ СѓС‡РёС‚С‹РІР°СЋС‚СЃСЏ Р·Р°РІРµСЂС€С‘РЅРЅС‹Рµ СѓСЂРѕРєРё,
+            РґРѕ {progress.breakdown.diary.target_notes_count} Р·Р°РјРµС‚РѕРє РґРЅРµРІРЅРёРєР° Рё Р·Р°РІРµСЂС€С‘РЅРЅС‹Рµ РєРІРёР·С‹.
           </p>
           <div className="bottle-panel__stats">
             <div>
               <strong>
-                {progress.breakdown.learning.completed_lessons_count} из{" "}
+                {progress.breakdown.learning.completed_lessons_count} РёР·{" "}
                 {progress.breakdown.learning.available_lessons_count}
               </strong>
-              <small>уроки завершены</small>
+              <small>СѓСЂРѕРєРё Р·Р°РІРµСЂС€РµРЅС‹</small>
             </div>
             <div>
               <strong>
-                {progress.breakdown.diary.notes_count} из {progress.breakdown.diary.target_notes_count}
+                {progress.breakdown.diary.notes_count} РёР· {progress.breakdown.diary.target_notes_count}
               </strong>
-              <small>заметки в дневнике</small>
+              <small>Р·Р°РјРµС‚РєРё РІ РґРЅРµРІРЅРёРєРµ</small>
             </div>
             <div>
               <strong>
-                {progress.breakdown.quizzes.completed_quizzes_count} из{" "}
+                {progress.breakdown.quizzes.completed_quizzes_count} РёР·{" "}
                 {progress.breakdown.quizzes.available_quizzes_count}
               </strong>
-              <small>квизы завершены</small>
+              <small>РєРІРёР·С‹ Р·Р°РІРµСЂС€РµРЅС‹</small>
             </div>
           </div>
           <Link className="primary-action bottle-panel__action" to={progress.next_action.href}>
@@ -108,8 +107,8 @@ export function BottlePage() {
           </Link>
           {progress.completed_units === 0 && (
             <p className="bottle-panel__hint">
-              Сейчас бутылка пустая — это нормальное начало. Заверши первый урок или добавь заметку, и здесь появится
-              первый видимый прогресс.
+              РЎРµР№С‡Р°СЃ Р±СѓС‚С‹Р»РєР° РїСѓСЃС‚Р°СЏ вЂ” СЌС‚Рѕ РЅРѕСЂРјР°Р»СЊРЅРѕРµ РЅР°С‡Р°Р»Рѕ. Р—Р°РІРµСЂС€Рё РїРµСЂРІС‹Р№ СѓСЂРѕРє РёР»Рё РґРѕР±Р°РІСЊ Р·Р°РјРµС‚РєСѓ, Рё Р·РґРµСЃСЊ РїРѕСЏРІРёС‚СЃСЏ
+              РїРµСЂРІС‹Р№ РІРёРґРёРјС‹Р№ РїСЂРѕРіСЂРµСЃСЃ.
             </p>
           )}
         </div>
@@ -118,17 +117,17 @@ export function BottlePage() {
       <section className="activity-preview-panel">
         <div className="activity-preview-panel__header">
           <div>
-            <span>Недавняя активность</span>
-            <h2>Что наполнило бутылку</h2>
+            <span>РќРµРґР°РІРЅСЏСЏ Р°РєС‚РёРІРЅРѕСЃС‚СЊ</span>
+            <h2>Р§С‚Рѕ РЅР°РїРѕР»РЅРёР»Рѕ Р±СѓС‚С‹Р»РєСѓ</h2>
           </div>
           <Link className="ghost-action" to="/progress">
-            Вся активность
+            Р’СЃСЏ Р°РєС‚РёРІРЅРѕСЃС‚СЊ
           </Link>
         </div>
 
         {progress.activity_preview.length === 0 ? (
           <p className="activity-preview-panel__empty">
-            Пока нет действий. Уроки, квизы и заметки появятся здесь, когда начнут наполнять бутылку.
+            РџРѕРєР° РЅРµС‚ РґРµР№СЃС‚РІРёР№. РЈСЂРѕРєРё, РєРІРёР·С‹ Рё Р·Р°РјРµС‚РєРё РїРѕСЏРІСЏС‚СЃСЏ Р·РґРµСЃСЊ, РєРѕРіРґР° РЅР°С‡РЅСѓС‚ РЅР°РїРѕР»РЅСЏС‚СЊ Р±СѓС‚С‹Р»РєСѓ.
           </p>
         ) : (
           <div className="activity-preview-list">
@@ -164,3 +163,4 @@ function formatActivityDate(value: string): string {
     minute: "2-digit",
   }).format(new Date(value));
 }
+

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-import { getOnboardingStatus } from "../onboarding/api";
+import { BackButton } from "../../shared/ui/BackButton";
 import { ErrorState } from "../../shared/ui/ErrorState";
 import { LoadingState } from "../../shared/ui/LoadingState";
+import { getOnboardingStatus } from "../onboarding/api";
 
 import { createTastingNote, getTastingNote, updateTastingNote } from "./api";
 import { DiaryNoteForm, emptyDiaryNoteForm, formFromNote, payloadFromForm } from "./DiaryNoteForm";
@@ -83,12 +84,12 @@ export function DiaryNoteFormPage() {
   return (
     <section className="diary-page">
       <header className="diary-header">
-        <Link className="back-link" to={backTo}>
-          {backLabel}
-        </Link>
+        <BackButton to={backTo} label={backLabel} />
         <span>{isEditing ? "Редактирование" : "Новая запись"}</span>
         <h1>{isEditing ? "Редактировать заметку" : "Новая заметка"}</h1>
-        <p>Достаточно названия и пары честных слов. Остальные поля можно заполнить сейчас или вернуться к ним позже.</p>
+        <p>
+          Достаточно названия и пары честных слов. Остальные поля можно заполнить сейчас или вернуться к ним позже.
+        </p>
       </header>
 
       {error && <p className="form-error" role="alert">{error}</p>}

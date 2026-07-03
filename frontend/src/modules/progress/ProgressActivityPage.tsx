@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { getOnboardingStatus } from "../onboarding/api";
+import { BackButton } from "../../shared/ui/BackButton";
 import { EmptyState } from "../../shared/ui/EmptyState";
 import { ErrorState } from "../../shared/ui/ErrorState";
 import { LoadingState } from "../../shared/ui/LoadingState";
@@ -63,9 +64,7 @@ export function ProgressActivityPage() {
   return (
     <section className="progress-page">
       <header className="progress-header">
-        <Link className="back-link" to="/bottle">
-          К бутылке
-        </Link>
+        <BackButton to="/bottle" label="К бутылке" />
         <span>Личная история</span>
         <h1>Активность</h1>
         <p>Приватная история действий, которые уже наполнили бутылку.</p>

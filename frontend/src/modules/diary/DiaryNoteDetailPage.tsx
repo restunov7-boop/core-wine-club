@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { getOnboardingStatus } from "../onboarding/api";
+import { BackButton } from "../../shared/ui/BackButton";
 import { ErrorState } from "../../shared/ui/ErrorState";
 import { LoadingState } from "../../shared/ui/LoadingState";
 
@@ -105,9 +106,7 @@ export function DiaryNoteDetailPage() {
 
   return (
     <article className="diary-detail">
-      <Link className="back-link" to="/diary">
-        Назад к дневнику
-      </Link>
+      <BackButton to="/diary" label="Назад к дневнику" />
 
       <header className="diary-detail__header">
         <div className="diary-note-card__topline">

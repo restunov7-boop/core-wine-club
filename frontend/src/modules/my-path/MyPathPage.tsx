@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { getOnboardingStatus } from "../onboarding/api";
+import { BackButton } from "../../shared/ui/BackButton";
 import { ErrorState } from "../../shared/ui/ErrorState";
 import { LoadingState } from "../../shared/ui/LoadingState";
 
@@ -62,9 +63,7 @@ export function MyPathPage() {
   return (
     <section className="my-path-page">
       <header className="my-path-header">
-        <Link className="back-link" to="/home">
-          На главную
-        </Link>
+        <BackButton to="/home" label="На главную" />
         <span>Что дальше</span>
         <h1>{myPath.title}</h1>
         <p>{myPath.subtitle}</p>

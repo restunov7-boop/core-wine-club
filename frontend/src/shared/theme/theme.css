@@ -14,7 +14,7 @@
   color: var(--color-text);
   background: var(--color-bg);
   font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    Inter, "SF Pro Text", "Segoe UI", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -1806,5 +1806,186 @@ textarea:focus-visible {
   .quiz-list,
   .diary-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.back-button {
+  width: 44px;
+  height: 44px;
+  display: inline-grid;
+  place-items: center;
+  margin-bottom: 18px;
+  border: 1px solid rgba(245, 239, 232, 0.12);
+  border-radius: 999px;
+  background: rgba(245, 239, 232, 0.04);
+  color: var(--color-text);
+}
+
+.back-button span,
+.ghost-action--icon span {
+  transform: translateY(-1px);
+  font-size: 30px;
+  line-height: 1;
+}
+
+.back-button:hover {
+  border-color: rgba(214, 168, 79, 0.52);
+  background: rgba(214, 168, 79, 0.08);
+}
+
+.ghost-action--icon {
+  width: 46px;
+  flex: 0 0 46px;
+  padding: 0;
+  border-radius: 999px;
+}
+
+.home-bottle-card {
+  min-height: 100%;
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  align-items: center;
+  gap: 18px;
+  padding: 20px;
+  border: 1px solid rgba(245, 239, 232, 0.08);
+  border-radius: var(--radius-card);
+  background:
+    radial-gradient(circle at 22% 20%, rgba(214, 168, 79, 0.13), transparent 12rem),
+    linear-gradient(160deg, rgba(33, 29, 31, 0.96), rgba(43, 37, 39, 0.88));
+  box-shadow: var(--shadow-soft);
+}
+
+.home-bottle-card h3 {
+  margin: 10px 0 0;
+  font-size: 24px;
+  line-height: 1.18;
+}
+
+.home-bottle-card p {
+  margin: 12px 0 0;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.bottle-visual--home {
+  width: 118px;
+  min-height: 226px;
+  transform: scale(0.68);
+  transform-origin: center;
+}
+
+.diary-form {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.diary-form-section {
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid rgba(245, 239, 232, 0.08);
+  border-radius: var(--radius-card);
+  background: linear-gradient(160deg, rgba(33, 29, 31, 0.96), rgba(43, 37, 39, 0.88));
+  box-shadow: var(--shadow-soft);
+}
+
+.diary-form-section__header {
+  display: grid;
+  gap: 8px;
+}
+
+.diary-form-section__header span {
+  color: var(--color-accent);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.diary-form-section__header h2,
+.discoveries-promo h2 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.18;
+}
+
+.diary-form-section__header p,
+.discoveries-promo p {
+  margin: 0;
+  color: var(--color-text-muted);
+  line-height: 1.55;
+}
+
+.wine-suggestion-list {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.wine-suggestion {
+  display: grid;
+  gap: 5px;
+  min-height: 74px;
+  padding: 12px;
+  border: 1px solid rgba(214, 168, 79, 0.22);
+  border-radius: var(--radius-card);
+  background: rgba(214, 168, 79, 0.07);
+  color: var(--color-text);
+  text-align: left;
+}
+
+.wine-suggestion span {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.diary-photo-placeholder {
+  min-height: 142px;
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  border: 1px dashed rgba(214, 168, 79, 0.34);
+  border-radius: var(--radius-card);
+  background: rgba(245, 239, 232, 0.035);
+  color: var(--color-text-muted);
+}
+
+.diary-photo-placeholder span {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(143, 38, 56, 0.34);
+  color: var(--color-text);
+  font-size: 30px;
+}
+
+.discoveries-promo {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  border: 1px solid rgba(214, 168, 79, 0.28);
+  border-radius: var(--radius-card);
+  background:
+    linear-gradient(130deg, rgba(143, 38, 56, 0.2), rgba(214, 168, 79, 0.07)),
+    rgba(245, 239, 232, 0.04);
+}
+
+.discoveries-promo span {
+  color: var(--color-accent);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+@media (max-width: 430px) {
+  .home-bottle-card,
+  .wine-suggestion-list {
+    grid-template-columns: 1fr;
+  }
+
+  .bottle-visual--home {
+    margin-bottom: -78px;
   }
 }

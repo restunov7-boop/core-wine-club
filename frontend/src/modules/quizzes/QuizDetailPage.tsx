@@ -3,6 +3,7 @@ import type { FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { getOnboardingStatus } from "../onboarding/api";
+import { BackButton } from "../../shared/ui/BackButton";
 import { ErrorState } from "../../shared/ui/ErrorState";
 import { LoadingState } from "../../shared/ui/LoadingState";
 
@@ -135,9 +136,7 @@ export function QuizDetailPage() {
   return (
     <section className="quiz-detail-page">
       <header className="quiz-detail-header">
-        <Link className="back-link" to="/quizzes">
-          Назад к квизам
-        </Link>
+        <BackButton to="/quizzes" label="Назад к квизам" />
         <div className="quiz-meta">
           <span>{difficultyLabels[quiz.difficulty] ?? quiz.difficulty}</span>
           {quiz.estimated_minutes && <span>{quiz.estimated_minutes} мин</span>}

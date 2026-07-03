@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { getOnboardingStatus } from "../onboarding/api";
+import { BackButton } from "../../shared/ui/BackButton";
 import { ErrorState } from "../../shared/ui/ErrorState";
 import { LoadingState } from "../../shared/ui/LoadingState";
 
@@ -80,9 +81,7 @@ export function LearningPathDetailPage() {
 
   return (
     <article className="learning-detail">
-      <Link className="back-link" to="/learn">
-        Назад к урокам
-      </Link>
+      <BackButton to="/learn" label="Назад к урокам" />
 
       <header className="learning-detail__header">
         <div className="learning-meta">
