@@ -131,8 +131,8 @@ export function TasteProfilePage() {
             </Link>
           </div>
           <div className="taste-stat-grid">
-            <StatCard label="Уроки" value={`Пройдено: ${progress.learning.completed_lessons_count} / ${progress.learning.available_lessons_count}`} />
-            <StatCard label="Квизы" value={`Пройдено: ${progress.quizzes.completed_quizzes_count} / ${progress.quizzes.available_quizzes_count}`} />
+            <StatCard label="Уроки" value={`Пройдено: ${progress.learning.completed_lessons_count}`} />
+            <StatCard label="Квизы" value={`Пройдено: ${progress.quizzes.completed_quizzes_count}`} />
             <StatCard label="Дневник" value={`Заметок: ${progress.diary.notes_count}`} />
             <StatCard label="Бутылка" value={`${bottle.fill_percent}%`} />
           </div>

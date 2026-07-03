@@ -15,12 +15,6 @@ const difficultyLabels: Record<string, string> = {
   confident: "Уверенно",
 };
 
-const miniNotes = [
-  "Как отличить кислотность от сухости",
-  "Почему игристое подходит к солёным закускам",
-  "Что искать на этикетке, если выбираешь вслепую",
-];
-
 export function LearningPathsPage() {
   const navigate = useNavigate();
   const [items, setItems] = useState<LearningPathListItem[]>([]);
@@ -77,18 +71,8 @@ export function LearningPathsPage() {
       <header className="learning-header">
         <span>Обучение</span>
         <h1>Уроки</h1>
-        <p>Здесь живёт образовательная часть клуба: маршруты, уроки и мини-заметки, которые раньше смешивались с открытиями.</p>
+        <p>Здесь живёт образовательная часть клуба: маршруты и уроки.</p>
       </header>
-
-      <section className="learning-mini-notes">
-        <span>Мини-заметки к урокам</span>
-        <h2>Короткие открытия</h2>
-        <div>
-          {miniNotes.map((note) => (
-            <p key={note}>{note}</p>
-          ))}
-        </div>
-      </section>
 
       {items.length === 0 ? (
         <EmptyState
