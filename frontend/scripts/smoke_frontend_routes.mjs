@@ -13,6 +13,8 @@ const routes = [
   "/learn/lessons/how-wine-is-made",
   "/diary",
   "/taste-profile",
+  "/profile",
+  "/offline-tastings",
   "/admin",
   "/onboarding",
   "/unknown-route-for-smoke",

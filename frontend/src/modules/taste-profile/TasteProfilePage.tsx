@@ -10,49 +10,7 @@ import { getProgressSummary } from "../progress/api";
 import type { ProgressSummary } from "../progress/types";
 
 import { getTasteProfile } from "./api";
-import type { TasteProfileCountItem, TasteProfileResponse } from "./types";
-
-const experienceLabels: Record<string, string> = {
-  beginner: "Новичок",
-  curious: "Любопытно",
-  confident: "Уверенно",
-};
-
-const tasteLabels: Record<string, string> = {
-  red: "Красное",
-  white: "Белое",
-  sparkling: "Игристое",
-  rose: "Розе",
-  sweet: "Сладкое",
-  dry: "Сухое",
-  not_sure: "Пока изучаю",
-};
-
-const goalLabels: Record<string, string> = {
-  understand_wine: "Понимать вино",
-  choose_bottle: "Выбирать бутылку",
-  build_taste: "Понять свои предпочтения",
-  feel_confident: "Чувствовать уверенность",
-  explore_culture: "Исследовать культуру",
-};
-
-const wineColorLabels: Record<string, string> = {
-  red: "Красное",
-  white: "Белое",
-  rose: "Розе",
-  sparkling: "Игристое",
-  orange: "Оранжевое",
-  dessert: "Десертное",
-  unknown: "Не знаю",
-};
-
-const sweetnessLabels: Record<string, string> = {
-  dry: "Сухое",
-  semi_dry: "Полусухое",
-  semi_sweet: "Полусладкое",
-  sweet: "Сладкое",
-  unknown: "Не знаю",
-};
+import type { TasteProfileResponse } from "./types";
 
 export function TasteProfilePage() {
   const navigate = useNavigate();
@@ -106,22 +64,19 @@ export function TasteProfilePage() {
   }, [navigate]);
 
   if (error) {
-    return <ErrorState title="Не удалось открыть профиль вкуса" description={error} />;
+    return <ErrorState title="Не удалось открыть профиль" description={error} />;
   }
 
   if (isLoading || !profile) {
-    return <LoadingState title="Профиль вкуса" description="Собираем личную карту вкуса..." />;
+    return <LoadingState title="Профиль" description="Собираем личную сводку..." />;
   }
 
   return (
     <section className="taste-profile-page">
       <header className="taste-profile-header">
         <span>Личный профиль</span>
-        <h1>Профиль вкуса</h1>
-        <p>
-          Чистая сводка твоего винного ритма: что уже пробовала, какие слова чаще появляются в дневнике и куда
-          хочется двигаться дальше.
-        </p>
+        <h1>Профиль</h1>
+        <p>Спокойная сводка дневника и пути. Стартовые предпочтения из онбординга больше не занимают главный блок.</p>
       </header>
 
       <section className="taste-summary-card">
@@ -134,85 +89,26 @@ export function TasteProfilePage() {
         )}
       </section>
 
-      <section className="taste-profile-card">
-        <div className="taste-profile-card__header">
-          <div>
-            <span>Мои предпочтения</span>
-            <h2>Короткое резюме</h2>
-          </div>
-          <Link className="ghost-action" to="/onboarding">
-            Обновить
-          </Link>
-        </div>
-        <p>{buildPreferenceSummary(profile)}</p>
-        <div className="taste-chip-row">
-          {profile.onboarding.wine_experience_level && (
-            <span>{experienceLabels[profile.onboarding.wine_experience_level] ?? profile.onboarding.wine_experience_level}</span>
-          )}
-          {profile.onboarding.taste_preferences.map((item) => (
-            <span key={item}>{tasteLabels[item] ?? item}</span>
-          ))}
-          {profile.onboarding.goals.map((item) => (
-            <span key={item}>{goalLabels[item] ?? item}</span>
-          ))}
-          {!profile.onboarding.wine_experience_level &&
-            profile.onboarding.taste_preferences.length === 0 &&
-            profile.onboarding.goals.length === 0 && <span>Предпочтения появятся после онбординга</span>}
-        </div>
-      </section>
-
       <section className="taste-stat-grid">
         <StatCard label="Заметок" value={String(profile.stats.notes_count)} />
         <StatCard label="Средняя оценка" value={profile.stats.average_rating ? profile.stats.average_rating.toFixed(1) : "—"} />
         <StatCard label="Купила бы снова" value={formatRatio(profile.stats.would_buy_again_ratio)} />
       </section>
 
-      {progress && bottle && (
-        <section className="taste-profile-card">
-          <div className="taste-profile-card__header">
-            <div>
-              <span>Личный ритм</span>
-              <h2>Мой прогресс</h2>
-            </div>
-            <Link className="ghost-action" to="/progress">
-              Архив действий
-            </Link>
-          </div>
-          <div className="taste-stat-grid">
-            <StatCard
-              label="Уроки"
-              value={`${progress.learning.completed_lessons_count} из ${progress.learning.available_lessons_count}`}
-            />
-            <StatCard
-              label="Квизы"
-              value={`${progress.quizzes.completed_quizzes_count} из ${progress.quizzes.available_quizzes_count}`}
-            />
-            <StatCard label="Дневник" value={String(progress.diary.notes_count)} />
-            <StatCard label="Бутылка" value={`${bottle.fill_percent}%`} />
-          </div>
-          <Link className="primary-action taste-summary-card__action" to="/bottle">
-            Посмотреть бутылку
-          </Link>
-        </section>
-      )}
+      <section className="taste-profile-card taste-profile-card--placeholder">
+        <span>Скоро</span>
+        <h2>География вкуса</h2>
+        <p>Страны и регионы требуют отдельной доработки логики, поэтому пока оставлены как аккуратный placeholder.</p>
+      </section>
 
-      <ProfileListCard title="Любимые стили" groups={[
-        { label: "Цвет", items: profile.stats.favorite_wine_colors, labels: wineColorLabels },
-        { label: "Сладость", items: profile.stats.sweetness_distribution, labels: sweetnessLabels },
-      ]} />
-
-      <ProfileListCard title="Словарь вкуса" groups={[
-        { label: "Ароматы", items: profile.stats.top_aroma_notes },
-        { label: "Вкус", items: profile.stats.top_taste_notes },
-      ]} />
-
-      <ProfileListCard title="География" groups={[
-        { label: "Страны", items: profile.stats.countries_tried },
-        { label: "Регионы", items: profile.stats.regions_tried },
-      ]} />
+      <section className="taste-profile-card taste-profile-card--placeholder">
+        <span>Скоро</span>
+        <h2>Словарь вина</h2>
+        <p>Ароматы и вкусовые слова будут лучше работать после отдельного sprint по нормализации дневника.</p>
+      </section>
 
       <section className="taste-profile-card">
-        <h2>Инсайты</h2>
+        <h2>Наблюдение</h2>
         <div className="taste-insight-list">
           {profile.insights.map((insight) => (
             <article key={insight.key} className="taste-insight">
@@ -222,6 +118,26 @@ export function TasteProfilePage() {
           ))}
         </div>
       </section>
+
+      {progress && bottle && (
+        <section className="taste-profile-card taste-profile-card--rhythm">
+          <div className="taste-profile-card__header">
+            <div>
+              <span>Личный ритм</span>
+              <h2>Прогресс</h2>
+            </div>
+            <Link className="ghost-action" to="/progress">
+              Архив
+            </Link>
+          </div>
+          <div className="taste-stat-grid">
+            <StatCard label="Уроки" value={`Пройдено: ${progress.learning.completed_lessons_count} / ${progress.learning.available_lessons_count}`} />
+            <StatCard label="Квизы" value={`Пройдено: ${progress.quizzes.completed_quizzes_count} / ${progress.quizzes.available_quizzes_count}`} />
+            <StatCard label="Дневник" value={`Заметок: ${progress.diary.notes_count}`} />
+            <StatCard label="Бутылка" value={`${bottle.fill_percent}%`} />
+          </div>
+        </section>
+      )}
     </section>
   );
 }
@@ -233,58 +149,6 @@ function StatCard({ label, value }: { label: string; value: string }) {
       <strong>{value}</strong>
     </article>
   );
-}
-
-function ProfileListCard({
-  title,
-  groups,
-}: {
-  title: string;
-  groups: Array<{ label: string; items: TasteProfileCountItem[]; labels?: Record<string, string> }>;
-}) {
-  return (
-    <section className="taste-profile-card">
-      <h2>{title}</h2>
-      <div className="taste-profile-groups">
-        {groups.map((group) => (
-          <div className="taste-profile-group" key={group.label}>
-            <h3>{group.label}</h3>
-            {group.items.length > 0 ? (
-              <div className="taste-chip-row">
-                {group.items.map((item) => (
-                  <span key={item.key}>
-                    {group.labels?.[item.key] ?? item.key} · {item.count}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <p>Появится после первых заметок в дневнике.</p>
-            )}
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function buildPreferenceSummary(profile: TasteProfileResponse): string {
-  const experience = profile.onboarding.wine_experience_level
-    ? experienceLabels[profile.onboarding.wine_experience_level]
-    : null;
-  const tastes = profile.onboarding.taste_preferences.map((item) => tasteLabels[item] ?? item).slice(0, 3);
-  const goals = profile.onboarding.goals.map((item) => goalLabels[item] ?? item).slice(0, 2);
-
-  if (!experience && tastes.length === 0 && goals.length === 0) {
-    return "Пока профиль чистый. Он станет живее после онбординга и первых заметок.";
-  }
-
-  return [
-    experience ? `Сейчас уровень: ${experience.toLowerCase()}.` : null,
-    tastes.length ? `Ближе всего: ${tastes.join(", ").toLowerCase()}.` : null,
-    goals.length ? `Фокус: ${goals.join(", ").toLowerCase()}.` : null,
-  ]
-    .filter(Boolean)
-    .join(" ");
 }
 
 function formatRatio(value: number | null): string {

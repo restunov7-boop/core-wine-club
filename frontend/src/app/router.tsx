@@ -15,6 +15,7 @@ import { LearningPathDetailPage } from "../modules/learning/LearningPathDetailPa
 import { LearningPathsPage } from "../modules/learning/LearningPathsPage";
 import { LessonDetailPage } from "../modules/learning/LessonDetailPage";
 import { MyPathPage } from "../modules/my-path/MyPathPage";
+import { OfflineTastingsPage } from "../modules/offline-tastings/OfflineTastingsPage";
 import { OnboardingPage } from "../modules/onboarding/OnboardingPage";
 import { ProgressActivityPage } from "../modules/progress/ProgressActivityPage";
 import { QuizDetailPage } from "../modules/quizzes/QuizDetailPage";
@@ -67,6 +68,8 @@ export const router = createBrowserRouter([
       { path: "/diary/:noteId", element: <DiaryNoteDetailPage /> },
       { path: "/diary/:noteId/edit", element: <DiaryNoteFormPage /> },
       { path: "/taste-profile", element: <TasteProfilePage /> },
+      { path: "/profile", element: <Navigate to="/taste-profile" replace /> },
+      { path: "/offline-tastings", element: <OfflineTastingsPage /> },
       { path: "/club", element: <PlaceholderPage title="Клуб" /> },
       { path: "/premium", element: <PlaceholderPage title="Premium" /> },
       { path: "/notifications", element: <PlaceholderPage title="Notifications" /> },

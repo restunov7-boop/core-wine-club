@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { getOnboardingStatus } from "../onboarding/api";
 import { EmptyState } from "../../shared/ui/EmptyState";
 import { ErrorState } from "../../shared/ui/ErrorState";
 import { LoadingState } from "../../shared/ui/LoadingState";
+import { getOnboardingStatus } from "../onboarding/api";
 
 import { getLearningPaths } from "./api";
 import type { LearningPathListItem } from "./types";
@@ -14,6 +14,12 @@ const difficultyLabels: Record<string, string> = {
   curious: "Любопытно",
   confident: "Уверенно",
 };
+
+const miniNotes = [
+  "Как отличить кислотность от сухости",
+  "Почему игристое подходит к солёным закускам",
+  "Что искать на этикетке, если выбираешь вслепую",
+];
 
 export function LearningPathsPage() {
   const navigate = useNavigate();
@@ -69,10 +75,20 @@ export function LearningPathsPage() {
   return (
     <section className="learning-page">
       <header className="learning-header">
-        <span>Wine Club</span>
+        <span>Обучение</span>
         <h1>Уроки</h1>
-        <p>Короткие маршруты, чтобы спокойно разобраться в вине.</p>
+        <p>Здесь живёт образовательная часть клуба: маршруты, уроки и мини-заметки, которые раньше смешивались с открытиями.</p>
       </header>
+
+      <section className="learning-mini-notes">
+        <span>Мини-заметки к урокам</span>
+        <h2>Короткие открытия</h2>
+        <div>
+          {miniNotes.map((note) => (
+            <p key={note}>{note}</p>
+          ))}
+        </div>
+      </section>
 
       {items.length === 0 ? (
         <EmptyState
@@ -92,10 +108,10 @@ export function LearningPathsPage() {
                 <div className="learning-meta">
                   <span>{difficultyLabels[item.difficulty] ?? item.difficulty}</span>
                   <span>{item.lessons_count} уроков</span>
-                  <span>Завершено: {item.completed_lessons_count} из {item.lessons_count}</span>
+                  <span>Пройдено: {item.completed_lessons_count} / {item.lessons_count}</span>
                   {item.recommended_quizzes_count > 0 && (
                     <span>
-                      Квиз: {item.completed_recommended_quizzes_count} из {item.recommended_quizzes_count}
+                      Квиз: {item.completed_recommended_quizzes_count} / {item.recommended_quizzes_count}
                     </span>
                   )}
                   {item.estimated_minutes && <span>{item.estimated_minutes} мин</span>}

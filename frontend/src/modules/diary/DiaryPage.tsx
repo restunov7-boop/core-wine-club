@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { getOnboardingStatus } from "../onboarding/api";
 import { EmptyState } from "../../shared/ui/EmptyState";
 import { ErrorState } from "../../shared/ui/ErrorState";
 import { LoadingState } from "../../shared/ui/LoadingState";
+import { getOnboardingStatus } from "../onboarding/api";
 
 import { getTastingNotes } from "./api";
 import type { TastingNoteListItem } from "./types";
@@ -83,10 +83,16 @@ export function DiaryPage() {
         </Link>
       </header>
 
+      <aside className="diary-shelf-placeholder">
+        <span>Скоро</span>
+        <h2>Винная полка</h2>
+        <p>Здесь появятся вина, которые ты захочешь сохранить. Пока это место под будущую систему, без новой логики.</p>
+      </aside>
+
       {total === 0 ? (
         <EmptyState
           title="Пока нет заметок"
-          description="Добавь первое вино в дневник — так профиль вкуса станет точнее, а бутылка получит новый вклад."
+          description="Добавь первое вино в дневник, чтобы профиль вкуса стал точнее, а бутылка получила новый вклад."
           action={
             <Link className="primary-action" to="/diary/new">
               Добавить первую заметку
@@ -101,15 +107,11 @@ export function DiaryPage() {
                 <div className="diary-note-card__topline">
                   {item.rating && <span>{item.rating}/5</span>}
                   {item.wine_color && <span>{colorLabels[item.wine_color] ?? item.wine_color}</span>}
-                  {item.would_buy_again !== null && <span>{item.would_buy_again ? "Купил бы снова" : "Не повторю"}</span>}
+                  {item.would_buy_again !== null && <span>{item.would_buy_again ? "Купила бы снова" : "Не повторю"}</span>}
                 </div>
                 <h2>{item.wine_name}</h2>
                 {item.producer && <p>{item.producer}</p>}
-                {(item.country || item.region) && (
-                  <small>
-                    {[item.country, item.region].filter(Boolean).join(", ")}
-                  </small>
-                )}
+                {(item.country || item.region) && <small>{[item.country, item.region].filter(Boolean).join(", ")}</small>}
                 {item.tasted_at && <small>{formatDate(item.tasted_at)}</small>}
               </article>
             </Link>

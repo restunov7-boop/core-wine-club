@@ -1,31 +1,65 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-import { EmptyState } from "../../shared/ui/EmptyState";
 import { ErrorState } from "../../shared/ui/ErrorState";
 import { LoadingState } from "../../shared/ui/LoadingState";
 import { getOnboardingStatus } from "../onboarding/api";
 
-import { getDiscoveries } from "./api";
-import type { DiscoveryListItem } from "./types";
-
-const categoryLabels: Record<string, string> = {
-  basics: "Основы",
-  taste: "Вкус",
-  ritual: "Ритуал",
-  pairing: "Сочетания",
-  culture: "Культура",
+type DiscoveryPost = {
+  id: string;
+  type: "post" | "tip" | "video" | "social";
+  title: string;
+  body: string;
+  tag: string;
 };
 
-const difficultyLabels: Record<string, string> = {
-  beginner: "Новичок",
-  curious: "Любопытно",
-  confident: "Уверенно",
+const discoveryPosts: DiscoveryPost[] = [
+  {
+    id: "friday-sparkling",
+    type: "tip",
+    title: "Игристое не только для праздников",
+    body: "Если хочется лёгкого вечера, попробуй сухое игристое к солёным закускам или мягкому сыру.",
+    tag: "wine tip",
+  },
+  {
+    id: "label-photo",
+    type: "social",
+    title: "Сфотографируй этикетку",
+    body: "Самый простой способ не забыть бутылку: фото этикетки плюс одна честная фраза в дневнике.",
+    tag: "заметка",
+  },
+  {
+    id: "video-placeholder",
+    type: "video",
+    title: "Мини-видео: как держать бокал",
+    body: "Скоро здесь появятся короткие видео-подсказки. Пока сохраняем место под формат.",
+    tag: "video soon",
+  },
+  {
+    id: "first-date-wine",
+    type: "post",
+    title: "Вино для спокойного знакомства",
+    body: "Не бери самое сложное. Лучше свежий понятный стиль, который не спорит с разговором.",
+    tag: "lifestyle",
+  },
+  {
+    id: "rose-mood",
+    type: "tip",
+    title: "Розе — это не только лето",
+    body: "Сухое розе хорошо работает с пастой, рыбой и вечерами, где хочется лёгкости без сладости.",
+    tag: "pairing",
+  },
+];
+
+const typeLabels: Record<DiscoveryPost["type"], string> = {
+  post: "пост",
+  tip: "tip",
+  video: "video",
+  social: "соцсеть",
 };
 
 export function DiscoveriesPage() {
   const navigate = useNavigate();
-  const [items, setItems] = useState<DiscoveryListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,14 +77,9 @@ export function DiscoveriesPage() {
           navigate("/onboarding", { replace: true });
           return;
         }
-
-        const response = await getDiscoveries();
-        if (mounted) {
-          setItems(response.items);
-        }
       } catch (caught) {
         if (mounted) {
-          setError(caught instanceof Error ? caught.message : "Не удалось загрузить открытия");
+          setError(caught instanceof Error ? caught.message : "Не удалось открыть открытия");
         }
       } finally {
         if (mounted) {
@@ -71,54 +100,30 @@ export function DiscoveriesPage() {
   }
 
   if (isLoading) {
-    return <LoadingState title="Открытия" description="Собираем короткие wine tips..." />;
+    return <LoadingState title="Открытия" description="Готовим ленту коротких wine tips..." />;
   }
 
   return (
-    <section className="discoveries-page">
+    <section className="discoveries-page discoveries-page--feed">
       <header className="discoveries-header">
-        <span>Wine Club</span>
+        <span>Wine girl notes</span>
         <h1>Открытия</h1>
-        <p>
-          Короткие посты от винной девочки: идеи для вечера, lifestyle-подсказки, маленькие карточки и поводы
-          попробовать что-то новое.
-        </p>
+        <p>Короткие посты, идеи и lifestyle-подсказки. Обучение теперь живёт в уроках, а здесь — лёгкая лента.</p>
       </header>
 
-      <aside className="discoveries-promo">
-        <span>Скоро</span>
-        <h2>Офлайн-дегустации</h2>
-        <p>Тёплые камерные встречи появятся здесь позже. Пока без оплаты, бронирования и сложной логики.</p>
-      </aside>
-
-      {items.length === 0 ? (
-        <EmptyState
-          title="Открытий пока нет"
-          description="Первые материалы появятся здесь после локального seed. Пока можно вернуться на главную."
-          action={
-            <Link className="primary-action" to="/home">
-              На главную
-            </Link>
-          }
-        />
-      ) : (
-        <div className="discoveries-list">
-          {items.map((item) => (
-            <Link className="discovery-card" key={item.slug} to={`/discoveries/${item.slug}`}>
-              <article>
-                <div className="discovery-meta">
-                  <span>{categoryLabels[item.category] ?? item.category}</span>
-                  <span>{difficultyLabels[item.difficulty] ?? item.difficulty}</span>
-                  {item.estimated_minutes && <span>{item.estimated_minutes} мин</span>}
-                </div>
-                <h2>{item.title}</h2>
-                {item.subtitle && <p className="discovery-card__subtitle">{item.subtitle}</p>}
-                <p>{item.summary}</p>
-              </article>
-            </Link>
-          ))}
-        </div>
-      )}
+      <div className="discovery-feed">
+        {discoveryPosts.map((post) => (
+          <article className={`discovery-feed-card discovery-feed-card--${post.type}`} key={post.id}>
+            <div className="discovery-meta">
+              <span>{typeLabels[post.type]}</span>
+              <span>{post.tag}</span>
+            </div>
+            <h2>{post.title}</h2>
+            <p>{post.body}</p>
+            {post.type === "video" && <div className="discovery-video-placeholder">Video placeholder</div>}
+          </article>
+        ))}
+      </div>
     </section>
   );
 }

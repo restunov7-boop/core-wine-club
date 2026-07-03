@@ -62,7 +62,7 @@ export const routeManifest: RouteManifestItem[] = [
     requiresAuth: true,
     requiresOnboarding: true,
     usesAppShell: true,
-    purpose: "Published discovery list for the current project.",
+    purpose: "Frontend lifestyle feed with wine tips and demo post placeholders.",
   },
   {
     path: "/discoveries/:slug",
@@ -78,7 +78,7 @@ export const routeManifest: RouteManifestItem[] = [
     requiresAuth: true,
     requiresOnboarding: true,
     usesAppShell: true,
-    purpose: "Learning path list with completion counts.",
+    purpose: "Learning path list with completion counts and mini educational notes.",
   },
   {
     path: "/learn/:pathSlug",
@@ -135,6 +135,22 @@ export const routeManifest: RouteManifestItem[] = [
     requiresOnboarding: true,
     usesAppShell: true,
     purpose: "Private taste profile computed from onboarding and diary notes.",
+  },
+  {
+    path: "/profile",
+    label: "Profile Alias",
+    requiresAuth: true,
+    requiresOnboarding: true,
+    usesAppShell: true,
+    purpose: "Alias redirect to the private taste profile route.",
+  },
+  {
+    path: "/offline-tastings",
+    label: "Offline Tastings",
+    requiresAuth: true,
+    requiresOnboarding: true,
+    usesAppShell: true,
+    purpose: "Frontend-only placeholder for future offline tasting events without booking or payments.",
   },
   {
     path: "/onboarding",

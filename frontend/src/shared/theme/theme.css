@@ -2085,3 +2085,233 @@ textarea:focus-visible {
   font-size: 12px;
   line-height: 1.35;
 }
+
+.icon-action {
+  width: 44px;
+  height: 44px;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border: 1px solid rgba(214, 168, 79, 0.22);
+  border-radius: 999px;
+  background: rgba(245, 239, 232, 0.045);
+  color: var(--color-text);
+}
+
+.icon-action svg {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.home-page--alive {
+  position: relative;
+}
+
+.home-page__intro--with-action {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.home-tasting-banner,
+.home-atmosphere,
+.home-diary-panel,
+.diary-shelf-placeholder,
+.learning-mini-notes,
+.offline-tastings-hero,
+.offline-tastings-note {
+  border: 1px solid rgba(245, 239, 232, 0.08);
+  border-radius: var(--radius-card);
+  background: linear-gradient(160deg, rgba(33, 29, 31, 0.96), rgba(43, 37, 39, 0.88));
+  box-shadow: var(--shadow-soft);
+}
+
+.home-tasting-banner {
+  display: grid;
+  gap: 5px;
+  padding: 14px 16px;
+  border-color: rgba(214, 168, 79, 0.26);
+  background:
+    linear-gradient(130deg, rgba(143, 38, 56, 0.22), rgba(214, 168, 79, 0.08)),
+    rgba(245, 239, 232, 0.04);
+}
+
+.home-tasting-banner span,
+.home-atmosphere span,
+.home-diary-panel__header span,
+.diary-shelf-placeholder span,
+.learning-mini-notes > span,
+.offline-tastings-hero span,
+.taste-profile-card--placeholder > span {
+  color: var(--color-accent);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.home-tasting-banner small,
+.home-atmosphere p,
+.home-diary-empty p,
+.diary-shelf-placeholder p,
+.learning-mini-notes p,
+.offline-tastings-hero p,
+.offline-tastings-note p,
+.taste-profile-card--placeholder p {
+  color: var(--color-text-muted);
+  line-height: 1.55;
+}
+
+.home-atmosphere {
+  position: relative;
+  min-height: 300px;
+  overflow: hidden;
+  padding: 22px;
+}
+
+.bottle-visual--home-ambient {
+  position: absolute;
+  right: -18px;
+  bottom: -70px;
+  opacity: 0.78;
+  transform: scale(0.84);
+  transform-origin: right bottom;
+}
+
+.home-atmosphere__copy {
+  position: relative;
+  z-index: 1;
+  max-width: 24rem;
+  display: grid;
+  gap: 10px;
+}
+
+.home-atmosphere__copy h2,
+.home-diary-panel__header h2,
+.diary-shelf-placeholder h2,
+.learning-mini-notes h2,
+.offline-tastings-note h2,
+.taste-profile-card--placeholder h2 {
+  margin: 0;
+}
+
+.home-soft-link {
+  width: fit-content;
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.home-diary-panel {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+}
+
+.home-diary-panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.home-note-list {
+  display: grid;
+  gap: 8px;
+}
+
+.home-note-item {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid rgba(245, 239, 232, 0.08);
+  border-radius: var(--radius-card);
+  background: rgba(245, 239, 232, 0.035);
+}
+
+.home-note-item span {
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.home-diary-empty {
+  display: grid;
+  gap: 12px;
+}
+
+.discovery-feed {
+  display: grid;
+  gap: 12px;
+}
+
+.discovery-feed-card {
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+  border: 1px solid rgba(245, 239, 232, 0.08);
+  border-radius: var(--radius-card);
+  background: linear-gradient(160deg, rgba(33, 29, 31, 0.96), rgba(43, 37, 39, 0.88));
+  box-shadow: var(--shadow-soft);
+}
+
+.discovery-feed-card h2,
+.discovery-feed-card p {
+  margin: 0;
+}
+
+.discovery-video-placeholder {
+  min-height: 120px;
+  display: grid;
+  place-items: center;
+  border: 1px dashed rgba(214, 168, 79, 0.3);
+  border-radius: var(--radius-card);
+  color: var(--color-text-muted);
+}
+
+.learning-mini-notes,
+.diary-shelf-placeholder,
+.offline-tastings-note {
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+}
+
+.learning-mini-notes div {
+  display: grid;
+  gap: 8px;
+}
+
+.learning-mini-notes p {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(245, 239, 232, 0.08);
+  border-radius: var(--radius-card);
+  background: rgba(245, 239, 232, 0.035);
+}
+
+.offline-tastings-page {
+  width: min(100%, 720px);
+  display: grid;
+  gap: 16px;
+  margin: 0 auto;
+}
+
+.offline-tastings-hero {
+  display: grid;
+  gap: 12px;
+  padding: 24px;
+}
+
+.offline-tastings-hero h1 {
+  margin: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 34px;
+  line-height: 1.08;
+}
+
+.taste-profile-card--rhythm {
+  order: 10;
+}

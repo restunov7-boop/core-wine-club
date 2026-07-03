@@ -5,7 +5,7 @@ const navItems = [
   { to: "/discoveries", label: "Открытия", match: ["/discoveries"] },
   { to: "/learn", label: "Уроки", match: ["/learn"] },
   { to: "/diary", label: "Дневник", match: ["/diary"] },
-  { to: "/taste-profile", label: "Профиль", match: ["/taste-profile"] },
+  { to: "/taste-profile", label: "Профиль", match: ["/taste-profile", "/profile"] },
 ];
 
 export function BottomNav() {
