@@ -3237,6 +3237,216 @@ body {
   background: rgba(255, 253, 248, 0.82);
 }
 
+.profile-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.profile-hub-card {
+  display: grid;
+  gap: 8px;
+  min-height: 116px;
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: rgba(255, 253, 248, 0.72);
+  color: inherit;
+  text-decoration: none;
+}
+
+.profile-hub-card span {
+  color: var(--color-primary);
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.profile-hub-card p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.taste-map-page,
+.dictionary-page {
+  width: min(100%, 720px);
+  display: grid;
+  gap: 14px;
+  margin: 0 auto;
+}
+
+.taste-map-header,
+.dictionary-header,
+.taste-map-card,
+.dictionary-tools,
+.dictionary-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.taste-map-header,
+.dictionary-header {
+  padding: 24px;
+  background:
+    linear-gradient(180deg, rgba(255, 253, 248, 0.98), rgba(248, 241, 232, 0.74)),
+    var(--color-surface);
+}
+
+.taste-map-header > span,
+.dictionary-header > span,
+.taste-map-card__header span,
+.dictionary-card__header span,
+.dictionary-example span {
+  color: var(--color-accent);
+  font-size: 13px;
+  font-weight: 590;
+}
+
+.taste-map-header h1,
+.dictionary-header h1 {
+  margin: 12px 0 0;
+  font-size: 32px;
+  line-height: 1.16;
+}
+
+.taste-map-header p,
+.dictionary-header p,
+.taste-map-card p,
+.dictionary-card p,
+.dictionary-empty p,
+.taste-map-empty p {
+  margin: 12px 0 0;
+  color: var(--color-text-muted);
+  line-height: 1.58;
+}
+
+.taste-map-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.taste-map-card {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+}
+
+.taste-map-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.taste-map-card__header h2,
+.taste-map-card h2,
+.dictionary-card h2 {
+  margin: 4px 0 0;
+  font-size: 21px;
+  line-height: 1.22;
+}
+
+.taste-map-columns,
+.taste-profile-groups {
+  display: grid;
+  gap: 12px;
+}
+
+.taste-map-list,
+.dictionary-example {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid rgba(120, 108, 102, 0.16);
+  border-radius: var(--radius-card);
+  background: rgba(255, 253, 248, 0.64);
+}
+
+.taste-map-list h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.taste-map-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.taste-map-chip-row span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid rgba(143, 38, 56, 0.16);
+  border-radius: 999px;
+  background: rgba(143, 38, 56, 0.055);
+  color: var(--color-primary);
+  font-size: 14px;
+}
+
+.taste-map-chip-row strong {
+  color: var(--color-text);
+  font-size: 13px;
+}
+
+.dictionary-tools {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+}
+
+.dictionary-tools label {
+  display: grid;
+  gap: 7px;
+}
+
+.dictionary-tools label > span {
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.dictionary-category-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dictionary-list {
+  display: grid;
+  gap: 10px;
+}
+
+.dictionary-card {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+}
+
+.dictionary-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dictionary-card__header span {
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  border: 1px solid rgba(184, 137, 70, 0.22);
+  border-radius: 999px;
+  background: rgba(184, 137, 70, 0.08);
+}
+
+.dictionary-example p {
+  margin: 0;
+}
+
 @media (max-width: 520px) {
   .diary-header {
     display: grid;
@@ -3244,5 +3454,15 @@ body {
 
   .diary-header__action {
     width: fit-content;
+  }
+
+  .profile-hub-grid,
+  .taste-map-stat-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .dictionary-card__header,
+  .taste-map-card__header {
+    display: grid;
   }
 }

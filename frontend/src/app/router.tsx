@@ -5,6 +5,7 @@ import { AuthGuard } from "./guards/AuthGuard";
 import { AdminLayout } from "./layout/AdminLayout";
 import { AppShell } from "./layouts/AppShell";
 import { BottlePage } from "../modules/bottle/BottlePage";
+import { DictionaryPage } from "../modules/dictionary/DictionaryPage";
 import { DiaryNoteDetailPage } from "../modules/diary/DiaryNoteDetailPage";
 import { DiaryNoteFormPage } from "../modules/diary/DiaryNoteFormPage";
 import { DiaryPage } from "../modules/diary/DiaryPage";
@@ -20,6 +21,7 @@ import { OnboardingPage } from "../modules/onboarding/OnboardingPage";
 import { ProgressActivityPage } from "../modules/progress/ProgressActivityPage";
 import { QuizDetailPage } from "../modules/quizzes/QuizDetailPage";
 import { QuizzesPage } from "../modules/quizzes/QuizzesPage";
+import { TasteMapPage } from "../modules/taste-map/TasteMapPage";
 import { TasteProfilePage } from "../modules/taste-profile/TasteProfilePage";
 import { TelegramDebugPage } from "../modules/debug/TelegramDebugPage";
 import { WineShelfPage } from "../modules/wine-shelf/WineShelfPage";
@@ -69,6 +71,8 @@ export const router = createBrowserRouter([
       { path: "/diary/new", element: <DiaryNoteFormPage /> },
       { path: "/diary/:noteId", element: <DiaryNoteDetailPage /> },
       { path: "/diary/:noteId/edit", element: <DiaryNoteFormPage /> },
+      { path: "/taste-map", element: <TasteMapPage /> },
+      { path: "/dictionary", element: <DictionaryPage /> },
       { path: "/taste-profile", element: <TasteProfilePage /> },
       { path: "/profile", element: <Navigate to="/taste-profile" replace /> },
       { path: "/offline-tastings", element: <OfflineTastingsPage /> },

@@ -145,6 +145,22 @@ export const routeManifest: RouteManifestItem[] = [
     purpose: "Private taste profile computed from onboarding and diary notes.",
   },
   {
+    path: "/taste-map",
+    label: "Taste Map",
+    requiresAuth: true,
+    requiresOnboarding: true,
+    usesAppShell: true,
+    purpose: "Frontend taste geography based on the current user's taste profile summary.",
+  },
+  {
+    path: "/dictionary",
+    label: "Wine Dictionary",
+    requiresAuth: true,
+    requiresOnboarding: true,
+    usesAppShell: true,
+    purpose: "Frontend-only beginner wine dictionary with local static terms.",
+  },
+  {
     path: "/profile",
     label: "Profile Alias",
     requiresAuth: true,

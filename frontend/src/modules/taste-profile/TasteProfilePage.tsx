@@ -27,6 +27,7 @@ const styleLabels: Record<string, string> = {
   sparkling: "Игристое",
   orange: "Оранжевое",
   dessert: "Десертное",
+  fortified: "Креплёное",
   unknown: "Не указано",
 };
 
@@ -121,6 +122,21 @@ export function TasteProfilePage() {
         <StatCard label="Купить снова" value={String(profile.stats.buy_again_count)} />
       </section>
 
+      <section className="taste-profile-card taste-profile-card--hub">
+        <div className="taste-profile-card__header">
+          <div>
+            <span>Разделы вкуса</span>
+            <h2>Куда идти дальше</h2>
+          </div>
+        </div>
+        <div className="profile-hub-grid">
+          <HubLink title="География вкуса" description="Страны, регионы, сорта и стили из дневника." to="/taste-map" />
+          <HubLink title="Словарь вина" description="Короткие объяснения терминов без занудства." to="/dictionary" />
+          <HubLink title="Винная полка" description="Вина, которые хочется попробовать, помнить или купить снова." to="/diary/shelf" />
+          <HubLink title="Новая заметка" description="Записать бокал и уточнить личный профиль." to="/diary/new" />
+        </div>
+      </section>
+
       <section className="taste-profile-card">
         <div className="taste-profile-card__header">
           <div>
@@ -149,7 +165,15 @@ export function TasteProfilePage() {
       </section>
 
       <section className="taste-profile-card">
-        <h2>Чаще всего</h2>
+        <div className="taste-profile-card__header">
+          <div>
+            <span>География вкуса</span>
+            <h2>Чаще всего</h2>
+          </div>
+          <Link className="ghost-action" to="/taste-map">
+            Открыть
+          </Link>
+        </div>
         {hasTopItems ? (
           <div className="taste-profile-groups">
             <CountGroup title="Страны" items={profile.stats.countries_tried} />
@@ -201,14 +225,22 @@ export function TasteProfilePage() {
       </section>
 
       <section className="taste-profile-card">
-        <h2>Словарь вкуса</h2>
+        <div className="taste-profile-card__header">
+          <div>
+            <span>Словарь вина</span>
+            <h2>Словарь вкуса</h2>
+          </div>
+          <Link className="ghost-action" to="/dictionary">
+            Открыть
+          </Link>
+        </div>
         {hasVocabulary ? (
           <div className="taste-profile-groups">
             <CountGroup title="Ароматы" items={profile.stats.top_aroma_notes} />
             <CountGroup title="Вкус" items={profile.stats.top_taste_notes} />
           </div>
         ) : (
-          <p>Когда в заметках появятся повторяющиеся слова про аромат и вкус, они соберутся здесь.</p>
+          <p>Когда в заметках появятся повторяющиеся слова про аромат и вкус, они соберутся здесь. А базовые термины уже доступны в словаре.</p>
         )}
       </section>
 
@@ -234,6 +266,15 @@ export function TasteProfilePage() {
         )}
       </section>
     </section>
+  );
+}
+
+function HubLink({ title, description, to }: { title: string; description: string; to: string }) {
+  return (
+    <Link className="profile-hub-card" to={to}>
+      <span>{title}</span>
+      <p>{description}</p>
+    </Link>
   );
 }
 

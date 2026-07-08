@@ -13,6 +13,8 @@ const routes = [
   "/learn/lessons/how-wine-is-made",
   "/diary",
   "/diary/shelf",
+  "/taste-map",
+  "/dictionary",
   "/taste-profile",
   "/profile",
   "/offline-tastings",
