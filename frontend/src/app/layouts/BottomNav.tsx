@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 
 const navItems = [
-  { to: "/home", label: "Home", match: ["/home"] },
+  { to: "/home", label: "Главная", match: ["/home"] },
   { to: "/discoveries", label: "Открытия", match: ["/discoveries"] },
   { to: "/learn", label: "Уроки", match: ["/learn"] },
   { to: "/diary", label: "Дневник", match: ["/diary"] },

@@ -194,7 +194,7 @@ export function DiaryNoteDetailPage() {
       {hasIdentityDetails && (
         <section className="diary-entry-section">
           <div className="diary-entry-section__header">
-            <span>Wine identity</span>
+            <span>Бутылка</span>
             <h2>Бутылка</h2>
           </div>
           <div className="diary-detail-grid">
@@ -209,7 +209,7 @@ export function DiaryNoteDetailPage() {
       {hasOriginDetails && (
         <section className="diary-entry-section">
           <div className="diary-entry-section__header">
-            <span>Origin</span>
+            <span>Происхождение</span>
             <h2>Место и контекст</h2>
           </div>
           <div className="diary-detail-grid">
@@ -226,7 +226,7 @@ export function DiaryNoteDetailPage() {
       {hasTastingDetails && (
         <section className="diary-entry-section">
           <div className="diary-entry-section__header">
-            <span>Tasting</span>
+            <span>Дегустация</span>
             <h2>Вкус и ощущения</h2>
           </div>
           <div className="diary-detail-grid">
@@ -242,7 +242,7 @@ export function DiaryNoteDetailPage() {
       {note.personal_note && (
         <section className="diary-entry-section diary-entry-section--note">
           <div className="diary-entry-section__header">
-            <span>Personal note</span>
+            <span>Личная заметка</span>
             <h2>Личная заметка</h2>
           </div>
           <div className="diary-note-text">
@@ -253,7 +253,7 @@ export function DiaryNoteDetailPage() {
 
       <section className="diary-entry-section diary-entry-section--shelf">
         <div className="diary-entry-section__header">
-          <span>Wine Shelf</span>
+          <span>Винная полка</span>
           <h2>Винная полка</h2>
         </div>
         <p>Сохрани это вино отдельно от заметки, чтобы быстро найти его в списке “хочу попробовать”, “понравилось” или “купить снова”.</p>

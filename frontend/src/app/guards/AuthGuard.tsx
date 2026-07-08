@@ -46,7 +46,7 @@ export function AuthGuard({ children }: PropsWithChildren) {
   if (!isAuthenticated) {
     return (
       <PlaceholderPage
-        title="Loading"
+        title="Вход"
         description={
           devTelegramMockEnabled
             ? "Signing in with local dev Telegram mock..."

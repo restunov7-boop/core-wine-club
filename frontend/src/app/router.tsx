@@ -34,7 +34,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/loading",
-    element: <PlaceholderPage title="Loading" />,
+    element: <PlaceholderPage title="Загрузка" />,
   },
   {
     path: "/telegram-debug",

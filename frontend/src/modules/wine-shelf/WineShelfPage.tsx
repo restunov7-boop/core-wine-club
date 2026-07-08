@@ -190,7 +190,7 @@ export function WineShelfPage() {
     <section className="wine-shelf-page">
       <header className="wine-shelf-header">
         <BackButton to="/diary" label="Назад к дневнику" />
-        <span>Wine Shelf</span>
+        <span>Личная полка</span>
         <h1>Винная полка</h1>
         <p>Место для вин, которые хочется попробовать, запомнить, повторить или аккуратно отложить как “не моё”.</p>
       </header>
