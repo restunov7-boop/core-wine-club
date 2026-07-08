@@ -122,7 +122,7 @@ export function DiaryNoteDetailPage() {
         country: note.country,
         region: note.region,
         grape: note.grape,
-        style: note.wine_color ? colorLabels[note.wine_color] : null,
+        style: note.wine_color,
         status: shelfStatusFromNote(note),
         personal_note: note.personal_note,
       });

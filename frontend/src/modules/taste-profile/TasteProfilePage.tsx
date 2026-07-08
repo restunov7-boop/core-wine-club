@@ -10,7 +10,25 @@ import { getProgressSummary } from "../progress/api";
 import type { ProgressSummary } from "../progress/types";
 
 import { getTasteProfile } from "./api";
-import type { TasteProfileResponse } from "./types";
+import type { TasteProfileCountItem, TasteProfileResponse } from "./types";
+
+const shelfStatusLabels: Record<string, string> = {
+  want_to_try: "Хочу попробовать",
+  tried: "Пробовала",
+  liked: "Понравилось",
+  not_for_me: "Не моё",
+  buy_again: "Купить снова",
+};
+
+const styleLabels: Record<string, string> = {
+  red: "Красное",
+  white: "Белое",
+  rose: "Розе",
+  sparkling: "Игристое",
+  orange: "Оранжевое",
+  dessert: "Десертное",
+  unknown: "Не указано",
+};
 
 export function TasteProfilePage() {
   const navigate = useNavigate();
@@ -71,12 +89,19 @@ export function TasteProfilePage() {
     return <LoadingState title="Профиль" description="Собираем личную сводку..." />;
   }
 
+  const hasTopItems =
+    profile.stats.countries_tried.length > 0 ||
+    profile.stats.regions_tried.length > 0 ||
+    profile.stats.top_grapes.length > 0 ||
+    profile.stats.top_styles.length > 0;
+  const hasVocabulary = profile.stats.top_aroma_notes.length > 0 || profile.stats.top_taste_notes.length > 0;
+
   return (
     <section className="taste-profile-page">
       <header className="taste-profile-header">
         <span>Личный профиль</span>
         <h1>Профиль</h1>
-        <p>Спокойная сводка дневника и пути. Стартовые предпочтения из онбординга больше не занимают главный блок.</p>
+        <p>Живая сводка по дневнику и винной полке. Без догадок: только то, что уже есть в твоих заметках.</p>
       </header>
 
       <section className="taste-summary-card">
@@ -91,24 +116,21 @@ export function TasteProfilePage() {
 
       <section className="taste-stat-grid">
         <StatCard label="Заметок" value={String(profile.stats.notes_count)} />
-        <StatCard label="Средняя оценка" value={profile.stats.average_rating ? profile.stats.average_rating.toFixed(1) : "—"} />
-        <StatCard label="Купила бы снова" value={formatRatio(profile.stats.would_buy_again_ratio)} />
-      </section>
-
-      <section className="taste-profile-card taste-profile-card--placeholder">
-        <span>Скоро</span>
-        <h2>География вкуса</h2>
-        <p>Страны и регионы требуют отдельной доработки логики, поэтому пока оставлены как аккуратный placeholder.</p>
-      </section>
-
-      <section className="taste-profile-card taste-profile-card--placeholder">
-        <span>Скоро</span>
-        <h2>Словарь вина</h2>
-        <p>Ароматы и вкусовые слова будут лучше работать после отдельного sprint по нормализации дневника.</p>
+        <StatCard label="С оценкой" value={String(profile.stats.rated_notes_count)} />
+        <StatCard label="Средняя оценка" value={profile.stats.average_rating === null ? "нет" : profile.stats.average_rating.toFixed(1)} />
+        <StatCard label="Купить снова" value={String(profile.stats.buy_again_count)} />
       </section>
 
       <section className="taste-profile-card">
-        <h2>Наблюдение</h2>
+        <div className="taste-profile-card__header">
+          <div>
+            <span>Наблюдение</span>
+            <h2>Что уже видно</h2>
+          </div>
+          <Link className="ghost-action" to="/diary/new">
+            Новая заметка
+          </Link>
+        </div>
         <div className="taste-insight-list">
           {profile.insights.length > 0 ? (
             profile.insights.map((insight) => (
@@ -120,10 +142,74 @@ export function TasteProfilePage() {
           ) : (
             <article className="taste-insight">
               <h3>Наблюдения появятся позже</h3>
-              <p>Когда в дневнике станет больше заметок, здесь появятся спокойные выводы о твоём вкусе.</p>
+              <p>Добавь ещё несколько заметок, и профиль начнёт показывать спокойные выводы о твоём вкусе.</p>
             </article>
           )}
         </div>
+      </section>
+
+      <section className="taste-profile-card">
+        <h2>Чаще всего</h2>
+        {hasTopItems ? (
+          <div className="taste-profile-groups">
+            <CountGroup title="Страны" items={profile.stats.countries_tried} />
+            <CountGroup title="Регионы" items={profile.stats.regions_tried} />
+            <CountGroup title="Сорта" items={profile.stats.top_grapes} />
+            <CountGroup title="Стили" items={profile.stats.top_styles} labelForKey={(key) => styleLabels[key] ?? key} />
+          </div>
+        ) : (
+          <p>Пока мало данных. После нескольких заметок здесь появятся страны, регионы, сорта и стили, которые встречаются чаще всего.</p>
+        )}
+      </section>
+
+      <section className="taste-profile-card">
+        <h2>Рейтинг</h2>
+        <div className="taste-stat-grid">
+          <StatCard label="Средняя оценка" value={profile.stats.average_rating === null ? "нет" : profile.stats.average_rating.toFixed(1)} />
+          <StatCard label="Оценённых вин" value={String(profile.stats.rated_notes_count)} />
+          <StatCard label="Повторить" value={formatRatio(profile.stats.would_buy_again_ratio)} />
+        </div>
+        <p>Рейтинг считается только по твоим заметкам. Если оценок мало, профиль показывает это спокойно, без лишней уверенности.</p>
+      </section>
+
+      <section className="taste-profile-card">
+        <div className="taste-profile-card__header">
+          <div>
+            <span>Винная полка</span>
+            <h2>Что сохранено</h2>
+          </div>
+          <Link className="ghost-action" to="/diary/shelf">
+            Открыть
+          </Link>
+        </div>
+        <div className="taste-stat-grid">
+          <StatCard label="Всего" value={String(profile.stats.shelf_items_count)} />
+          <StatCard label="Купить снова" value={String(countByKey(profile.stats.shelf_status_counts, "buy_again"))} />
+          <StatCard label="Хочу попробовать" value={String(countByKey(profile.stats.shelf_status_counts, "want_to_try"))} />
+        </div>
+        {profile.stats.shelf_status_counts.length > 0 ? (
+          <div className="taste-chip-row">
+            {profile.stats.shelf_status_counts.map((item) => (
+              <span key={item.key}>
+                {shelfStatusLabels[item.key] ?? item.key}: {item.count}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <p>Полка пока пустая. Добавь вино из заметки или сохрани бутылку, которую хочется попробовать позже.</p>
+        )}
+      </section>
+
+      <section className="taste-profile-card">
+        <h2>Словарь вкуса</h2>
+        {hasVocabulary ? (
+          <div className="taste-profile-groups">
+            <CountGroup title="Ароматы" items={profile.stats.top_aroma_notes} />
+            <CountGroup title="Вкус" items={profile.stats.top_taste_notes} />
+          </div>
+        ) : (
+          <p>Когда в заметках появятся повторяющиеся слова про аромат и вкус, они соберутся здесь.</p>
+        )}
       </section>
 
       <section className="taste-profile-card taste-profile-card--rhythm">
@@ -151,6 +237,33 @@ export function TasteProfilePage() {
   );
 }
 
+function CountGroup({
+  title,
+  items,
+  labelForKey,
+}: {
+  title: string;
+  items: TasteProfileCountItem[];
+  labelForKey?: (key: string) => string;
+}) {
+  if (items.length === 0) {
+    return null;
+  }
+
+  return (
+    <article className="taste-profile-group">
+      <h3>{title}</h3>
+      <div className="taste-chip-row">
+        {items.map((item) => (
+          <span key={item.key}>
+            {labelForKey ? labelForKey(item.key) : item.key}: {item.count}
+          </span>
+        ))}
+      </div>
+    </article>
+  );
+}
+
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
     <article className="taste-stat-card">
@@ -160,9 +273,13 @@ function StatCard({ label, value }: { label: string; value: string }) {
   );
 }
 
+function countByKey(items: TasteProfileCountItem[], key: string): number {
+  return items.find((item) => item.key === key)?.count ?? 0;
+}
+
 function formatRatio(value: number | null): string {
   if (value === null) {
-    return "—";
+    return "нет";
   }
   return `${Math.round(value * 100)}%`;
 }

@@ -16,6 +16,7 @@ from app.taste_profile.schemas import (
     TasteProfileStats,
     TasteProfileSummary,
 )
+from app.wine_shelf.models import WineShelfItem
 
 COUNT_LIMIT = 5
 INSIGHT_LIMIT = 4
@@ -30,11 +31,38 @@ WINE_COLOR_LABELS = {
     "unknown": "пока не определённые",
 }
 
+STYLE_ALIASES = {
+    "red": "red",
+    "красное": "red",
+    "красные": "red",
+    "white": "white",
+    "белое": "white",
+    "белые": "white",
+    "rose": "rose",
+    "rosé": "rose",
+    "розе": "rose",
+    "sparkling": "sparkling",
+    "игристое": "sparkling",
+    "игристые": "sparkling",
+    "orange": "orange",
+    "оранжевое": "orange",
+    "оранжевые": "orange",
+    "dessert": "dessert",
+    "десертное": "dessert",
+    "десертные": "dessert",
+    "fortified": "fortified",
+    "креплёное": "fortified",
+    "крепленое": "fortified",
+    "креплёные": "fortified",
+    "крепленые": "fortified",
+}
+
 
 def build_taste_profile(db: Session, project_user: ProjectUser) -> TasteProfileResponse:
     notes = _list_owned_notes(db, project_user)
+    shelf_items = _list_owned_shelf_items(db, project_user)
     onboarding = _build_onboarding(project_user)
-    stats = _build_stats(notes)
+    stats = _build_stats(notes, shelf_items)
     summary = _build_summary(stats.notes_count)
     insights = _build_insights(stats, onboarding)
 
@@ -48,7 +76,7 @@ def build_taste_profile(db: Session, project_user: ProjectUser) -> TasteProfileR
 
 def build_taste_profile_preview(db: Session, project_user: ProjectUser) -> TasteProfilePreview:
     notes = _list_owned_notes(db, project_user)
-    stats = _build_stats(notes)
+    stats = _build_stats(notes, [])
     return TasteProfilePreview(notes_count=stats.notes_count, average_rating=stats.average_rating)
 
 
@@ -64,6 +92,17 @@ def _list_owned_notes(db: Session, project_user: ProjectUser) -> list[TastingNot
     )
 
 
+def _list_owned_shelf_items(db: Session, project_user: ProjectUser) -> list[WineShelfItem]:
+    return (
+        db.query(WineShelfItem)
+        .filter(
+            WineShelfItem.project_id == project_user.project_id,
+            WineShelfItem.project_user_id == project_user.id,
+        )
+        .all()
+    )
+
+
 def _build_onboarding(project_user: ProjectUser) -> TasteProfileOnboarding:
     data = project_user.onboarding_data_json or {}
     return TasteProfileOnboarding(
@@ -73,9 +112,16 @@ def _build_onboarding(project_user: ProjectUser) -> TasteProfileOnboarding:
     )
 
 
-def _build_stats(notes: list[TastingNote]) -> TasteProfileStats:
+def _build_stats(notes: list[TastingNote], shelf_items: list[WineShelfItem]) -> TasteProfileStats:
     ratings = [note.rating for note in notes if note.rating is not None]
     would_buy_again_answers = [note.would_buy_again for note in notes if note.would_buy_again is not None]
+    buy_again_note_ids = {note.id for note in notes if note.would_buy_again is True}
+    note_buy_again_count = len(buy_again_note_ids)
+    shelf_buy_again_count = sum(
+        1
+        for item in shelf_items
+        if item.status == "buy_again" and (item.diary_note_id is None or item.diary_note_id not in buy_again_note_ids)
+    )
 
     average_rating = round(sum(ratings) / len(ratings), 2) if ratings else None
     would_buy_again_ratio = (
@@ -86,14 +132,22 @@ def _build_stats(notes: list[TastingNote]) -> TasteProfileStats:
 
     return TasteProfileStats(
         notes_count=len(notes),
+        rated_notes_count=len(ratings),
         average_rating=average_rating,
         would_buy_again_ratio=would_buy_again_ratio,
+        buy_again_count=note_buy_again_count + shelf_buy_again_count,
+        shelf_items_count=len(shelf_items),
         favorite_wine_colors=_counter_items(note.wine_color for note in notes),
         sweetness_distribution=_counter_items(note.sweetness for note in notes),
         top_aroma_notes=_counter_items(_flatten_note_lists(note.aroma_notes_json for note in notes), normalize=True),
         top_taste_notes=_counter_items(_flatten_note_lists(note.taste_notes_json for note in notes), normalize=True),
-        countries_tried=_counter_items(note.country for note in notes),
-        regions_tried=_counter_items(note.region for note in notes),
+        top_grapes=_counter_items([*(note.grape for note in notes), *(item.grape for item in shelf_items)]),
+        top_styles=_counter_items(
+            _normalize_style(value) for value in [*(note.wine_color for note in notes), *(item.style for item in shelf_items)]
+        ),
+        countries_tried=_counter_items([*(note.country for note in notes), *(item.country for item in shelf_items)]),
+        regions_tried=_counter_items([*(note.region for note in notes), *(item.region for item in shelf_items)]),
+        shelf_status_counts=_counter_items(item.status for item in shelf_items),
     )
 
 
@@ -101,12 +155,12 @@ def _build_summary(notes_count: int) -> TasteProfileSummary:
     if notes_count == 0:
         return TasteProfileSummary(
             title="Твой вкус только начинает складываться",
-            description="Сохраняй заметки в дневник, и профиль станет точнее после первых дегустаций.",
+            description="Добавь ещё несколько заметок, и здесь появятся первые наблюдения по странам, сортам, стилям и винам, которые хочется повторить.",
         )
 
     return TasteProfileSummary(
         title="Твой вкус начинает складываться",
-        description="Первые закономерности уже видны по дневнику. Они мягкие и будут уточняться с каждой новой заметкой.",
+        description="Первые закономерности уже видны по дневнику и винной полке. Они мягкие и будут уточняться с каждой новой заметкой.",
     )
 
 
@@ -118,7 +172,7 @@ def _build_insights(stats: TasteProfileStats, onboarding: TasteProfileOnboarding
             TasteProfileInsight(
                 key="first_note_next",
                 title="Добавь первую заметку",
-                description="После первой записи дневник начнёт показывать первые закономерности вкуса.",
+                description="Добавь ещё несколько заметок, и здесь появятся первые наблюдения.",
             )
         )
         if onboarding.taste_preferences:
@@ -134,17 +188,27 @@ def _build_insights(stats: TasteProfileStats, onboarding: TasteProfileOnboarding
     insights.append(
         TasteProfileInsight(
             key="diary_started",
-            title="Ты уже начал собирать личную карту вкуса",
-            description="Каждая заметка помогает видеть, какие вина тебе ближе по первым впечатлениям.",
+            title="Ты уже начала собирать личную карту вкуса",
+            description="Каждая заметка помогает видеть, какие вина ближе по первым впечатлениям.",
         )
     )
+
+    if stats.countries_tried:
+        top_country = stats.countries_tried[0]
+        insights.append(
+            TasteProfileInsight(
+                key="top_country",
+                title="Появляется география вкуса",
+                description=f"Чаще всего в дневнике и полке встречается {top_country.key}.",
+            )
+        )
 
     if stats.average_rating is not None and stats.average_rating >= 4:
         insights.append(
             TasteProfileInsight(
                 key="high_average_rating",
-                title="Сохранённые вина в целом тебе нравятся",
-                description="По первым оценкам в дневнике видно, что большинство записей оставили приятное впечатление.",
+                title="Оценки выглядят уверенно",
+                description=f"В среднем ты ставишь винам {stats.average_rating:.1f} — похоже, выбираешь довольно удачно.",
             )
         )
 
@@ -155,16 +219,16 @@ def _build_insights(stats: TasteProfileStats, onboarding: TasteProfileOnboarding
             TasteProfileInsight(
                 key="dominant_wine_color",
                 title="Появляется повторяющийся стиль",
-                description=f"Похоже, в твоём дневнике чаще встречаются {label} вина. Это пока мягкий ориентир, не правило.",
+                description=f"Похоже, в дневнике чаще встречаются {label} вина. Это пока мягкий ориентир, не правило.",
             )
         )
 
-    if stats.would_buy_again_ratio is not None and stats.would_buy_again_ratio >= 0.6:
+    if stats.buy_again_count > 0:
         insights.append(
             TasteProfileInsight(
                 key="would_buy_again",
                 title="Есть вина, к которым хочется вернуться",
-                description="В дневнике уже заметна доля бутылок, которые ты отметил как подходящие для повторной покупки.",
+                description="У тебя уже есть вина, которые хочется купить снова.",
             )
         )
 
@@ -194,6 +258,15 @@ def _counter_items(values: Iterable[str | None] | Iterable[str], normalize: bool
     counter = Counter(cleaned)
     ordered = sorted(counter.items(), key=lambda item: (-item[1], item[0].lower()))
     return [TasteProfileCountItem(key=key, count=count) for key, count in ordered[:COUNT_LIMIT]]
+
+
+def _normalize_style(value: str | None) -> str | None:
+    if not isinstance(value, str):
+        return None
+    cleaned = value.strip().lower()
+    if not cleaned:
+        return None
+    return STYLE_ALIASES.get(cleaned, cleaned)
 
 
 def _flatten_note_lists(values: Iterable[list[str] | None]) -> list[str]:
