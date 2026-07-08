@@ -9,6 +9,8 @@ import { LoadingState } from "../../shared/ui/LoadingState";
 
 import { deleteTastingNote, getTastingNote } from "./api";
 import type { TastingNoteDetail } from "./types";
+import { createShelfItem, listShelfItems } from "../wine-shelf/api";
+import type { WineShelfStatus } from "../wine-shelf/types";
 
 const colorLabels: Record<string, string> = {
   red: "Красное",
@@ -37,6 +39,9 @@ export function DiaryNoteDetailPage() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [shelfItemId, setShelfItemId] = useState<string | null>(null);
+  const [shelfMessage, setShelfMessage] = useState<string | null>(null);
+  const [isAddingToShelf, setIsAddingToShelf] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -62,6 +67,11 @@ export function DiaryNoteDetailPage() {
         const response = await getTastingNote(noteId);
         if (mounted) {
           setNote(response);
+        }
+        const shelf = await listShelfItems(undefined, 100).catch(() => null);
+        const linkedShelfItem = shelf?.items.find((item) => item.diary_note_id === response.id);
+        if (mounted && linkedShelfItem) {
+          setShelfItemId(linkedShelfItem.id);
         }
       } catch (caught) {
         if (mounted) {
@@ -94,6 +104,34 @@ export function DiaryNoteDetailPage() {
     } catch (caught) {
       setActionError(caught instanceof Error ? caught.message : "Не удалось удалить заметку");
       setIsDeleting(false);
+    }
+  }
+
+  async function addToShelf() {
+    if (!note) {
+      return;
+    }
+
+    setIsAddingToShelf(true);
+    setActionError(null);
+    setShelfMessage(null);
+    try {
+      const item = await createShelfItem({
+        diary_note_id: note.id,
+        wine_name: note.wine_name,
+        country: note.country,
+        region: note.region,
+        grape: note.grape,
+        style: note.wine_color ? colorLabels[note.wine_color] : null,
+        status: shelfStatusFromNote(note),
+        personal_note: note.personal_note,
+      });
+      setShelfItemId(item.id);
+      setShelfMessage("Добавлено в винную полку.");
+    } catch (caught) {
+      setActionError(caught instanceof Error ? caught.message : "Не удалось добавить вино в полку");
+    } finally {
+      setIsAddingToShelf(false);
     }
   }
 
@@ -213,6 +251,26 @@ export function DiaryNoteDetailPage() {
         </section>
       )}
 
+      <section className="diary-entry-section diary-entry-section--shelf">
+        <div className="diary-entry-section__header">
+          <span>Wine Shelf</span>
+          <h2>Винная полка</h2>
+        </div>
+        <p>Сохрани это вино отдельно от заметки, чтобы быстро найти его в списке “хочу попробовать”, “понравилось” или “купить снова”.</p>
+        <div className="diary-actions">
+          {shelfItemId ? (
+            <Link className="primary-action" to="/diary/shelf">
+              Открыть в полке
+            </Link>
+          ) : (
+            <button className="primary-action" type="button" disabled={isAddingToShelf} onClick={addToShelf}>
+              {isAddingToShelf ? "Добавляем..." : "Добавить в полку"}
+            </button>
+          )}
+          {shelfMessage && <small>{shelfMessage}</small>}
+        </div>
+      </section>
+
       <div className="diary-actions">
         <Link className="primary-action" to={`/diary/${note.id}/edit`}>
           Редактировать
@@ -235,6 +293,19 @@ export function DiaryNoteDetailPage() {
       </div>
     </article>
   );
+}
+
+function shelfStatusFromNote(note: TastingNoteDetail): WineShelfStatus {
+  if (note.would_buy_again) {
+    return "buy_again";
+  }
+  if (note.rating && note.rating >= 4) {
+    return "liked";
+  }
+  if (note.rating && note.rating <= 2) {
+    return "not_for_me";
+  }
+  return "tried";
 }
 
 function Field({ label, value }: { label: string; value: string | null }) {

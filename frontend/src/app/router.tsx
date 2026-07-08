@@ -22,6 +22,7 @@ import { QuizDetailPage } from "../modules/quizzes/QuizDetailPage";
 import { QuizzesPage } from "../modules/quizzes/QuizzesPage";
 import { TasteProfilePage } from "../modules/taste-profile/TasteProfilePage";
 import { TelegramDebugPage } from "../modules/debug/TelegramDebugPage";
+import { WineShelfPage } from "../modules/wine-shelf/WineShelfPage";
 import { PlaceholderPage } from "../shared/ui/PlaceholderPage";
 
 export const router = createBrowserRouter([
@@ -64,6 +65,7 @@ export const router = createBrowserRouter([
       { path: "/learn/lessons/:lessonSlug", element: <LessonDetailPage /> },
       { path: "/learn/:pathSlug", element: <LearningPathDetailPage /> },
       { path: "/diary", element: <DiaryPage /> },
+      { path: "/diary/shelf", element: <WineShelfPage /> },
       { path: "/diary/new", element: <DiaryNoteFormPage /> },
       { path: "/diary/:noteId", element: <DiaryNoteDetailPage /> },
       { path: "/diary/:noteId/edit", element: <DiaryNoteFormPage /> },

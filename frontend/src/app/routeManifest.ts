@@ -105,6 +105,14 @@ export const routeManifest: RouteManifestItem[] = [
     purpose: "Private tasting notes for the current project user.",
   },
   {
+    path: "/diary/shelf",
+    label: "Wine Shelf",
+    requiresAuth: true,
+    requiresOnboarding: true,
+    usesAppShell: true,
+    purpose: "Private wine shelf for wines the current project user wants to try, remember, or buy again.",
+  },
+  {
     path: "/diary/new",
     label: "New Diary Note",
     requiresAuth: true,
