@@ -3410,34 +3410,44 @@ body {
   display: block;
   border: 1px solid rgba(120, 108, 102, 0.14);
   border-radius: var(--radius-card);
-  background: rgba(244, 238, 229, 0.36);
+  background:
+    radial-gradient(circle at 28% 28%, rgba(255, 253, 248, 0.72), transparent 32%),
+    radial-gradient(circle at 74% 60%, rgba(184, 137, 70, 0.08), transparent 34%),
+    rgba(244, 238, 229, 0.36);
 }
 
 .taste-world-map__sea {
   fill: #f8f1e8;
 }
 
-.taste-world-map__land {
-  fill: rgba(120, 108, 102, 0.13);
-  stroke: rgba(120, 108, 102, 0.18);
-  stroke-width: 2;
+.taste-world-map__continent {
+  fill: rgba(120, 108, 102, 0.12);
+  stroke: rgba(120, 108, 102, 0.2);
+  stroke-width: 2.2;
+  stroke-linejoin: round;
 }
 
 .taste-world-map__marker circle {
-  fill: rgba(120, 108, 102, 0.34);
+  fill: rgba(120, 108, 102, 0.42);
   stroke: rgba(255, 253, 248, 0.92);
   stroke-width: 2;
 }
 
 .taste-world-map__marker--opened circle:first-child {
-  fill: var(--color-primary);
-  stroke: rgba(255, 253, 248, 0.96);
+  fill: rgba(143, 38, 56, 0.14);
+  stroke: rgba(143, 38, 56, 0.2);
 }
 
-.taste-world-map__marker-ring {
-  fill: none;
-  stroke: rgba(143, 38, 56, 0.28);
-  stroke-width: 3;
+.taste-world-map__marker--opened circle:last-child {
+  fill: var(--color-primary);
+  stroke: rgba(255, 253, 248, 0.98);
+  stroke-width: 2.4;
+}
+
+.taste-world-map__marker-halo {
+  fill: rgba(143, 38, 56, 0.12);
+  stroke: rgba(143, 38, 56, 0.16);
+  stroke-width: 2;
 }
 
 .taste-world-map__legend {
@@ -3463,6 +3473,42 @@ body {
 
 .taste-world-map__legend-dot--opened {
   background: var(--color-primary);
+}
+
+.taste-map-progress-panel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.taste-map-progress-panel > div {
+  display: grid;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid rgba(143, 38, 56, 0.14);
+  border-radius: var(--radius-card);
+  background: rgba(255, 253, 248, 0.68);
+}
+
+.taste-map-progress-panel span,
+.taste-map-source-note {
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.taste-map-progress-panel strong {
+  color: var(--color-primary);
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.taste-map-source-note {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(120, 108, 102, 0.14);
+  border-radius: var(--radius-card);
+  background: rgba(120, 108, 102, 0.045);
+  line-height: 1.55;
 }
 
 .taste-map-map-note {
@@ -3502,6 +3548,15 @@ body {
 .taste-country-card--suggested {
   border-color: rgba(184, 137, 70, 0.2);
   background: rgba(184, 137, 70, 0.055);
+}
+
+.taste-map-card--next {
+  border-color: rgba(184, 137, 70, 0.24);
+}
+
+.taste-map-card--secondary {
+  background: rgba(255, 253, 248, 0.66);
+  box-shadow: none;
 }
 
 .taste-country-card span {

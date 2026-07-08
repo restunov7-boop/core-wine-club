@@ -63,43 +63,61 @@ export function TasteMapPage() {
   }
 
   if (isLoading || !profile) {
-    return <LoadingState title="География вкуса" description="Собираем страны, регионы и карту..." />;
+    return <LoadingState title="География вкуса" description="Обновляем карту по дневнику и винной полке..." />;
   }
 
   const hasOpenedCountries = openedCountries.length > 0;
+  const nextGoalCount = Math.min(wineCountries.length, openedCountries.length + 3);
+  const countriesToNextGoal = Math.max(0, nextGoalCount - openedCountries.length);
+  const hasAnySourceData = profile.stats.notes_count > 0 || profile.stats.shelf_items_count > 0;
 
   return (
     <section className="taste-map-page">
       <header className="taste-map-header">
         <span>Винная карта мира</span>
         <h1>География вкуса</h1>
-        <p>Страны закрашиваются, когда в дневнике или полке появляется вино из этой страны. Это твоя личная винная карта, без внешних карт и лишней тяжести.</p>
+        <p>Страны открываются, когда в дневнике или винной полке появляется вино из этой страны.</p>
       </header>
 
       <section className="taste-map-card taste-map-card--world">
         <div className="taste-map-card__header">
           <div>
             <span>Карта</span>
-            <h2>Открытые страны</h2>
+            <h2>Континенты и открытые страны</h2>
           </div>
           <Link className="ghost-action" to="/diary/new">
             Добавить
           </Link>
         </div>
         <TasteWorldMap openedCountries={openedCountries} />
+        <div className="taste-map-progress-panel">
+          <div>
+            <span>Открыто стран</span>
+            <strong>{openedCountries.length} / {wineCountries.length}</strong>
+          </div>
+          <div>
+            <span>Следующая цель</span>
+            <strong>
+              {countriesToNextGoal > 0 ? `открыть ещё ${countriesToNextGoal}` : "вся карта открыта"}
+            </strong>
+          </div>
+        </div>
+        <p className="taste-map-source-note">
+          Карта собирается по заметкам дневника и винной полке. Если заметки удалены, страна может оставаться открытой, пока на полке есть вино из этой страны.
+        </p>
         {!hasOpenedCountries && (
           <div className="taste-map-map-note">
-            <h3>Карта начнёт закрашиваться после первой заметки</h3>
+            <h3>Карта начнёт заполняться после первой страны</h3>
             <p>Укажи страну в дневнике или добавь вино на полку, и первая точка появится на карте.</p>
           </div>
         )}
       </section>
 
       <section className="taste-map-stat-grid">
-        <StatCard label="Открыто стран" value={`${openedCountries.length} / ${wineCountries.length}`} />
         <StatCard label="Регионов" value={String(profile.stats.regions_tried.length)} />
         <StatCard label="Заметок" value={String(profile.stats.notes_count)} />
         <StatCard label="В полке" value={String(profile.stats.shelf_items_count)} />
+        <StatCard label="Поддержано стран" value={String(wineCountries.length)} />
       </section>
 
       {hasOpenedCountries ? (
@@ -123,25 +141,30 @@ export function TasteMapPage() {
         </section>
       ) : (
         <section className="empty-state taste-map-empty">
-          <span>Пока пусто</span>
-          <h2>Открой первую страну</h2>
-          <p>Добавь заметку с Францией, Италией, Грузией или любой другой страной, и карта начнёт оживать.</p>
+          <span>{hasAnySourceData ? "Страна не указана" : "Пока пусто"}</span>
+          <h2>Карта начнёт заполняться после первой страны</h2>
+          <p>
+            {hasAnySourceData
+              ? "В дневнике или полке уже есть данные, но страна пока не распознана. Добавь страну к заметке или полке, чтобы открыть первую точку."
+              : "Добавь заметку с Францией, Италией, Грузией или любой другой страной, и карта начнёт оживать."}
+          </p>
           <Link className="primary-action empty-state__action" to="/diary/new">
             Добавить заметку
           </Link>
         </section>
       )}
 
-      <section className="taste-map-card">
+      <section className="taste-map-card taste-map-card--next">
         <div className="taste-map-card__header">
           <div>
-            <span>Следующая страна для карты</span>
+            <span>Следующие страны</span>
             <h2>Что можно открыть дальше</h2>
           </div>
           <Link className="ghost-action" to="/diary/new">
             Записать бокал
           </Link>
         </div>
+        <p>Выбери бутылку из новой страны, добавь её в дневник, и карта станет на одну точку живее.</p>
         <div className="taste-country-grid taste-country-grid--suggested">
           {nextCountries.map((country) => (
             <SuggestedCountry key={country.code} country={country} />
@@ -149,7 +172,7 @@ export function TasteMapPage() {
         </div>
       </section>
 
-      <section className="taste-map-card">
+      <section className="taste-map-card taste-map-card--secondary">
         <h2>Регионы и стили</h2>
         <div className="taste-map-columns">
           <CountList title="Регионы" items={profile.stats.regions_tried} />
