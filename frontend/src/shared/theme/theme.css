@@ -3336,6 +3336,10 @@ body {
   padding: 18px;
 }
 
+.taste-map-card--world {
+  overflow: hidden;
+}
+
 .taste-map-card__header {
   display: flex;
   align-items: flex-start;
@@ -3393,6 +3397,132 @@ body {
 .taste-map-chip-row strong {
   color: var(--color-text);
   font-size: 13px;
+}
+
+.taste-world-map {
+  display: grid;
+  gap: 10px;
+}
+
+.taste-world-map svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid rgba(120, 108, 102, 0.14);
+  border-radius: var(--radius-card);
+  background: rgba(244, 238, 229, 0.36);
+}
+
+.taste-world-map__sea {
+  fill: #f8f1e8;
+}
+
+.taste-world-map__land {
+  fill: rgba(120, 108, 102, 0.13);
+  stroke: rgba(120, 108, 102, 0.18);
+  stroke-width: 2;
+}
+
+.taste-world-map__marker circle {
+  fill: rgba(120, 108, 102, 0.34);
+  stroke: rgba(255, 253, 248, 0.92);
+  stroke-width: 2;
+}
+
+.taste-world-map__marker--opened circle:first-child {
+  fill: var(--color-primary);
+  stroke: rgba(255, 253, 248, 0.96);
+}
+
+.taste-world-map__marker-ring {
+  fill: none;
+  stroke: rgba(143, 38, 56, 0.28);
+  stroke-width: 3;
+}
+
+.taste-world-map__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.taste-world-map__legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.taste-world-map__legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(120, 108, 102, 0.34);
+}
+
+.taste-world-map__legend-dot--opened {
+  background: var(--color-primary);
+}
+
+.taste-map-map-note {
+  display: grid;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid rgba(143, 38, 56, 0.14);
+  border-radius: var(--radius-card);
+  background: rgba(143, 38, 56, 0.055);
+}
+
+.taste-map-map-note h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.taste-map-map-note p {
+  margin: 0;
+}
+
+.taste-country-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.taste-country-card {
+  display: grid;
+  gap: 7px;
+  min-height: 120px;
+  padding: 14px;
+  border: 1px solid rgba(143, 38, 56, 0.14);
+  border-radius: var(--radius-card);
+  background: rgba(255, 253, 248, 0.7);
+}
+
+.taste-country-card--suggested {
+  border-color: rgba(184, 137, 70, 0.2);
+  background: rgba(184, 137, 70, 0.055);
+}
+
+.taste-country-card span {
+  color: var(--color-accent);
+  font-size: 12px;
+  font-weight: 590;
+}
+
+.taste-country-card h3 {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.taste-country-card p,
+.taste-country-card small {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  line-height: 1.45;
 }
 
 .dictionary-tools {
@@ -3457,7 +3587,8 @@ body {
   }
 
   .profile-hub-grid,
-  .taste-map-stat-grid {
+  .taste-map-stat-grid,
+  .taste-country-grid {
     grid-template-columns: 1fr 1fr;
   }
 

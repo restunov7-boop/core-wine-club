@@ -130,7 +130,11 @@ export function TasteProfilePage() {
           </div>
         </div>
         <div className="profile-hub-grid">
-          <HubLink title="География вкуса" description="Страны, регионы, сорта и стили из дневника." to="/taste-map" />
+          <HubLink
+            title="География вкуса"
+            description={`Открыто стран: ${profile.stats.countries_tried.length}. Карта закрашивается по дневнику и полке.`}
+            to="/taste-map"
+          />
           <HubLink title="Словарь вина" description="Короткие объяснения терминов без занудства." to="/dictionary" />
           <HubLink title="Винная полка" description="Вина, которые хочется попробовать, помнить или купить снова." to="/diary/shelf" />
           <HubLink title="Новая заметка" description="Записать бокал и уточнить личный профиль." to="/diary/new" />
