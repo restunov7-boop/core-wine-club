@@ -8,6 +8,8 @@ import type { BottleProgress } from "../bottle/types";
 import { getOnboardingStatus } from "../onboarding/api";
 import { getProgressSummary } from "../progress/api";
 import type { ProgressSummary } from "../progress/types";
+import { getOpenedWineCountries } from "../taste-map/data/wineCountries";
+import { getNextTasteMapAchievement } from "../taste-map/tasteMapGamification";
 
 import { getTasteProfile } from "./api";
 import type { TasteProfileCountItem, TasteProfileResponse } from "./types";
@@ -96,6 +98,8 @@ export function TasteProfilePage() {
     profile.stats.top_grapes.length > 0 ||
     profile.stats.top_styles.length > 0;
   const hasVocabulary = profile.stats.top_aroma_notes.length > 0 || profile.stats.top_taste_notes.length > 0;
+  const openedMapCountries = getOpenedWineCountries(profile.stats.countries_tried);
+  const nextMapAchievement = getNextTasteMapAchievement(openedMapCountries);
 
   return (
     <section className="taste-profile-page">
@@ -132,7 +136,11 @@ export function TasteProfilePage() {
         <div className="profile-hub-grid">
           <HubLink
             title="География вкуса"
-            description={`Открыто стран: ${profile.stats.countries_tried.length}. Собирай личную винную карту мира.`}
+            description={
+              nextMapAchievement
+                ? `Открыто стран: ${openedMapCountries.length}. Ближайшая веха: ${nextMapAchievement.title}.`
+                : `Открыто стран: ${openedMapCountries.length}. Карта уже выглядит как личный винный глобус.`
+            }
             to="/taste-map"
           />
           <HubLink title="Словарь вина" description="Короткие объяснения терминов без занудства." to="/dictionary" />

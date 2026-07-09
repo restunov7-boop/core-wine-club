@@ -6,7 +6,14 @@ import { LoadingState } from "../../shared/ui/LoadingState";
 import { getTasteProfile } from "../taste-profile/api";
 import type { TasteProfileCountItem, TasteProfileResponse } from "../taste-profile/types";
 
-import { getNextWineCountries, getOpenedWineCountries, wineCountries, type WineCountry } from "./data/wineCountries";
+import { getNextWineCountries, getOpenedWineCountries, wineCountries, type OpenedWineCountry, type WineCountry } from "./data/wineCountries";
+import {
+  getRegionProgress,
+  getTasteMapAchievements,
+  regionGroupLabels,
+  type RegionProgress,
+  type TasteMapAchievement,
+} from "./tasteMapGamification";
 import { TasteWorldMap } from "./TasteWorldMap";
 
 const styleLabels: Record<string, string> = {
@@ -24,6 +31,7 @@ export function TasteMapPage() {
   const [profile, setProfile] = useState<TasteProfileResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCountryCode, setSelectedCountryCode] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -57,6 +65,9 @@ export function TasteMapPage() {
     [profile],
   );
   const nextCountries = useMemo(() => getNextWineCountries(openedCountries), [openedCountries]);
+  const regionProgress = useMemo(() => getRegionProgress(openedCountries), [openedCountries]);
+  const achievements = useMemo(() => getTasteMapAchievements(openedCountries), [openedCountries]);
+  const selectedCountry = openedCountries.find((country) => country.code === selectedCountryCode) ?? null;
 
   if (error) {
     return <ErrorState title="География вкуса недоступна" description={error} />;
@@ -94,7 +105,11 @@ export function TasteMapPage() {
             Добавить
           </Link>
         </div>
-        <TasteWorldMap openedCountries={openedCountries} />
+        <TasteWorldMap
+          openedCountries={openedCountries}
+          selectedCountryCode={selectedCountryCode ?? undefined}
+          onSelectCountry={(country) => setSelectedCountryCode(country.code)}
+        />
         <div className="taste-map-progress-panel">
           <div>
             <span>Открыто стран</span>
@@ -116,6 +131,8 @@ export function TasteMapPage() {
         )}
       </section>
 
+      <CountryDetail country={selectedCountry} hasOpenedCountries={hasOpenedCountries} />
+
       <section className="taste-map-stat-grid">
         <StatCard label="Регионов" value={String(profile.stats.regions_tried.length)} />
         <StatCard label="Заметок" value={String(profile.stats.notes_count)} />
@@ -133,12 +150,21 @@ export function TasteMapPage() {
           </div>
           <div className="taste-country-grid">
             {openedCountries.map((country) => (
-              <article key={country.code} className="taste-country-card">
-                <span>{country.regionGroup}</span>
+              <button
+                key={country.code}
+                className={
+                  country.code === selectedCountryCode
+                    ? "taste-country-card taste-country-card--button taste-country-card--selected"
+                    : "taste-country-card taste-country-card--button"
+                }
+                type="button"
+                onClick={() => setSelectedCountryCode(country.code)}
+              >
+                <span>{regionGroupLabels[country.regionGroup]}</span>
                 <h3>{country.label}</h3>
                 <p>{country.count} {pluralizeRecords(country.count)}</p>
                 <small>{country.commonWineHint}</small>
-              </article>
+              </button>
             ))}
           </div>
         </section>
@@ -157,6 +183,26 @@ export function TasteMapPage() {
         </section>
       )}
 
+      <section className="taste-map-card">
+        <div className="taste-map-card__header">
+          <div>
+            <span>Континенты</span>
+            <h2>Прогресс по регионам</h2>
+          </div>
+        </div>
+        <RegionProgressList items={regionProgress} />
+      </section>
+
+      <section className="taste-map-card taste-map-card--achievements">
+        <div className="taste-map-card__header">
+          <div>
+            <span>Достижения</span>
+            <h2>Маленькие вехи карты</h2>
+          </div>
+        </div>
+        <AchievementGrid items={achievements} />
+      </section>
+
       <section className="taste-map-card taste-map-card--next">
         <div className="taste-map-card__header">
           <div>
@@ -167,7 +213,7 @@ export function TasteMapPage() {
             Записать бокал
           </Link>
         </div>
-        <p>Выбери бутылку из новой страны, добавь её в дневник, и карта станет на одну точку живее.</p>
+        <p>Добавь заметку с вином из этой страны, и она появится на карте.</p>
         <div className="taste-country-grid taste-country-grid--suggested">
           {nextCountries.map((country) => (
             <SuggestedCountry key={country.code} country={country} />
@@ -187,13 +233,78 @@ export function TasteMapPage() {
   );
 }
 
+function CountryDetail({
+  country,
+  hasOpenedCountries,
+}: {
+  country: OpenedWineCountry | null;
+  hasOpenedCountries: boolean;
+}) {
+  return (
+    <section className="taste-map-card taste-map-card--selected-country">
+      <div className="taste-map-card__header">
+        <div>
+          <span>Деталь страны</span>
+          <h2>{country ? country.label : "Открытая страна"}</h2>
+        </div>
+        <Link className="ghost-action" to="/diary/new">
+          Добавить заметку
+        </Link>
+      </div>
+      {country ? (
+        <div className="taste-country-detail">
+          <span>{regionGroupLabels[country.regionGroup]}</span>
+          <strong>{country.count} {pluralizeRecords(country.count)}</strong>
+          <p>{country.commonWineHint}</p>
+        </div>
+      ) : (
+        <p className="taste-map-muted">
+          {hasOpenedCountries
+            ? "Выбери открытую страну на карте или в списке."
+            : "Первая деталь появится, когда в дневнике или винной полке будет страна."}
+        </p>
+      )}
+    </section>
+  );
+}
+
 function SuggestedCountry({ country }: { country: WineCountry }) {
   return (
     <article className="taste-country-card taste-country-card--suggested">
-      <span>{country.regionGroup}</span>
+      <span>{regionGroupLabels[country.regionGroup]}</span>
       <h3>{country.label}</h3>
       <p>{country.commonWineHint}</p>
+      <Link className="ghost-action taste-country-card__action" to="/diary/new">
+        Добавить заметку
+      </Link>
     </article>
+  );
+}
+
+function RegionProgressList({ items }: { items: RegionProgress[] }) {
+  return (
+    <div className="taste-region-grid">
+      {items.map((item) => (
+        <article key={item.key} className={item.opened > 0 ? "taste-region-card taste-region-card--active" : "taste-region-card"}>
+          <span>{item.label}</span>
+          <strong>{item.opened} / {item.total}</strong>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function AchievementGrid({ items }: { items: TasteMapAchievement[] }) {
+  return (
+    <div className="taste-achievement-grid">
+      {items.map((item) => (
+        <article key={item.key} className={item.achieved ? "taste-achievement-card taste-achievement-card--done" : "taste-achievement-card"}>
+          <span>{item.achieved ? "Открыто" : `${item.progress} / ${item.target}`}</span>
+          <h3>{item.title}</h3>
+          <p>{item.description}</p>
+        </article>
+      ))}
+    </div>
   );
 }
 

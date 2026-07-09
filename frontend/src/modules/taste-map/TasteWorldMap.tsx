@@ -2,6 +2,8 @@ import type { OpenedWineCountry } from "./data/wineCountries";
 
 type TasteWorldMapProps = {
   openedCountries: OpenedWineCountry[];
+  selectedCountryCode?: string;
+  onSelectCountry?: (country: OpenedWineCountry) => void;
 };
 
 const continents = [
@@ -37,10 +39,10 @@ const continents = [
   },
 ];
 
-export function TasteWorldMap({ openedCountries }: TasteWorldMapProps) {
+export function TasteWorldMap({ openedCountries, selectedCountryCode, onSelectCountry }: TasteWorldMapProps) {
   return (
     <div className="taste-world-map" role="img" aria-label={`Открыто стран на винной карте: ${openedCountries.length}`}>
-      <svg viewBox="0 0 1000 520" aria-hidden="true" focusable="false">
+      <svg viewBox="0 0 1000 520" aria-label="Интерактивная карта открытых стран" focusable="false">
         <rect className="taste-world-map__sea" x="0" y="0" width="1000" height="520" rx="30" />
         {continents.map((continent) => (
           <path key={continent.key} className="taste-world-map__continent" d={continent.path}>
@@ -50,7 +52,23 @@ export function TasteWorldMap({ openedCountries }: TasteWorldMapProps) {
 
         {openedCountries.map((country) => {
           return (
-            <g key={country.code} className="taste-world-map__marker taste-world-map__marker--opened">
+            <g
+              key={country.code}
+              className={
+                country.code === selectedCountryCode
+                  ? "taste-world-map__marker taste-world-map__marker--opened taste-world-map__marker--selected"
+                  : "taste-world-map__marker taste-world-map__marker--opened"
+              }
+              role="button"
+              tabIndex={0}
+              onClick={() => onSelectCountry?.(country)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  onSelectCountry?.(country);
+                }
+              }}
+            >
               <title>
                 {`${country.label}: открыто, записей ${country.count}`}
               </title>

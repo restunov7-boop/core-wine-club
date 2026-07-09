@@ -90,11 +90,34 @@ export function getOpenedWineCountries(items: TasteProfileCountItem[]): OpenedWi
 export function getNextWineCountries(openedCountries: OpenedWineCountry[], limit = 6): WineCountry[] {
   const openedCodes = new Set(openedCountries.map((item) => item.code));
   const priority = ["FR", "IT", "ES", "PT", "DE", "GE", "AR", "CL", "ZA", "AU", "NZ", "GR"];
-
-  return [...wineCountries]
+  const candidates = [...wineCountries]
     .filter((item) => !openedCodes.has(item.code))
-    .sort((left, right) => priorityIndex(left.code, priority) - priorityIndex(right.code, priority))
-    .slice(0, limit);
+    .sort((left, right) => priorityIndex(left.code, priority) - priorityIndex(right.code, priority));
+  const selected: WineCountry[] = [];
+  const usedRegionGroups = new Set<WineCountryRegionGroup>();
+
+  for (const country of candidates) {
+    if (selected.length >= limit) {
+      break;
+    }
+    if (usedRegionGroups.has(country.regionGroup)) {
+      continue;
+    }
+
+    selected.push(country);
+    usedRegionGroups.add(country.regionGroup);
+  }
+
+  for (const country of candidates) {
+    if (selected.length >= limit) {
+      break;
+    }
+    if (!selected.some((item) => item.code === country.code)) {
+      selected.push(country);
+    }
+  }
+
+  return selected;
 }
 
 function country(
