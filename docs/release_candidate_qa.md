@@ -2,6 +2,8 @@
 
 This checklist is for the CORE Wine Club release-candidate pass. It contains no secrets and should be safe to share inside the project.
 
+Use this together with `docs/release_lock.md` before treating the MVP as release locked.
+
 ## Route Checklist
 
 - `/home`
@@ -127,6 +129,8 @@ This checklist is for the CORE Wine Club release-candidate pass. It contains no 
 
 - Confirm Vercel frontend env vars before release.
 - Confirm Render backend env vars before release.
+- Confirm Render `CORS_ORIGINS` and `TELEGRAM_WEB_APP_URL` use the frontend root only: no `/home`, no trailing slash.
+- Confirm production `DATABASE_URL` uses the Supabase pooler placeholder/value, not the direct host format.
 - Confirm Supabase migrations have been applied manually where required.
 - Run frontend build and smoke checks before deploying.
 - Do not paste secrets into QA reports or screenshots.

@@ -32,13 +32,13 @@ In Supabase:
 
 Supabase may provide direct and pooler connection strings. For this project production deployment, use the pooler connection string in Render `DATABASE_URL`.
 
-Do not use this direct host in Render:
+Do not use this direct host format in Render:
 
 ```text
-db.spjwanjgioebodahmyfp.supabase.co
+db.<project-ref>.supabase.co
 ```
 
-It previously caused IPv6/network issues from the deployment environment.
+The direct host previously caused IPv6/network issues from the deployment environment.
 
 Do not write the full real `DATABASE_URL` in docs, chat, screenshots, or commit messages. Use placeholder format only:
 

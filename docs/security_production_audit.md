@@ -44,10 +44,10 @@ TELEGRAM_AUTH_MAX_AGE_SECONDS=86400
 
 Use the frontend root for CORS and Telegram Web App URL. Do not add `/home` and do not add a trailing slash.
 
-Use the Supabase pooler URL for `DATABASE_URL`. Do not use the direct host:
+Use the Supabase pooler URL for `DATABASE_URL`. Do not use the direct host format:
 
 ```text
-db.spjwanjgioebodahmyfp.supabase.co
+db.<project-ref>.supabase.co
 ```
 
 After changing Render env variables, trigger a manual deploy if Render does not restart the service automatically.

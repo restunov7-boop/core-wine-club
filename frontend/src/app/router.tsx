@@ -92,8 +92,26 @@ export const router = createBrowserRouter([
       </AuthGuard>
     ),
     children: [
-      { index: true, element: <PlaceholderPage title="Админ-раздел" /> },
-      { path: "dashboard", element: <PlaceholderPage title="Админ-панель" /> },
+      {
+        index: true,
+        element: (
+          <PlaceholderPage
+            eyebrow="Админ"
+            title="Админ-панель готовится"
+            description="Здесь позже появится управление контентом. Сейчас раздел нужен для проверки доступа и маршрута."
+          />
+        ),
+      },
+      {
+        path: "dashboard",
+        element: (
+          <PlaceholderPage
+            eyebrow="Админ"
+            title="Панель готовится"
+            description="Рабочие инструменты администратора появятся в отдельном спринте. Полный CMS здесь пока не включён."
+          />
+        ),
+      },
     ],
   },
   {

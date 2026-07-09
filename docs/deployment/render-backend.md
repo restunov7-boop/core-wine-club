@@ -44,13 +44,13 @@ Use Supabase Postgres through `DATABASE_URL`. The backend already uses SQLAlchem
 
 For production on Render, use the Supabase pooler connection string, not the direct database host. Do not write the real connection string in docs or chat.
 
-Forbidden direct host for this project:
+Forbidden direct host format for this project:
 
 ```text
-db.spjwanjgioebodahmyfp.supabase.co
+db.<project-ref>.supabase.co
 ```
 
-That direct host previously caused IPv6/network issues from the deployment environment.
+The direct host previously caused IPv6/network issues from the deployment environment. Use the Supabase pooler placeholder/value in Render instead.
 
 Run migrations as a Render shell/one-off command:
 
