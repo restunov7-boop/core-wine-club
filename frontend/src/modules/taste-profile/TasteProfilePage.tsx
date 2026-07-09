@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { ErrorState } from "../../shared/ui/ErrorState";
 import { LoadingState } from "../../shared/ui/LoadingState";
+import { canAccessAdmin, useAuthStore } from "../auth/store";
 import { getBottleProgress } from "../bottle/api";
 import type { BottleProgress } from "../bottle/types";
 import { getOnboardingStatus } from "../onboarding/api";
@@ -35,6 +36,8 @@ const styleLabels: Record<string, string> = {
 
 export function TasteProfilePage() {
   const navigate = useNavigate();
+  const isAdmin = useAuthStore((state) => state.isAdmin);
+  const projectUser = useAuthStore((state) => state.projectUser);
   const [profile, setProfile] = useState<TasteProfileResponse | null>(null);
   const [progress, setProgress] = useState<ProgressSummary | null>(null);
   const [bottle, setBottle] = useState<BottleProgress | null>(null);
@@ -100,6 +103,7 @@ export function TasteProfilePage() {
   const hasVocabulary = profile.stats.top_aroma_notes.length > 0 || profile.stats.top_taste_notes.length > 0;
   const openedMapCountries = getOpenedWineCountries(profile.stats.countries_tried);
   const nextMapAchievement = getNextTasteMapAchievement(openedMapCountries);
+  const canOpenAdmin = isAdmin || canAccessAdmin(projectUser);
 
   return (
     <section className="taste-profile-page">
@@ -146,6 +150,13 @@ export function TasteProfilePage() {
           <HubLink title="Словарь вина" description="Короткие объяснения терминов без занудства." to="/dictionary" />
           <HubLink title="Винная полка" description="Вина, которые хочется попробовать, помнить или купить снова." to="/diary/shelf" />
           <HubLink title="Новая заметка" description="Записать бокал и уточнить личный профиль." to="/diary/new" />
+          {canOpenAdmin && (
+            <HubLink
+              title="Админ-панель"
+              description="Служебный раздел для QA и управления проектом."
+              to="/admin"
+            />
+          )}
         </div>
       </section>
 

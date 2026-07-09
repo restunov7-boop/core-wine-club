@@ -20,15 +20,17 @@ type AuthState = {
   setError: (message: string | null) => void;
 };
 
-function canAccessAdmin(projectUser: ProjectUser | null): boolean {
+export function canAccessAdmin(projectUser: ProjectUser | null): boolean {
   if (!projectUser || projectUser.status !== "active") {
     return false;
   }
 
+  const capabilities = Array.isArray(projectUser.capabilities) ? projectUser.capabilities : [];
+
   return (
     projectUser.role === "admin" ||
     projectUser.role === "owner" ||
-    projectUser.capabilities.includes("access_admin")
+    capabilities.includes("access_admin")
   );
 }
 
