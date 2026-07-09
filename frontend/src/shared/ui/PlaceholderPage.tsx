@@ -12,7 +12,7 @@ export function PlaceholderPage({ title, description, eyebrow = "CORE Wine Club"
     <section className="page">
       <div className="page__eyebrow">{eyebrow}</div>
       <h1>{title}</h1>
-      <p>{description ?? "Sprint placeholder. Business logic will be added in later sprints."}</p>
+      <p>{description ?? "Этот раздел пока готовится. Основная логика появится в следующих спринтах."}</p>
       {action && <div className="page__actions">{action}</div>}
     </section>
   );

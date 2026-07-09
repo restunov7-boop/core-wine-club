@@ -77,9 +77,9 @@ export const router = createBrowserRouter([
       { path: "/profile", element: <Navigate to="/taste-profile" replace /> },
       { path: "/offline-tastings", element: <OfflineTastingsPage /> },
       { path: "/club", element: <PlaceholderPage title="Клуб" /> },
-      { path: "/premium", element: <PlaceholderPage title="Premium" /> },
-      { path: "/notifications", element: <PlaceholderPage title="Notifications" /> },
-      { path: "/settings", element: <PlaceholderPage title="Settings" /> },
+      { path: "/premium", element: <PlaceholderPage title="Премиум" /> },
+      { path: "/notifications", element: <PlaceholderPage title="Уведомления" /> },
+      { path: "/settings", element: <PlaceholderPage title="Настройки" /> },
     ],
   },
   {
@@ -92,8 +92,8 @@ export const router = createBrowserRouter([
       </AuthGuard>
     ),
     children: [
-      { index: true, element: <PlaceholderPage title="Admin" /> },
-      { path: "dashboard", element: <PlaceholderPage title="Admin Dashboard" /> },
+      { index: true, element: <PlaceholderPage title="Админ-раздел" /> },
+      { path: "dashboard", element: <PlaceholderPage title="Админ-панель" /> },
     ],
   },
   {
