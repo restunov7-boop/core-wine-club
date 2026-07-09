@@ -25,12 +25,12 @@ Set these in Render dashboard, not in git:
 
 ```env
 APP_ENV=production
-DATABASE_URL=<supabase-postgres-url>
+DATABASE_URL=<supabase-pooler-postgres-url>
 JWT_SECRET=<strong-random-secret>
 DEV_AUTH_ENABLED=false
-CORS_ORIGINS=https://your-vercel-frontend.vercel.app
+CORS_ORIGINS=https://core-wine-club-frontend-theta.vercel.app
 TELEGRAM_BOT_TOKEN=<botfather-token>
-TELEGRAM_WEB_APP_URL=https://your-vercel-frontend.vercel.app
+TELEGRAM_WEB_APP_URL=https://core-wine-club-frontend-theta.vercel.app
 TELEGRAM_BOT_ENABLED=true
 TELEGRAM_BOT_POLLING_ALLOWED=false
 TELEGRAM_AUTH_MAX_AGE_SECONDS=86400
@@ -41,6 +41,16 @@ TELEGRAM_AUTH_MAX_AGE_SECONDS=86400
 ## Database
 
 Use Supabase Postgres through `DATABASE_URL`. The backend already uses SQLAlchemy and `psycopg`.
+
+For production on Render, use the Supabase pooler connection string, not the direct database host. Do not write the real connection string in docs or chat.
+
+Forbidden direct host for this project:
+
+```text
+db.spjwanjgioebodahmyfp.supabase.co
+```
+
+That direct host previously caused IPv6/network issues from the deployment environment.
 
 Run migrations as a Render shell/one-off command:
 
@@ -61,3 +71,4 @@ Do not seed real production data with the dev seed unless that environment is ex
 - Render free web services may spin down after idle.
 - Telegram webhooks require HTTPS, which Render provides for deployed services.
 - Do not commit Render URLs, secrets, tokens, logs, or database URLs.
+- After Render env changes, trigger a manual deploy if the service does not restart automatically.

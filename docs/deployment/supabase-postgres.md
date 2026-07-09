@@ -30,7 +30,23 @@ In Supabase:
 4. Put it into Render as `DATABASE_URL`.
 5. Never commit it.
 
-Supabase may provide direct and pooler connection strings. Use the option recommended by Supabase for the target runtime. If the direct connection has networking limits, use the pooler connection string.
+Supabase may provide direct and pooler connection strings. For this project production deployment, use the pooler connection string in Render `DATABASE_URL`.
+
+Do not use this direct host in Render:
+
+```text
+db.spjwanjgioebodahmyfp.supabase.co
+```
+
+It previously caused IPv6/network issues from the deployment environment.
+
+Do not write the full real `DATABASE_URL` in docs, chat, screenshots, or commit messages. Use placeholder format only:
+
+```env
+DATABASE_URL=<supabase-pooler-postgres-url>
+```
+
+If the database password was exposed or may have been pasted into chat, rotate it in Supabase, then update Render `DATABASE_URL` with the new pooler URL.
 
 ## Migrations
 
