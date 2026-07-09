@@ -3769,3 +3769,110 @@ body {
     display: grid;
   }
 }
+
+/* Sprint 47: Telegram WebView mobile polish. */
+.taste-map-page,
+.dictionary-page,
+.wine-shelf-page {
+  overflow-x: hidden;
+}
+
+.taste-map-card,
+.taste-country-card,
+.taste-achievement-card,
+.taste-region-card,
+.dictionary-card,
+.wine-shelf-card,
+.profile-hub-card {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.taste-world-map svg {
+  max-width: 100%;
+  min-height: 188px;
+}
+
+.taste-world-map__marker {
+  touch-action: manipulation;
+}
+
+.dictionary-category-row,
+.wine-shelf-filter-panel,
+.wine-shelf-card__actions {
+  align-items: stretch;
+}
+
+.dictionary-category-row .choice-chip,
+.wine-shelf-filter-panel .choice-chip,
+.wine-shelf-card__actions .primary-action,
+.wine-shelf-card__actions .ghost-action,
+.wine-shelf-card__actions .danger-action {
+  min-height: 42px;
+}
+
+.diary-form textarea {
+  min-height: 132px;
+}
+
+@media (max-width: 430px) {
+  .taste-map-header,
+  .taste-map-card,
+  .dictionary-header,
+  .dictionary-tools,
+  .dictionary-card,
+  .wine-shelf-header,
+  .wine-shelf-form-panel,
+  .wine-shelf-filter-panel,
+  .wine-shelf-card {
+    padding: 16px;
+  }
+
+  .profile-hub-grid,
+  .taste-map-stat-grid,
+  .taste-map-progress-panel,
+  .taste-country-grid,
+  .taste-region-grid,
+  .taste-achievement-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .taste-world-map {
+    gap: 8px;
+  }
+
+  .taste-world-map__legend {
+    gap: 8px;
+  }
+
+  .taste-country-card,
+  .taste-achievement-card,
+  .taste-region-card {
+    min-height: auto;
+  }
+
+  .taste-map-card__header .ghost-action,
+  .wine-shelf-card__header .ghost-action,
+  .dictionary-card__header .ghost-action {
+    width: fit-content;
+  }
+
+  .wine-shelf-card__header,
+  .wine-shelf-card__actions {
+    display: grid;
+  }
+
+  .wine-shelf-card__actions .primary-action,
+  .wine-shelf-card__actions .ghost-action,
+  .wine-shelf-card__actions .danger-action {
+    width: 100%;
+  }
+
+  .diary-form {
+    padding-bottom: calc(var(--bottom-nav-height) + 132px + env(safe-area-inset-bottom));
+  }
+
+  .diary-form .primary-action[type="submit"] {
+    bottom: calc(var(--bottom-nav-height) + 12px + env(safe-area-inset-bottom));
+  }
+}
