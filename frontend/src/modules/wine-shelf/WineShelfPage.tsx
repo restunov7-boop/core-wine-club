@@ -78,7 +78,7 @@ export function WineShelfPage() {
       } catch (caught) {
         if (mounted) {
           const message = caught instanceof Error ? caught.message : "Не удалось открыть винную полку";
-          setError(`${message}. Полка почти готова, но в production может понадобиться обновить базу данных.`);
+          setError(`${message} Полка почти готова: если ошибка повторяется, возможно, сервер ещё просыпается или таблица полки недоступна.`);
         }
       } finally {
         if (mounted) {

@@ -44,7 +44,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   async login(initData: string) {
     if (!initData) {
       set({
-        error: "Telegram initData is missing. Enable VITE_DEV_TELEGRAM_MOCK=true for local dev auth.",
+        error: "Не удалось подтвердить вход через Telegram. Открой приложение из бота ещё раз.",
         isAuthenticated: false,
         isAdmin: false,
         isLoading: false,
@@ -66,7 +66,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       });
     } catch (error) {
       set({
-        error: error instanceof Error ? error.message : "Authentication failed",
+        error: error instanceof Error ? error.message : "Не удалось войти через Telegram",
         isAuthenticated: false,
         isAdmin: false,
         isLoading: false,
@@ -107,7 +107,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       setApiAccessToken(null);
       set({
         accessToken: null,
-        error: error instanceof Error ? error.message : "Unable to load session",
+        error: error instanceof Error ? error.message : "Не удалось загрузить сессию",
         isAuthenticated: false,
         isAdmin: false,
         isLoading: false,

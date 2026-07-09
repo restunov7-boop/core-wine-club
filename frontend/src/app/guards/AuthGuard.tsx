@@ -1,8 +1,8 @@
 import { PropsWithChildren, useEffect } from "react";
 
 import { useAuthStore } from "../../modules/auth/store";
-import { PlaceholderPage } from "../../shared/ui/PlaceholderPage";
 import { telegramClient } from "../../shared/lib/telegram/telegramClient";
+import { PlaceholderPage } from "../../shared/ui/PlaceholderPage";
 
 const devTelegramMockEnabled = import.meta.env.DEV && import.meta.env.VITE_DEV_TELEGRAM_MOCK === "true";
 
@@ -31,7 +31,7 @@ export function AuthGuard({ children }: PropsWithChildren) {
         return;
       }
 
-      setError("Telegram initData is missing. Open inside Telegram or enable VITE_DEV_TELEGRAM_MOCK=true in local dev.");
+      setError("Не удалось подтвердить вход через Telegram. Открой приложение из бота ещё раз.");
     });
 
     return () => {
@@ -40,18 +40,24 @@ export function AuthGuard({ children }: PropsWithChildren) {
   }, [accessToken, error, isAuthenticated, isLoading, loadMe, login, setError]);
 
   if (error) {
-    return <PlaceholderPage title="Authentication error" description={error} />;
+    return (
+      <PlaceholderPage
+        title="Вход не получился"
+        description={error}
+        action={
+          <button className="primary-action" type="button" onClick={() => window.location.reload()}>
+            Попробовать снова
+          </button>
+        }
+      />
+    );
   }
 
   if (!isAuthenticated) {
     return (
       <PlaceholderPage
         title="Вход"
-        description={
-          devTelegramMockEnabled
-            ? "Signing in with local dev Telegram mock..."
-            : "Signing in with Telegram Mini App initData..."
-        }
+        description={devTelegramMockEnabled ? "Входим через локальный Telegram mock..." : "Проверяем вход через Telegram..."}
       />
     );
   }

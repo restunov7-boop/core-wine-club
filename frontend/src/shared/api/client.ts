@@ -13,6 +13,12 @@ export class ApiError extends Error {
   }
 }
 
+type ApiErrorPayload = {
+  error?: {
+    message?: unknown;
+  };
+};
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000/api/v1";
 let accessToken: string | null = null;
 
@@ -36,7 +42,7 @@ async function request<TData>(path: string, init: RequestInit = {}): Promise<Api
     });
   } catch (error) {
     const detail = error instanceof Error ? error.message : "Unknown network error";
-    throw new ApiError("Не удалось связаться с сервером. Проверь, что backend запущен.", 0, {
+    throw new ApiError("Не удалось связаться с сервером. Проверь соединение и попробуй снова.", 0, {
       detail,
       url: `${API_BASE_URL}${path}`,
     });
@@ -45,12 +51,32 @@ async function request<TData>(path: string, init: RequestInit = {}): Promise<Api
   const payload = await response.json().catch(() => null);
 
   if (!response.ok) {
-    const message =
-      typeof payload?.error?.message === "string" ? payload.error.message : "Не удалось выполнить запрос";
-    throw new ApiError(message, response.status, payload);
+    throw new ApiError(formatApiErrorMessage(response.status, payload as ApiErrorPayload | null), response.status, payload);
   }
 
   return payload as ApiResponse<TData>;
+}
+
+function formatApiErrorMessage(status: number, payload: ApiErrorPayload | null): string {
+  const backendMessage = typeof payload?.error?.message === "string" ? payload.error.message : null;
+
+  if (status === 401) {
+    return "Не удалось подтвердить вход через Telegram. Открой приложение из бота ещё раз.";
+  }
+  if (status === 403) {
+    return "Нет доступа к этому разделу.";
+  }
+  if (status === 404) {
+    return "Эта запись не найдена или уже удалена.";
+  }
+  if (status === 502 || status === 503 || status === 504) {
+    return "Сервер просыпается. Попробуй ещё раз через несколько секунд.";
+  }
+  if (status >= 500) {
+    return "Сервер временно недоступен. Попробуй обновить страницу чуть позже.";
+  }
+
+  return backendMessage ?? "Не удалось выполнить запрос. Попробуй ещё раз.";
 }
 
 export const apiClient = {
