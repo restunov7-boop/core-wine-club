@@ -32,11 +32,25 @@ This checklist is for the CORE Wine Club release-candidate pass. It contains no 
 
 - App opens from the Telegram bot button.
 - Login completes without showing raw Telegram `initData`.
+- Profile opens from bottom navigation and `/profile` redirects to the real profile page.
 - No token, secret, or stack trace appears in the UI.
 - Bottom navigation does not cover page content.
 - Safe-area spacing works on mobile.
 - Long Russian text wraps without horizontal scroll.
 - Error states stay calm and actionable.
+- Unknown route opens a safe app fallback and does not show a technical browser error.
+
+## Admin Access Checklist
+
+- Admin access is granted through the backend QA utility, not through frontend hiding.
+- The production QA user has `ProjectUser.role = admin` or `owner`, or the `access_admin` capability.
+- `ProjectUser.status` is `active`.
+- The Profile hub shows `Админ-панель` only for users with admin access.
+- Regular users do not see the admin entry point in Profile.
+- `/admin` is protected by `AdminGuard`.
+- A non-admin opening `/admin` sees a calm Russian access-denied state.
+- `/telegram-debug` may show role, status, capabilities, `isAdmin`, and `canAccessAdmin`.
+- `/telegram-debug` must not show full Telegram `initData`, bearer tokens, secrets, passwords, or database URLs.
 
 ## Main User Journey
 
@@ -49,9 +63,10 @@ This checklist is for the CORE Wine Club release-candidate pass. It contains no 
 7. Open Wine Shelf.
 8. Change shelf status and save.
 9. Open Profile.
-10. Open Taste Map.
-11. Open Dictionary.
-12. Open Learn, Quiz, Discoveries, Progress, Bottle, and Offline Tastings.
+10. If the user is admin, open Profile -> Admin Panel.
+11. Open Taste Map.
+12. Open Dictionary.
+13. Open Learn, Quiz, Discoveries, Progress, Bottle, and Offline Tastings.
 
 ## Wine Shelf Checklist
 
@@ -105,6 +120,7 @@ This checklist is for the CORE Wine Club release-candidate pass. It contains no 
 - Render cold start can make the first backend request slow. User-facing copy should say the server is waking up.
 - Wine Shelf depends on the production `wine_shelf_items` table already being migrated.
 - Telegram auth should be tested from the bot, not only from a normal browser tab.
+- Admin users must be granted through `backend/scripts/grant_project_admin.py` or an equivalent backend-controlled operation.
 - `/telegram-debug` may be used for QA, but it must not display full `initData`.
 
 ## Deployment Reminders
