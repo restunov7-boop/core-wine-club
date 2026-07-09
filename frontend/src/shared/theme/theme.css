@@ -1880,7 +1880,7 @@ textarea:focus-visible {
 }
 
 .diary-form {
-  padding: 0;
+  padding: 0 0 calc(var(--bottom-nav-height) + 112px + env(safe-area-inset-bottom));
   border: 0;
   background: transparent;
   box-shadow: none;
@@ -3095,10 +3095,12 @@ body {
 
 .diary-form .primary-action[type="submit"] {
   position: sticky;
-  bottom: calc(var(--bottom-nav-height) + 10px);
+  bottom: calc(var(--bottom-nav-height) + 14px + env(safe-area-inset-bottom));
   z-index: 3;
   width: 100%;
-  box-shadow: 0 12px 24px rgba(143, 38, 56, 0.16);
+  margin-top: 2px;
+  outline: 10px solid rgba(250, 246, 239, 0.92);
+  box-shadow: 0 14px 28px rgba(143, 38, 56, 0.18);
 }
 
 .home-note-item {
@@ -3417,25 +3419,25 @@ body {
 }
 
 .taste-world-map__sea {
-  fill: #f8f1e8;
+  fill: #f7f0e7;
 }
 
 .taste-world-map__continent {
-  fill: rgba(120, 108, 102, 0.12);
-  stroke: rgba(120, 108, 102, 0.2);
-  stroke-width: 2.2;
+  fill: rgba(120, 108, 102, 0.13);
+  stroke: rgba(120, 108, 102, 0.24);
+  stroke-width: 2;
   stroke-linejoin: round;
 }
 
 .taste-world-map__marker circle {
-  fill: rgba(120, 108, 102, 0.42);
-  stroke: rgba(255, 253, 248, 0.92);
-  stroke-width: 2;
+  fill: var(--color-primary);
+  stroke: rgba(255, 253, 248, 0.98);
+  stroke-width: 2.4;
 }
 
 .taste-world-map__marker--opened circle:first-child {
-  fill: rgba(143, 38, 56, 0.14);
-  stroke: rgba(143, 38, 56, 0.2);
+  fill: rgba(143, 38, 56, 0.13);
+  stroke: rgba(143, 38, 56, 0.18);
 }
 
 .taste-world-map__marker--opened circle:last-child {
@@ -3468,11 +3470,13 @@ body {
   width: 10px;
   height: 10px;
   border-radius: 999px;
-  background: rgba(120, 108, 102, 0.34);
+  background: rgba(120, 108, 102, 0.18);
+  border: 1px solid rgba(120, 108, 102, 0.3);
 }
 
 .taste-world-map__legend-dot--opened {
   background: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 .taste-map-progress-panel {

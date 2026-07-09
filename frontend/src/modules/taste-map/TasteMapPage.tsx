@@ -69,6 +69,11 @@ export function TasteMapPage() {
   const hasOpenedCountries = openedCountries.length > 0;
   const nextGoalCount = Math.min(wineCountries.length, openedCountries.length + 3);
   const countriesToNextGoal = Math.max(0, nextGoalCount - openedCountries.length);
+  const nextGoalCopy = hasOpenedCountries
+    ? countriesToNextGoal > 0
+      ? `открыть ещё ${countriesToNextGoal}`
+      : "вся карта открыта"
+    : "открой первую страну";
   const hasAnySourceData = profile.stats.notes_count > 0 || profile.stats.shelf_items_count > 0;
 
   return (
@@ -97,9 +102,7 @@ export function TasteMapPage() {
           </div>
           <div>
             <span>Следующая цель</span>
-            <strong>
-              {countriesToNextGoal > 0 ? `открыть ещё ${countriesToNextGoal}` : "вся карта открыта"}
-            </strong>
+            <strong>{nextGoalCopy}</strong>
           </div>
         </div>
         <p className="taste-map-source-note">
